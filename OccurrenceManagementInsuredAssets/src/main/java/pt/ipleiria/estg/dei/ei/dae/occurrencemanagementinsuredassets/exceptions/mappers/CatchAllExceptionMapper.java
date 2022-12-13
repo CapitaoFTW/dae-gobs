@@ -32,13 +32,13 @@ public class CatchAllExceptionMapper implements ExceptionMapper<Exception> {
             status = Response.Status.NOT_FOUND;
         else if (ex instanceof MyConstraintViolationException || ex instanceof MyIllegalArgumentException)
             status = Response.Status.BAD_REQUEST;
-        else */if (ex instanceof NotAuthorizedException || ex instanceof MalformedJwtException || ex instanceof SignatureException)
+        else */
+        if (ex instanceof NotAuthorizedException || ex instanceof MalformedJwtException || ex instanceof SignatureException)
             status = Response.Status.UNAUTHORIZED;
         else if (ex instanceof NoSuchAlgorithmException) {
             //return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             status = Response.Status.INTERNAL_SERVER_ERROR;
-        }
-        else {
+        } else {
             logger.log(Level.WARNING, "Fail processing app request!", ex);
             //return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             status = Response.Status.INTERNAL_SERVER_ERROR;
