@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.security;
 
-import org.hibernate.NotYetImplementedFor6Exception;
+import org.jboss.resteasy.spi.NotImplementedYetException;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -46,7 +46,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             @Override
             public Principal getUserPrincipal() {
-                throw new NotYetImplementedFor6Exception();
+                throw new NotImplementedYetException();
                 //return user::getUsername;
             }
 
@@ -58,7 +58,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                         return true;
                 }*/
 
-                throw new NotYetImplementedFor6Exception();
+                throw new NotImplementedYetException();
                 //return Hibernate.getClass(user).getSimpleName().equals(s);
             }
 

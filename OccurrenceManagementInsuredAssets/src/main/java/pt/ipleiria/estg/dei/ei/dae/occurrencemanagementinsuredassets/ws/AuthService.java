@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.ws;
 
-import org.hibernate.NotYetImplementedFor6Exception;
+import org.jboss.resteasy.spi.NotImplementedYetException;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.dtos.auth.AuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.dtos.auth.ChangePasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.security.AuthInfo;
@@ -36,7 +36,7 @@ public class AuthService {
                 throw new NotAuthorizedException("Invalid login credentials");
 
             return issueAuthInfo(authInfo);*/
-            throw new NotYetImplementedFor6Exception();
+            throw new NotImplementedYetException();
         } catch (EntityNotFoundException ex) {
             throw new NotAuthorizedException("Invalid login credentials");
         }
@@ -52,7 +52,7 @@ public class AuthService {
             return Response.status(Response.Status.BAD_REQUEST).entity("OldPassword is wrong or newPassword and confirmPassword do not match").build();
 
         return issueAuthInfo(authInfo);*/
-        throw new NotYetImplementedFor6Exception();
+        throw new NotImplementedYetException();
     }
 
     protected Response issueAuthInfo(AuthInfo authInfo) {
