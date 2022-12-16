@@ -6,6 +6,8 @@ import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.entities.Se
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.Collection;
 
 @Stateless
@@ -15,7 +17,14 @@ public class SeguradoraBean {
     private SeguradoraInterface seguradoraBridge;
 
     public Seguradora find(int id) {
-        return getBridge().getSeguradora(id);
+        try {
+            return getBridge().getSeguradora(id);
+        } catch (WebApplicationException ex) {
+            if (ex.getResponse().getStatusInfo() == Response.Status.INTERNAL_SERVER_ERROR)//MockAPi.io returns error 500 instead of 404
+                return null;
+
+            throw ex;
+        }
     }
 
     public Collection<Seguradora> getAll() {
