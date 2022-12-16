@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.ejbs.SeguradoraBean;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.entities.Seguradora;
+import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.exceptions.EntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -23,10 +24,10 @@ public class SeguradoraService {
 
     @GET
     @Path("/{id}")
-    public Response getSeguradora(@PathParam("id") int id) {
+    public Response getSeguradora(@PathParam("id") int id) throws EntityNotFoundException {
         Seguradora seguradora = seguradoraBean.find(id);
         if (seguradora == null)
-            throw new NotFoundException("Falha ao obter Seguradora, Seguradora não existe.");
+            throw new EntityNotFoundException(id, "Falha ao obter Seguradora, Seguradora não existe");
 
         return Response.ok(seguradora).build();
     }
