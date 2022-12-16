@@ -4,6 +4,7 @@ import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.entities.Se
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
@@ -14,4 +15,8 @@ public interface SeguradoraInterface {
     @GET
     @Path("/")
     Collection<Seguradora> getAll();
+
+    @GET
+    @Path("/{id}")
+    Seguradora getSeguradora(@PathParam("id") int id);
 }

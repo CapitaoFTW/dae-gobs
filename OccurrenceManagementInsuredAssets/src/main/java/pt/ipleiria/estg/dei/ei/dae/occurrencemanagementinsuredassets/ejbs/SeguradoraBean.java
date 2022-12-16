@@ -14,6 +14,10 @@ public class SeguradoraBean {
     private SeguradoraProxy seguradoraProxy;
     private SeguradoraInterface seguradoraBridge;
 
+    public Seguradora find(int id) {
+        return getBridge().getSeguradora(id);
+    }
+
     public Collection<Seguradora> getAll() {
         return getBridge().getAll();
     }
