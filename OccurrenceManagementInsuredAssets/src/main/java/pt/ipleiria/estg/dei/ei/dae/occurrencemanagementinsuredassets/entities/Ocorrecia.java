@@ -18,6 +18,8 @@ public class Ocorrecia extends EntityId {
     private Apolice apolice;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
+    @ManyToOne
+    private Perito perito;
     @NotNull
     @OneToMany(mappedBy = "ocorrecia", cascade = CascadeType.REMOVE)
     private Collection<Ficheiro> ficheiros;
@@ -59,6 +61,14 @@ public class Ocorrecia extends EntityId {
 
     public void setEstadoOcorrencia(EstadoOcorrencia estadoOcorrencia) {
         this.estadoOcorrencia = estadoOcorrencia;
+    }
+
+    public Perito getPerito() {
+        return perito;
+    }
+
+    public void setPerito(Perito perito) {
+        this.perito = perito;
     }
 
     public Collection<Ficheiro> getFicheiros() {
