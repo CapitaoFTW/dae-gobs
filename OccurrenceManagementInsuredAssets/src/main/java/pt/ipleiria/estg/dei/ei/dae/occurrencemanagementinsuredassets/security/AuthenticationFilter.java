@@ -1,8 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.security;
 
-import org.jboss.resteasy.spi.NotImplementedYetException;
+import org.hibernate.Hibernate;
+import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.ejbs.UserBean;
+import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.entities.User;
 
 import javax.annotation.Priority;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotAuthorizedException;
@@ -24,6 +27,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private TokenIssuer issuer;
     @Context
     private UriInfo uriInfo;
+    @EJB
+    private UserBean userBean;
 
     @Override
     @Transactional
@@ -35,10 +40,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String jwToken = authorization.substring("Bearer".length()).trim();
         AuthInfo authInfo = issuer.revertIssue(jwToken);
 
-        //todo toke verification
-        /*User user = userBean.find(authInfo.getUsername());
+        User user = userBean.find(authInfo.getUsername());
         if (user == null || !authInfo.getToken().equals(user.getToken()))
-            throw new NotAuthorizedException("Authorization received an invalid token");*/
+            throw new NotAuthorizedException("Authorization received an invalid token");
 
         containerRequestContext.setSecurityContext(new SecurityContext() {
             //todo maybe adding roles
@@ -46,8 +50,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             @Override
             public Principal getUserPrincipal() {
-                throw new NotImplementedYetException();
-                //return user::getUsername;
+                return user::getUsername;
             }
 
             @Override
@@ -58,8 +61,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                         return true;
                 }*/
 
-                throw new NotImplementedYetException();
-                //return Hibernate.getClass(user).getSimpleName().equals(s);
+                return Hibernate.getClass(user).getSimpleName().equals(s);
             }
 
             @Override

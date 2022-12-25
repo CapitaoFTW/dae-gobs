@@ -32,11 +32,6 @@ public class CatchUnhandledExceptionMapper implements ExceptionMapper<Exception>
 
         logger.log(Level.WARNING, "UnhandledException: %s", ex);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
-
-        /*if (ex instanceof MyEntityExistsException)
-            status = Response.Status.CONFLICT;
-        else if (ex instanceof MyConstraintViolationException || ex instanceof MyIllegalArgumentException)
-            status = Response.Status.BAD_REQUEST;*/
     }
 
     private <T extends Throwable> Response getMapperAndPropagateException(Class<T> exClass, Exception ex) {

@@ -1,12 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.ws;
 
-import org.jboss.resteasy.spi.NotImplementedYetException;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.dtos.auth.AuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.dtos.auth.ChangePasswordDTO;
+import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.ejbs.UserBean;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.security.AuthInfo;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.security.Authenticated;
 import pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.security.TokenIssuer;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -24,6 +25,8 @@ import java.security.Principal;
 public class AuthService {
     @Context
     private SecurityContext securityContext;
+    @EJB
+    private UserBean userBean;
     @Inject
     private TokenIssuer issuer;
 
@@ -31,12 +34,11 @@ public class AuthService {
     @POST
     public Response authenticate(@Valid AuthDTO auth) throws NoSuchAlgorithmException {
         try {
-            /* AuthInfo authInfo = userBean.canLogin(auth);
+            AuthInfo authInfo = userBean.canLogin(auth);
             if (authInfo == null)
                 throw new NotAuthorizedException("Invalid login credentials");
 
-            return issueAuthInfo(authInfo);*/
-            throw new NotImplementedYetException();
+            return issueAuthToken(authInfo);
         } catch (EntityNotFoundException ex) {
             throw new NotAuthorizedException("Invalid login credentials");
         }
@@ -47,15 +49,14 @@ public class AuthService {
     @Path("/change-password")
     public Response changePassword(@Valid ChangePasswordDTO dto) throws NoSuchAlgorithmException {
         Principal principal = securityContext.getUserPrincipal();
-        /*AuthInfo authInfo = userBean.changePassword(principal.getName(), dto);
+        AuthInfo authInfo = userBean.changePassword(principal.getName(), dto);
         if (authInfo == null)
             return Response.status(Response.Status.BAD_REQUEST).entity("OldPassword is wrong or newPassword and confirmPassword do not match").build();
 
-        return issueAuthInfo(authInfo);*/
-        throw new NotImplementedYetException();
+        return issueAuthToken(authInfo);
     }
 
-    protected Response issueAuthInfo(AuthInfo authInfo) {
+    protected Response issueAuthToken(AuthInfo authInfo) {
         String jwToken = issuer.issue(authInfo);
         return Response.ok(jwToken).build();
     }

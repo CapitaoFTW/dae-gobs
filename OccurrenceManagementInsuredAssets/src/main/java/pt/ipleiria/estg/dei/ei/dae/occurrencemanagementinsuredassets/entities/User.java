@@ -1,10 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.occurrencemanagementinsuredassets.entities;
 
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public abstract class User extends EntityId {
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "users")
+public class User extends EntityId {
     @Id
     @Size(min = 3, max = 50)
     private String username;
