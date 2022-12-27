@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'OccurrenceManagementInsuredAssets-Client',
+    title: 'gobs-client',
     htmlAttrs: {
       lang: 'en'
     },
@@ -54,7 +54,7 @@ export default {
 
   proxy: {
     '/api/': {
-      target: 'http://localhost:8080/occurrence-management-insured-assets/api/',
+      target: 'http://localhost:8080/gobs/api/',
       pathRewrite: {
         '^/api/': ''
       }
