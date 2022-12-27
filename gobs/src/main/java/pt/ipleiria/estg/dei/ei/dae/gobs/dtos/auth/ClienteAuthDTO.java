@@ -2,11 +2,13 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @SuppressWarnings("unused")
 public class ClienteAuthDTO extends BaseAuthDTO {
     @Min(value = 100000000)
     @Max(value = 999999999)
+    @NotNull
     private Integer nif;
 
     public ClienteAuthDTO() {

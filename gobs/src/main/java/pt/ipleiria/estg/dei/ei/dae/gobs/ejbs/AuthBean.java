@@ -96,6 +96,9 @@ public class AuthBean {
             return false;
 
         String newPassword = dto.getNewPassword();
+        if (dto.getOldPassword().equals(newPassword))
+            return false;
+
         if (!newPassword.equals(dto.getConfirmPassword()))
             return false;
 
