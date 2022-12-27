@@ -1,0 +1,115 @@
+##### Students
+GET http://localhost:8080/gobs/api/seguradoras
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/peritos
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/students/capitao_22
+Accept: application/json
+###
+DELETE http://localhost:8080/gobs/api/students/capitao_22
+Accept: application/json
+##
+PUT http://localhost:8080/gobs/api/students
+Content-Type: application/json
+
+{
+  "username": "capitao_22",
+  "password": "arrozdoce2420",
+  "name": "Rodrigo Capitão",
+  "email": "rodrigofilipecapitao@gmail.com"
+}
+
+###
+POST http://localhost:8080/gobs/api/students
+Content-Type: application/json
+
+### REQUEST JWT TOKEN
+POST http://localhost:8080/gobs/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+ "username": "crisgama",
+ "password": "arrozdoce2420"
+}
+
+### GET ALL STUDENTS
+GET http://localhost:8080/gobs/api/students
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjcmlzZ2FtYSIsImlhdCI6MTY2OTEzMTMyNCwiZXhwIjoxNjY5MTM0OTI0fQ.rk_hPT4gCgg38foOdjAlNmX4DC8O3mi3SvbLAacjiZ4
+
+
+
+##### Teachers
+GET http://localhost:8080/gobs/api/teachers
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/teachers/crisgama
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/teachers/crisgama/subjects
+Accept: application/json
+###
+POST http://localhost:8080/gobs/api/teachers
+Content-Type: application/json
+
+##### Admins
+GET http://localhost:8080/gobs/api/admins
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/admins/PereiraFAlcon
+Accept: application/json
+###
+DELETE http://localhost:8080/gobs/api/admins/PereiraFAlcon
+Accept: application/json
+###
+POST http://localhost:8080/gobs/api/admins
+Content-Type: application/json
+
+##### Subjects
+GET http://localhost:8080/gobs/api/subjects
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/subjects/1
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/subjects/1/students
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/subjects/1/teachers
+Accept: application/json
+###
+POST http://localhost:8080/gobs/api/subjects
+Content-Type: application/json
+
+##### Subjects
+GET http://localhost:8080/gobs/api/courses
+Accept: application/json
+###
+GET http://localhost:8080/gobs/api/courses/1
+Accept: application/json
+###
+POST http://localhost:8080/gobs/api/courses/5
+Content-Type: application/json
+###
+POST http://localhost:8080/gobs/api/courses
+Content-Type: application/json
+
+{
+ "email": "johndoe@mail.com",
+ "name": "John Doe",
+ "username": "john",
+ "password": "jd",
+ "courseCode": 1
+}
+
+###
+POST http://localhost:8080/gobs/api/students/capitao_22/email/send
+Content-Type: application/json
+
+{
+  "subject": "Sobre DAE",
+  "message": "Ganda Disciplina"
+}

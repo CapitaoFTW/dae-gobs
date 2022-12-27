@@ -19,9 +19,10 @@ import javax.ws.rs.core.SecurityContext;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 
-@Consumes({MediaType.APPLICATION_JSON})
 @Path("auth")
 @Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
+
 public class AuthService {
     @Context
     private SecurityContext securityContext;

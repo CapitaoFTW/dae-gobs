@@ -4,7 +4,7 @@ public enum TipoDeBem {
     CASA,
     CARRO,
     ELETRODOMESTICO,
-    COMPUTADR,
+    COMPUTADOR,
     PORTATIL,
     TELEMOVEL
 }
