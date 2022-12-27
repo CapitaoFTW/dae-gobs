@@ -1,40 +1,21 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.persistence.*;
+import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "users")
-public class User extends EntityId {
-    @Id
-    @Size(min = 3, max = 50)
-    private String username;
+@MappedSuperclass
+public abstract class BaseAuth<T> extends EntityId<T> {
     @NotBlank
     @Size(min = 3, max = 255)
     private String password;
     private String token;
 
-    public User() {
+    public BaseAuth() {
     }
 
-    public User(String username, String password) {
-        this.username = username;
+    public BaseAuth(String password) {
         this.password = password;
-    }
-
-    @Override
-    protected Object entityId() {
-        return username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

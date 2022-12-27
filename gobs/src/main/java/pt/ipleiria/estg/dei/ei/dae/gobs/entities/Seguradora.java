@@ -5,9 +5,9 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-public class Seguradora extends EntityId {
+public class Seguradora extends EntityId<Integer> {
     @Id
-    private int id;
+    private Integer id;
     @NotBlank
     private String name;
 
@@ -19,15 +19,15 @@ public class Seguradora extends EntityId {
     }
 
     @Override
-    protected Object entityId() {
+    public Integer getEntityId() {
         return id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

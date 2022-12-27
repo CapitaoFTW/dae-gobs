@@ -5,12 +5,12 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 @MappedSuperclass
-public abstract class EntityId {
+public abstract class EntityId<T> {
     @Version
     private int version;
 
     @JsonbTransient
-    protected abstract Object entityId();
+    public abstract T getEntityId();
 
     @Override
     public boolean equals(Object o) {
@@ -20,12 +20,12 @@ public abstract class EntityId {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        EntityId entity = (EntityId) o;
-        return entityId().equals(entity.entityId());
+        EntityId<?> entity = (EntityId<?>) o;
+        return getEntityId().equals(entity.getEntityId());
     }
 
     @Override
     public int hashCode() {
-        return entityId().hashCode();
+        return getEntityId().hashCode();
     }
 }

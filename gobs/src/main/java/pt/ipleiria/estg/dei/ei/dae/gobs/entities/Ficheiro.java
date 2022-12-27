@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class Ficheiro extends EntityId {
+public class Ficheiro extends EntityId<Long> {
     @Id
     @GeneratedValue
     private Long id;
@@ -28,7 +28,7 @@ public class Ficheiro extends EntityId {
     }
 
     @Override
-    protected Object entityId() {
+    public Long getEntityId() {
         return id;
     }
 

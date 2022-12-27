@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 
 @Entity
-public class Apolice extends EntityId {
+public class Apolice extends EntityId<Long> {
     @Id
     @GeneratedValue
     private Long id;
@@ -36,7 +36,7 @@ public class Apolice extends EntityId {
     }
 
     @Override
-    protected Object entityId() {
+    public Long getEntityId() {
         return id;
     }
 

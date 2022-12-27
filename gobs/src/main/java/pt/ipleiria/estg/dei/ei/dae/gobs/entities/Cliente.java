@@ -1,19 +1,31 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ClienteDTO;
+
+import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
 @Entity
-public class Cliente extends EntityId {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NamedQueries({
+        @NamedQuery(
+                name = "existsCliente",
+                query = "SELECT COUNT(c.nif) FROM Cliente c WHERE c.nif = :nif"
+        ),
+        @NamedQuery(
+                name = "getAllClientes",
+                query = "SELECT c FROM Cliente c ORDER BY c.nif ASC"//todo change order
+        )
+})
+public class Cliente extends BaseAuth<Integer> {
     @Id
-    @Size(min = 9, max = 9)
-    private int nif;
+    @Min(value = 100000000)
+    @Max(value = 999999999)
+    private Integer nif;
     @NotNull
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.REMOVE)
     private Collection<Apolice> apolices;
@@ -22,21 +34,22 @@ public class Cliente extends EntityId {
         this.apolices = new LinkedHashSet<>();
     }
 
-    public Cliente(int nif) {
-        this();
+    public Cliente(Integer nif, String password) {
+        super(password);
         this.nif = nif;
+        this.apolices = new LinkedHashSet<>();
     }
 
     @Override
-    protected Object entityId() {
+    public Integer getEntityId() {
         return nif;
     }
 
-    public int getNif() {
+    public Integer getNif() {
         return nif;
     }
 
-    public void setNif(int nif) {
+    public void setNif(Integer nif) {
         this.nif = nif;
     }
 
@@ -54,5 +67,12 @@ public class Cliente extends EntityId {
 
     public boolean isParticular() {
         return nif < 500000000;
+    }
+
+    public ClienteDTO toDto() {
+        return new ClienteDTO(
+                this.getNif(),
+                this.getPassword()
+        );
     }
 }
