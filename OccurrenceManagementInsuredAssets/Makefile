@@ -3,7 +3,7 @@
 ifneq (,$(wildcard ./.env))
     include .env
     export
-    APPLICATION_NAME ?= occurrence-management-insured-assets
+    APPLICATION_NAME ?= gobs
 endif
 
 up:

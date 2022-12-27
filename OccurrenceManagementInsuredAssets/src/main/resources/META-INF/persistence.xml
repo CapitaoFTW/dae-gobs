@@ -3,9 +3,9 @@
              xmlns="https://jakarta.ee/xml/ns/persistence"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
-    <persistence-unit name="OccurrenceManagementInsuredAssetsUnit" transaction-type="JTA">
+    <persistence-unit name="GobsUnit" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:/OccurrenceManagementInsuredAssetsDS</jta-data-source>
+        <jta-data-source>java:/GobsDS</jta-data-source>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="hibernate.show_sql" value="false"/>
