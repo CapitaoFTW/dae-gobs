@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.mappers;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.EntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -9,12 +9,12 @@ import javax.ws.rs.ext.Provider;
 import java.util.logging.Logger;
 
 @Provider
-public class EntityNotFoundExceptionMapper implements ExceptionMapper<EntityNotFoundException> {
+public class GobsEntityNotFoundExceptionMapper implements ExceptionMapper<GobsEntityNotFoundException> {
     @Inject
     private Logger logger;
 
     @Override
-    public Response toResponse(EntityNotFoundException ex) {
+    public Response toResponse(GobsEntityNotFoundException ex) {
         return Response.status(Response.Status.NOT_FOUND).entity(ex.getComposedMessage()).build();
     }
 }

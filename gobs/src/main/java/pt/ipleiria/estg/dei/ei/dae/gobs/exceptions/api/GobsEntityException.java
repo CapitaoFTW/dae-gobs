@@ -1,48 +1,48 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.api;
 
 @SuppressWarnings("unused")
-public class EntityException extends Exception {
+public class GobsEntityException extends RuntimeException {
     private Object entity;
 
-    public EntityException() {
+    public GobsEntityException() {
     }
 
-    public EntityException(String message) {
+    public GobsEntityException(String message) {
         super(message);
     }
 
-    public EntityException(String message, Throwable cause) {
+    public GobsEntityException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public EntityException(Throwable cause) {
+    public GobsEntityException(Throwable cause) {
         super(cause);
     }
 
-    public EntityException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public GobsEntityException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public EntityException(Object entity) {
+    public GobsEntityException(Object entity) {
         this.entity = entity;
     }
 
-    public EntityException(Object entity, String message) {
+    public GobsEntityException(Object entity, String message) {
         super(message);
         this.entity = entity;
     }
 
-    public EntityException(Object entity, String message, Throwable cause) {
+    public GobsEntityException(Object entity, String message, Throwable cause) {
         super(message, cause);
         this.entity = entity;
     }
 
-    public EntityException(Object entity, Throwable cause) {
+    public GobsEntityException(Object entity, Throwable cause) {
         super(cause);
         this.entity = entity;
     }
 
-    public EntityException(Object entity, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public GobsEntityException(Object entity, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.entity = entity;
     }
