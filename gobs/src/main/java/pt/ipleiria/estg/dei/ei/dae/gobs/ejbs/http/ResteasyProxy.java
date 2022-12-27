@@ -8,7 +8,7 @@ import org.jboss.resteasy.client.jaxrs.engines.ClientHttpEngineBuilder43;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 
 public abstract class ResteasyProxy<T> {
-    private static final String MOCKAPI = null;//todo change like: https://{ID}.mockapi.io/{API} | https://639ac6ded5141501973ea7c6.mockapi.io/api/V1/
+    private static final String MOCKAPI = "https://639ac6ded5141501973ea7c6.mockapi.io/api/V1/";
     private static final ResteasyWebTarget target = getHttpClient();
     private final T proxy;
 
