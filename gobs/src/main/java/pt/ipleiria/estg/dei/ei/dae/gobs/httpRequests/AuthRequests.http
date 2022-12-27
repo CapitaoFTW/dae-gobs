@@ -1,0 +1,40 @@
+### Login with known credentials into client
+// @no-log
+POST {{host}}/api/auth/login-client
+Content-Type: application/json
+
+{
+  "nif": "123456789",
+  "password": "test"
+}
+
+> {%
+    client.test('Login with known credentials into client', function () {
+        const status = response.status;
+        client.assert(status === 200, `Response status is not 200 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.global.set("auth_token", String(response.body));
+    });
+%}
+
+
+### Login with known credentials into usuario
+// @no-log
+POST {{host}}/api/auth/login-employee
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test"
+}
+
+> {%
+    client.test('Login with known credentials into usuario', function () {
+        const status = response.status;
+        client.assert(status === 200, `Response status is not 200 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.global.set("auth_token", String(response.body));
+    });
+%}
