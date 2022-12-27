@@ -20,8 +20,8 @@ import java.util.Arrays;
 @Priority(Priorities.AUTHORIZATION)
 @Provider
 public class AuthorizationFilter implements ContainerRequestFilter {
-    private static final Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED).entity("Access denied").build();
-    private static final Response ACCESS_FORBIDDEN = Response.status(Response.Status.FORBIDDEN).entity("Access forbidden").build();
+    private static final Response ACCESS_DENIED = Response.status(Response.Status.UNAUTHORIZED).entity("Acesso negado.").build();
+    private static final Response ACCESS_FORBIDDEN = Response.status(Response.Status.FORBIDDEN).entity("Acesso proibido.").build();
 
     @Context
     private SecurityContext securityContext;

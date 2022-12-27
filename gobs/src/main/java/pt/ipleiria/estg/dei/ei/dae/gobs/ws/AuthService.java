@@ -1,8 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.AuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ChangePasswordDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.UserBean;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ClientAuthDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.EmployeeAuthDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Usuario;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsBadRequestException;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsNotAuthorizedException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.AuthInfo;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.TokenIssuer;
@@ -19,6 +24,9 @@ import javax.ws.rs.core.SecurityContext;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.USUARIO_ROLE;
+
 @Path("auth")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
@@ -27,21 +35,35 @@ public class AuthService {
     @Context
     private SecurityContext securityContext;
     @EJB
-    private UserBean userBean;
+    private AuthBean authBean;
     @Inject
     private TokenIssuer issuer;
 
-    @Path("/login")
+    @Path("/login-client")
     @POST
-    public Response authenticate(@Valid AuthDTO auth) throws NoSuchAlgorithmException {
+    public Response authenticateCliente(@Valid ClientAuthDTO auth) throws NoSuchAlgorithmException {
         try {
-            AuthInfo authInfo = userBean.canLogin(auth);
+            AuthInfo authInfo = authBean.canLogin(auth);
             if (authInfo == null)
-                throw new NotAuthorizedException("Invalid login credentials");
+                throw new GobsNotAuthorizedException("Credenciais de login inválidas.");
 
             return issueAuthToken(authInfo);
         } catch (EntityNotFoundException ex) {
-            throw new NotAuthorizedException("Invalid login credentials");
+            throw new GobsNotAuthorizedException("Credenciais de login inválidas.");
+        }
+    }
+
+    @Path("/login-employee")
+    @POST
+    public Response authenticateEmployee(@Valid EmployeeAuthDTO auth) throws NoSuchAlgorithmException {
+        try {
+            AuthInfo authInfo = authBean.canLogin(auth);
+            if (authInfo == null)
+                throw new GobsNotAuthorizedException("Credenciais de login inválidas.");
+
+            return issueAuthToken(authInfo);
+        } catch (EntityNotFoundException ex) {
+            throw new GobsNotAuthorizedException("Credenciais de login inválidas.");
         }
     }
 
@@ -49,10 +71,18 @@ public class AuthService {
     @PATCH
     @Path("/change-password")
     public Response changePassword(@Valid ChangePasswordDTO dto) throws NoSuchAlgorithmException {
+        AuthInfo authInfo;
         Principal principal = securityContext.getUserPrincipal();
-        AuthInfo authInfo = userBean.changePassword(principal.getName(), dto);
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            authInfo = authBean.changePassword(Integer.valueOf(principal.getName()), dto);
+        } else if (securityContext.isUserInRole(USUARIO_ROLE)) {
+            authInfo = authBean.changePassword(principal.getName(), dto);
+        } else {
+            throw new GobsNotAuthorizedException("Não tem permissão para alterar a sua senha.");
+        }
+
         if (authInfo == null)
-            return Response.status(Response.Status.BAD_REQUEST).entity("OldPassword is wrong or newPassword and confirmPassword do not match").build();
+            throw new GobsBadRequestException("A senha antiga está errada ou a nova senha e a confirmação da senha não correspondem.");
 
         return issueAuthToken(authInfo);
     }
@@ -60,5 +90,27 @@ public class AuthService {
     protected Response issueAuthToken(AuthInfo authInfo) {
         String jwToken = issuer.issue(authInfo);
         return Response.ok(jwToken).build();
+    }
+
+    @Authenticated
+    @GET
+    @Path("/self")
+    public Response getSelf() {
+        Principal principal = securityContext.getUserPrincipal();
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Cliente cliente = authBean.find(Integer.valueOf(principal.getName()));
+            if (cliente == null)
+                throw new GobsNotAuthorizedException("Falha ao obter o próprio cliente-");
+
+            return Response.ok(cliente).build();
+        } else if (securityContext.isUserInRole(USUARIO_ROLE)) {
+            Usuario user = authBean.find(principal.getName());
+            if (user == null)
+                throw new GobsNotAuthorizedException("Falha ao obter o próprio usuário.");
+
+            return Response.ok(user).build();
+        } else {
+            throw new GobsNotAuthorizedException("Não tem permissão.");
+        }
     }
 }
