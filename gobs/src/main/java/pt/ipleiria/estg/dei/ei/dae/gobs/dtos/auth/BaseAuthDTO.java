@@ -1,25 +1,26 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth;
 
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-public class AuthDTO implements Serializable {
-    @NotBlank
-    @Size(min = 3, max = 25)
-    private String username;
+@SuppressWarnings("unused")
+@MappedSuperclass
+public abstract class BaseAuthDTO implements Serializable {
     @NotBlank
     @Size(min = 3, max = 255)
     private String password;
 
-    public String getUsername() {
-        return username;
+    protected BaseAuthDTO() {
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    protected BaseAuthDTO(String password) {
+        this.password = password;
     }
 
+    @JsonbTransient
     public String getPassword() {
         return password;
     }
