@@ -16,7 +16,7 @@ public class SeguradoraBean {
     private SeguradoraProxy seguradoraProxy;
     private SeguradoraInterface seguradoraBridge;
 
-    public Seguradora find(int id) {
+    public Seguradora find(Integer id) {
         try {
             return getBridge().getSeguradora(id);
         } catch (WebApplicationException ex) {

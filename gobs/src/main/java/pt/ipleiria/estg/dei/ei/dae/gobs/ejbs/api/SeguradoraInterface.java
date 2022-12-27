@@ -18,5 +18,5 @@ public interface SeguradoraInterface {
 
     @GET
     @Path("/{id}")
-    Seguradora getSeguradora(@PathParam("id") int id);
+    Seguradora getSeguradora(@PathParam("id") Integer id);
 }
