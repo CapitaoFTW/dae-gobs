@@ -1,8 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ChangePasswordDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ClientAuthDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.EmployeeAuthDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ClienteAuthDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.UsuarioAuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Usuario;
@@ -41,7 +41,7 @@ public class AuthService {
 
     @Path("/login-client")
     @POST
-    public Response authenticateCliente(@Valid ClientAuthDTO auth) throws NoSuchAlgorithmException {
+    public Response authenticateCliente(@Valid ClienteAuthDTO auth) throws NoSuchAlgorithmException {
         try {
             AuthInfo authInfo = authBean.canLogin(auth);
             if (authInfo == null)
@@ -55,7 +55,7 @@ public class AuthService {
 
     @Path("/login-employee")
     @POST
-    public Response authenticateEmployee(@Valid EmployeeAuthDTO auth) throws NoSuchAlgorithmException {
+    public Response authenticateEmployee(@Valid UsuarioAuthDTO auth) throws NoSuchAlgorithmException {
         try {
             AuthInfo authInfo = authBean.canLogin(auth);
             if (authInfo == null)
@@ -102,13 +102,13 @@ public class AuthService {
             if (cliente == null)
                 throw new GobsNotAuthorizedException("Falha ao obter o próprio cliente-");
 
-            return Response.ok(cliente).build();
+            return Response.ok(cliente.toDto()).build();
         } else if (securityContext.isUserInRole(USUARIO_ROLE)) {
             Usuario user = authBean.find(principal.getName());
             if (user == null)
                 throw new GobsNotAuthorizedException("Falha ao obter o próprio usuário.");
 
-            return Response.ok(user).build();
+            return Response.ok(user.toDto()).build();
         } else {
             throw new GobsNotAuthorizedException("Não tem permissão.");
         }

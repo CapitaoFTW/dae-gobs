@@ -64,11 +64,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             @Override
             public boolean isUserInRole(String s) {
-                if (authInfo.isClient())
+                if (authInfo.isClient()) {
                     if (s.equals(CLIENTE_ROLE))
                         return true;
-                    else if (s.equals(USUARIO_ROLE))
+                } else {
+                    if (s.equals(USUARIO_ROLE))
                         return true;
+                }
 
                 //todo related to roles
                 /*for (Role role : roles) {

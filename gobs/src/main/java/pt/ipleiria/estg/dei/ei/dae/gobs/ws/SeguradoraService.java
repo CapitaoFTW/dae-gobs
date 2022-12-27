@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.SeguradoraBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
-import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.EntityNotFoundException;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -25,10 +25,10 @@ public class SeguradoraService {
 
     @GET
     @Path("/{id}")
-    public Response getSeguradora(@PathParam("id") int id) throws EntityNotFoundException {
+    public Response getSeguradora(@PathParam("id") Integer id) throws GobsEntityNotFoundException {
         Seguradora seguradora = seguradoraBean.find(id);
         if (seguradora == null)
-            throw new EntityNotFoundException(id, "Falha ao obter Seguradora, Seguradora não existe");
+            throw new GobsEntityNotFoundException(id, "Falha ao obter Seguradora, Seguradora não existe");
 
         return Response.ok(seguradora).build();
     }
