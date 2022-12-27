@@ -2,7 +2,7 @@
 	<b-container class="align-items-center d-flex justify-content-center h-75">
 		<b-tabs v-model="loginIndex" align="center" lazy pills @activate-tab="reset">
 			<br>
-			<b-form ref="loginForms" :validated="isFormValid" class="border border-primary p-4 rounded"
+			<b-form :validated="isFormValid" class="border border-primary p-4 rounded"
 					@submit.prevent="login">
 				<b-tab active title="Cliente">
 					<b-form-group
@@ -77,30 +77,30 @@ export default {
 		invalidIdFeedback() {
 			switch (this.loginIndex) {
 				case 0:
-					const nif = this.nif
+					const nif = this.nif;
 					if (!nif) {
-						return null
+						return null;
 					}
 
-					const nifLen = nif.length
+					const nifLen = nif.length;
 					if (nifLen !== 9) {
-						return 'Nif/NIPC inválido.'
+						return 'Nif/NIPC inválido.';
 					}
 
-					return ''
+					return '';
 
 				case 1:
-					const username = this.username
+					const username = this.username;
 					if (!username) {
-						return null
+						return null;
 					}
 
-					const usernameLen = username.length
+					const usernameLen = username.length;
 					if (usernameLen < 3 || usernameLen > 50) {
-						return 'O nome de usuário deve ter entre [3, 50] caracteres.'
+						return 'O nome de usuário deve ter entre [3, 50] caracteres.';
 					}
 
-					return ''
+					return '';
 
 				default:
 					return null;
@@ -108,33 +108,42 @@ export default {
 		},
 		isIdValid() {
 			if (this.invalidIdFeedback == null) {
-				return null
+				return null;
 			}
 
-			return this.invalidIdFeedback === ''
+			return this.invalidIdFeedback === '';
 		},
 		invalidPasswordFeedback() {
-			const password = this.password
+			const password = this.password;
 			if (!password) {
-				return null
+				return null;
 			}
 
-			const passwordLen = password.length
+			const passwordLen = password.length;
 			if (passwordLen < 3 || passwordLen > 255) {
-				return 'A senha deve ter entre [3, 255] caracteres.'
+				return 'A senha deve ter entre [3, 255] caracteres.';
 			}
 
-			return ''
+			return '';
 		},
 		isPasswordValid() {
 			if (this.invalidPasswordFeedback == null) {
-				return null
+				return null;
 			}
 
-			return this.invalidPasswordFeedback === ''
+			return this.invalidPasswordFeedback === '';
 		},
 		isFormValid() {
 			return this.isIdValid && this.isPasswordValid;
+		},
+		userId() {
+			switch (this.loginIndex) {
+				case 0:
+					return this.nif;
+
+				case 1:
+					return this.username;
+			}
 		}
 	},
 	data() {
@@ -146,88 +155,61 @@ export default {
 		}
 	},
 	methods: {
-		loginClient() {
-			console.log(this.$auth.strategies)
-			this.$auth.loginWith('client', {
-				data: {
-					nif: this.nif,
-					password: this.password
-				}
-			}).then(() => {
-				console.info(`Logged in into ${JSON.stringify(this.$auth.user)}`)
-				this.$root.$bvToast.toast(`You are logged in!`, {
-					solid: true,
-					title: `Logged in!`,
-					variant: 'success'
-				})
-				this.$router.push('/')
-			}).catch(error => {
-				console.log(error)
-				let msg
-				if (error.response)
-					msg = error.message.replace(`status code ${error.response.status}`, `status '${error.response.statusText}'(${error.response.status})`)
-				else
-					msg = error.message
-
-				console.error(`Error trying to login into ${this.nif}: ${error.message}`)
-				this.$bvToast.toast(msg, {
-					solid: true,
-					title: `Error trying to login into ${this.nif}`,
-					toaster: 'b-toaster-top-center',
-					variant: 'danger'
-				})
-			})
-		},
-		loginEmployee() {
-			this.$auth.loginWith('employee', {
-				data: {
-					username: this.username,
-					password: this.password
-				}
-			}).then(() => {
-				console.info(`Logged in into ${JSON.stringify(this.$auth.user)}`)
-				this.$root.$bvToast.toast(`You are logged in!`, {
-					solid: true,
-					title: `Logged in!`,
-					variant: 'success'
-				})
-				this.$router.push('/')
-			}).catch(error => {
-				let msg
-				if (error.response)
-					msg = error.message.replace(`status code ${error.response.status}`, `status '${error.response.statusText}'(${error.response.status})`)
-				else
-					msg = error.message
-
-				console.error(`Error trying to login into ${this.username}: ${error.message}`)
-				this.$bvToast.toast(msg, {
-					solid: true,
-					title: `Error trying to login into ${this.username}`,
-					toaster: 'b-toaster-top-center',
-					variant: 'danger'
-				})
-			})
-		},
 		login() {
 			switch (this.loginIndex) {
 				case 0:
-					this.loginClient();
+					this.$auth.loginWith('client', {
+						data: {
+							nif: this.nif,
+							password: this.password
+						}
+					}).then(this.afterLogin).catch(this.catchLogin);
 					return;
 
-				case 2:
-					this.loginEmployee();
+				case 1:
+					this.$auth.loginWith('employee', {
+						data: {
+							username: this.username,
+							password: this.password
+						}
+					}).then(this.afterLogin).catch(this.catchLogin);
 					return;
 
 				default:
 					this.$root.$bvToast.toast("Erro interno detetado, recarregando...", {
 						solid: true,
-						title: `Erro de pagina`,
+						title: 'Erro de pagina',
 						toaster: 'b-toaster-top-center',
 						variant: 'danger'
-					})
-					location.reload()
+					});
+					this.loginIndex = 0;
+					this.reset();
 					return;
 			}
+		},
+		catchLogin(error) {
+			let msg
+			if (error.response && error.response.data)
+				msg = error.response.data
+			else
+				msg = error.message
+
+			console.error(`Erro ao tentar fazer login com ${this.userId}: ${error.message}`);
+			this.$bvToast.toast(msg, {
+				solid: true,
+				title: `Erro ao tentar fazer login com ${this.userId}`,
+				toaster: 'b-toaster-top-center',
+				variant: 'danger'
+			});
+		},
+		afterLogin() {
+			console.info(`Logged in into ${JSON.stringify(this.$auth.user)}`);
+			this.$root.$bvToast.toast('You are logged in!', {
+				solid: true,
+				title: 'Logged in!',
+				variant: 'success'
+			});
+			this.$router.push('/');
 		},
 		reset() {
 			this.nif = null;

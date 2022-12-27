@@ -85,7 +85,7 @@ export default {
 					},
 					logout: false,
 					user: {
-						url: '/api/auth/self-client',
+						url: '/api/auth/self',
 						method: 'get'
 					}
 				}
@@ -99,7 +99,7 @@ export default {
 					},
 					logout: false,
 					user: {
-						url: '/api/auth/self-employee',
+						url: '/api/auth/self',
 						method: 'get'
 					}
 				}
