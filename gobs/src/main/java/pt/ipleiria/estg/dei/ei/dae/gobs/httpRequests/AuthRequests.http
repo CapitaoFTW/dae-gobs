@@ -19,7 +19,7 @@ Content-Type: application/json
 %}
 
 
-### Login with known credentials into usuario
+### Login with known credentials into user
 // @no-log
 POST {{host}}/api/auth/login-employee
 Content-Type: application/json
@@ -30,11 +30,126 @@ Content-Type: application/json
 }
 
 > {%
-    client.test('Login with known credentials into usuario', function () {
+    client.test('Login with known credentials into user', function () {
         const status = response.status;
         client.assert(status === 200, `Response status is not 200 | Received ${status}`);
         const type = response.contentType.mimeType;
         client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.global.set("auth_token", String(response.body));
+    });
+%}
+
+
+### Try login with invalid credentials
+// @no-log
+POST {{host}}/api/auth/login-employee
+Content-Type: application/json
+
+{
+  "username": "test0",
+  "password": "test0"
+}
+
+> {%
+    client.test('Try login with invalid credentials', function () {
+        const status = response.status;
+        client.assert(status === 401, `Response status is not 401 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.assert(String(response.body) === 'Credenciais de login inválidas.');
+    });
+%}
+
+
+### Change password with know credentials
+// @no-log
+PATCH {{host}}/api/auth/change-password
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "test",
+  "newPassword": "test2",
+  "confirmPassword": "test2"
+}
+
+> {%
+    client.test('Change password with know credentials', function () {
+        const status = response.status;
+        client.assert(status === 200, `Response status is not 200 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+
+        const old_token = client.global.get('auth_token');
+        const new_token = String(response.body);
+        client.assert(new_token && String(old_token) !== new_token, 'The old token is expected to be different from the new token');
+        client.global.set("auth_token", new_token);
+    });
+%}
+
+
+### Change password with know old credentials
+// @no-log
+PATCH {{host}}/api/auth/change-password
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "test",
+  "newPassword": "test2",
+  "confirmPassword": "test2"
+}
+
+> {%
+    client.test('Change password with know old credentials', function () {
+        const status = response.status;
+        client.assert(status === 400, `Response status is not 400 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.assert(String(response.body) === 'A senha antiga está errada ou a nova senha e a confirmação da senha não correspondem.');
+    });
+%}
+
+
+### Change password with unmatch confirm password
+
+PATCH {{host}}/api/auth/change-password
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "test2",
+  "newPassword": "test1",
+  "confirmPassword": "test"
+}
+
+> {%
+    client.test('Change password with unmatch confirm password', function () {
+        const status = response.status;
+        client.assert(status === 400, `Response status is not 400 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.assert(String(response.body) === 'A senha antiga está errada ou a nova senha e a confirmação da senha não correspondem.');
+    });
+%}
+
+
+### Change password back to original
+// @no-log
+PATCH {{host}}/api/auth/change-password
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "test2",
+  "newPassword": "test",
+  "confirmPassword": "test"
+}
+
+> {%
+    client.test('Change password back to original', function () {
+        const status = response.status;
+        client.assert(status === 200, `Response status is not 200 | Received ${status}`);
         client.global.set("auth_token", String(response.body));
     });
 %}
