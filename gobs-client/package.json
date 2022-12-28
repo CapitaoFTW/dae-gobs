@@ -3,16 +3,16 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "nuxt",
-		"build": "nuxt build",
-		"start": "nuxt start",
-		"generate": "nuxt generate"
+		"dev": "SET NODE_OPTIONS=--openssl-legacy-provider && nuxt",
+		"build": "SET NODE_OPTIONS=--openssl-legacy-provider && nuxt build",
+		"start": "SET NODE_OPTIONS=--openssl-legacy-provider && nuxt start",
+		"generate": "SET NODE_OPTIONS=--openssl-legacy-provider && nuxt generate"
 	},
 	"dependencies": {
-		"@nuxtjs/auth": "^4.9.1",
+		"@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
 		"@nuxtjs/axios": "^5.13.6",
 		"bootstrap-vue": "^2.23.1",
-		"core-js": "^3.26.1",
+		"core-js": "^3.27.0",
 		"nuxt": "^2.15.8",
 		"vue": "^2.7.14",
 		"vue-server-renderer": "^2.7.14",

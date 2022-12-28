@@ -37,7 +37,7 @@ export default {
 		'bootstrap-vue/nuxt',
 		// https://go.nuxtjs.dev/axios
 		'@nuxtjs/axios',
-		'@nuxtjs/auth'
+		'@nuxtjs/auth-next'
 	],
 
 	bootstrapVue: {
@@ -77,7 +77,7 @@ export default {
 		watchLoggedIn: true,
 		strategies: {
 			client: {
-				_scheme: 'local',
+				scheme: 'local',
 				endpoints: {
 					login: {
 						url: '/api/auth/login-client',
@@ -91,7 +91,7 @@ export default {
 				}
 			},
 			employee: {
-				_scheme: 'local',
+				scheme: 'local',
 				endpoints: {
 					login: {
 						url: '/api/auth/login-employee',
