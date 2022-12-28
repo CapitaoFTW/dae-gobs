@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 
 @Entity
-public class Ocorrecia extends EntityId<Long> {
+public class Ocorrencia extends EntityId<Long> {
     @Id
     @GeneratedValue
     private Long id;
@@ -21,14 +21,14 @@ public class Ocorrecia extends EntityId<Long> {
     @ManyToOne
     private Perito perito;
     @NotNull
-    @OneToMany(mappedBy = "ocorrecia", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "ocorrencia", cascade = CascadeType.REMOVE)
     private Collection<Ficheiro> ficheiros;
 
-    public Ocorrecia() {
+    public Ocorrencia() {
         this.ficheiros = new LinkedHashSet<>();
     }
 
-    public Ocorrecia(Apolice apolice, EstadoOcorrencia estadoOcorrencia) {
+    public Ocorrencia(Apolice apolice, EstadoOcorrencia estadoOcorrencia) {
         this();
         this.apolice = apolice;
         this.estadoOcorrencia = estadoOcorrencia;

@@ -19,22 +19,22 @@ import java.util.LinkedHashSet;
 public class Perito extends Usuario {
     @NotNull
     @OneToMany(mappedBy = "perito", cascade = CascadeType.REMOVE)
-    private Collection<Ocorrecia> ocorrecias;
+    private Collection<Ocorrencia> ocorrencias;
 
     public Perito() {
-        this.ocorrecias = new LinkedHashSet<>();
+        this.ocorrencias = new LinkedHashSet<>();
     }
 
     public Perito(String username, String password) {
         super(username, password);
-        this.ocorrecias = new LinkedHashSet<>();
+        this.ocorrencias = new LinkedHashSet<>();
     }
 
-    public Collection<Ocorrecia> getOcorrecias() {
-        return ocorrecias;
+    public Collection<Ocorrencia> getOcorrencias() {
+        return ocorrencias;
     }
 
-    public void setOcorrecias(Collection<Ocorrecia> ocorrecias) {
-        this.ocorrecias = ocorrecias;
+    public void setOcorrencias(Collection<Ocorrencia> ocorrencias) {
+        this.ocorrencias = ocorrencias;
     }
 }

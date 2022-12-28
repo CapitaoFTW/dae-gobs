@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,14 +9,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 
-@Path("/Seguradoras") // TODO trocar S por s aqui e no mockapi
+@Path("/apolices") // TODO ADICIONAR APOLICES AO MOCKAPI QUE EU NAO CONSIGO
 @Produces({MediaType.APPLICATION_JSON})
-public interface SeguradoraInterface {
+public interface ApoliceInterface {
     @GET
     @Path("/")
-    Collection<Seguradora> getAll();
+    Collection<Apolice> getAllApolices();
 
     @GET
     @Path("/{id}")
-    Seguradora getSeguradora(@PathParam("id") Integer id);
+    Apolice getApolice(@PathParam("id") Integer id);
 }

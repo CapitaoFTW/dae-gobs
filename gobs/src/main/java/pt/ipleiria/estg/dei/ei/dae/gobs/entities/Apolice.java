@@ -22,10 +22,10 @@ public class Apolice extends EntityId<Long> {
     private String descricao;
     @NotNull
     @OneToMany(mappedBy = "apolice", cascade = CascadeType.REMOVE)
-    private Collection<Ocorrecia> ocorrecias;
+    private Collection<Ocorrencia> ocorrencias;
 
     public Apolice() {
-        this.ocorrecias = new LinkedHashSet<>();
+        this.ocorrencias = new LinkedHashSet<>();
     }
 
     public Apolice(Cliente cliente, TipoDeBem tipoDeBem, String descricao) {
@@ -72,11 +72,11 @@ public class Apolice extends EntityId<Long> {
         this.descricao = descricao;
     }
 
-    public Collection<Ocorrecia> getOcorrecias() {
-        return ocorrecias;
+    public Collection<Ocorrencia> getOcorrencias() {
+        return ocorrencias;
     }
 
-    public void setOcorrecias(Collection<Ocorrecia> ocorrecias) {
-        this.ocorrecias = ocorrecias;
+    public void setOcorrencias(Collection<Ocorrencia> ocorrencias) {
+        this.ocorrencias = ocorrencias;
     }
 }
