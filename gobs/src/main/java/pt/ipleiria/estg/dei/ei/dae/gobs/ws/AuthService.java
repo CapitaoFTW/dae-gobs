@@ -100,7 +100,7 @@ public class AuthService {
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
             Cliente cliente = authBean.find(Integer.valueOf(principal.getName()));
             if (cliente == null)
-                throw new GobsNotAuthorizedException("Falha ao obter o próprio cliente-");
+                throw new GobsNotAuthorizedException("Falha ao obter o próprio cliente.");
 
             return Response.ok(cliente.toDto()).build();
         } else if (securityContext.isUserInRole(USUARIO_ROLE)) {

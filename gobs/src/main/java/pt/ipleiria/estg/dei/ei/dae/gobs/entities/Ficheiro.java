@@ -13,18 +13,18 @@ public class Ficheiro extends EntityId<Long> {
     private String filename;
     @NotBlank
     private String filepath;
-    @JoinColumn(name = "ocorrecia_id")
+    @JoinColumn(name = "ocorrencia_id")
     @ManyToOne
     @NotNull
-    private Ocorrecia ocorrecia;
+    private Ocorrencia ocorrencia;
 
     public Ficheiro() {
     }
 
-    public Ficheiro(String filename, String filepath, Ocorrecia ocorrecia) {
+    public Ficheiro(String filename, String filepath, Ocorrencia ocorrencia) {
         this.filename = filename;
         this.filepath = filepath;
-        this.ocorrecia = ocorrecia;
+        this.ocorrencia = ocorrencia;
     }
 
     @Override
@@ -56,11 +56,11 @@ public class Ficheiro extends EntityId<Long> {
         this.filepath = filepath;
     }
 
-    public Ocorrecia getOcorrecia() {
-        return ocorrecia;
+    public Ocorrencia getOcorrencia() {
+        return ocorrencia;
     }
 
-    public void setOcorrecia(Ocorrecia ocorrecia) {
-        this.ocorrecia = ocorrecia;
+    public void setOcorrencia(Ocorrencia ocorrencia) {
+        this.ocorrencia = ocorrencia;
     }
 }

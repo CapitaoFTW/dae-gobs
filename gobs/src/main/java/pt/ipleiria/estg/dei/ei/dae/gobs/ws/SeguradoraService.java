@@ -19,7 +19,7 @@ public class SeguradoraService {
 
     @GET
     @Path("/")
-    public Response getAll() {
+    public Response getAllSeguradoras() {
         return Response.ok(seguradoraBean.getAll()).build();
     }
 
