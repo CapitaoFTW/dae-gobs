@@ -27,8 +27,8 @@ public class ApoliceBean {
         }
     }
 
-    public Collection<Apolice> getAllApolices() {
-        return getBridge().getAllApolices();
+    public Collection<Apolice> getAll() {
+        return getBridge().getAll();
     }
 
     private ApoliceInterface getBridge() {

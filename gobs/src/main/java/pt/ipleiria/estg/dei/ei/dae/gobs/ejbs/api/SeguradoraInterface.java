@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 
-@Path("/Seguradoras") // TODO trocar S por s aqui e no mockapi
+@Path("/Seguradoras")
 @Produces({MediaType.APPLICATION_JSON})
 public interface SeguradoraInterface {
     @GET
