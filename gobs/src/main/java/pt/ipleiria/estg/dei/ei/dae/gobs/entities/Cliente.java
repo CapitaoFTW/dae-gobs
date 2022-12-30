@@ -28,16 +28,16 @@ public class Cliente extends BaseAuth<Integer> {
     private Integer nif;
     @NotNull
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.REMOVE)
-    private Collection<Apolice> apolices;
+    private Collection<Ocorrencia> ocorrencias;
 
     public Cliente() {
-        this.apolices = new LinkedHashSet<>();
+        this.ocorrencias = new LinkedHashSet<>();
     }
 
     public Cliente(Integer nif, String password) {
         super(password);
         this.nif = nif;
-        this.apolices = new LinkedHashSet<>();
+        this.ocorrencias = new LinkedHashSet<>();
     }
 
     @Override
@@ -53,12 +53,12 @@ public class Cliente extends BaseAuth<Integer> {
         this.nif = nif;
     }
 
-    public Collection<Apolice> getApolices() {
-        return apolices;
+    public Collection<Ocorrencia> getOcorrencias() {
+        return ocorrencias;
     }
 
-    public void setApolices(Collection<Apolice> apolices) {
-        this.apolices = apolices;
+    public void setOcorrencias(Collection<Ocorrencia> ocorrencias) {
+        this.ocorrencias = ocorrencias;
     }
 
     public boolean isColetivo() {

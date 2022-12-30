@@ -8,14 +8,24 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 
 @Entity
-public class Ocorrencia extends EntityId<Long> {
+@NamedQueries({
+        @NamedQuery(
+                name = "existsOcorrencia",
+                query = "SELECT COUNT(o.id) FROM Ocorrencia o WHERE o.id = :id"
+        ),
+        @NamedQuery(
+                name = "getAllOcorrenciaByCliente",
+                query = "SELECT o FROM Ocorrencia o WHERE o.cliente.nif = :nif"
+        )
+})
+public class Ocorrencia extends EntityId<Integer> {
     @Id
     @GeneratedValue
-    private Long id;
-    @JoinColumn(name = "apolice_id")
+    private Integer id;
+    @JoinColumn(name = "cliente_id")
     @ManyToOne
     @NotNull
-    private Apolice apolice;
+    private Cliente cliente;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
     @ManyToOne
@@ -28,31 +38,22 @@ public class Ocorrencia extends EntityId<Long> {
         this.ficheiros = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(Apolice apolice, EstadoOcorrencia estadoOcorrencia) {
-        this();
-        this.apolice = apolice;
+    public Ocorrencia(EstadoOcorrencia estadoOcorrencia) {
         this.estadoOcorrencia = estadoOcorrencia;
+        this.ficheiros = new LinkedHashSet<>();
     }
 
     @Override
-    public Long getEntityId() {
+    public Integer getEntityId() {
         return id;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Apolice getApolice() {
-        return apolice;
-    }
-
-    public void setApolice(Apolice apolice) {
-        this.apolice = apolice;
     }
 
     public EstadoOcorrencia getEstadoOcorrencia() {

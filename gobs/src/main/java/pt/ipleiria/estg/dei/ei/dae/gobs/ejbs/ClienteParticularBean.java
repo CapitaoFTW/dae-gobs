@@ -9,6 +9,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.security.Hasher;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import java.security.NoSuchAlgorithmException;
@@ -40,5 +41,13 @@ public class ClienteParticularBean {
 
     public boolean exists(Integer nif) {
         return entityManager.createNamedQuery("existsCliente", Long.class).setParameter("nif", nif).getSingleResult() > 0;
+    }
+
+    public ClienteParticular find(Integer nif) {
+        return find(nif, LockModeType.OPTIMISTIC);
+    }
+
+    public ClienteParticular find(Integer nif, LockModeType lockModeType) {
+        return entityManager.find(ClienteParticular.class, nif, lockModeType);
     }
 }

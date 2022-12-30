@@ -5,10 +5,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class Ficheiro extends EntityId<Long> {
+public class Ficheiro extends EntityId<Integer> {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
     @NotBlank
     private String filename;
     @NotBlank
@@ -28,15 +28,15 @@ public class Ficheiro extends EntityId<Long> {
     }
 
     @Override
-    public Long getEntityId() {
+    public Integer getEntityId() {
         return id;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
