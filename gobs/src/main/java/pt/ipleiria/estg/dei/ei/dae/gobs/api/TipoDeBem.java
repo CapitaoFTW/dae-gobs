@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.ei.dae.gobs.api;
+/*package pt.ipleiria.estg.dei.ei.dae.gobs.api;
 
 public enum TipoDeBem {
     CASA,
@@ -7,4 +7,4 @@ public enum TipoDeBem {
     COMPUTADOR,
     PORTATIL,
     TELEMOVEL
-}
+}*/
