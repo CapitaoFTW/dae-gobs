@@ -1,50 +1,27 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.api.TipoDeBem;
+import javax.persistence.JoinColumn;
+import java.math.BigDecimal;
+import java.util.Date;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
-@Entity
-public class Apolice extends EntityId<Long> {
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Apolice extends EntityId<Integer> {
+    private Integer id;
     @JoinColumn(name = "cliente_id")
-    @ManyToOne
-    @NotNull
     private Cliente cliente;
-    @NotNull
-    private TipoDeBem tipoDeBem;
-    @NotNull
-    private String descricao;
-    @NotNull
-    @OneToMany(mappedBy = "apolice", cascade = CascadeType.REMOVE)
-    private Collection<Ocorrencia> ocorrencias;
-
-    public Apolice() {
-        this.ocorrencias = new LinkedHashSet<>();
-    }
-
-    public Apolice(Cliente cliente, TipoDeBem tipoDeBem, String descricao) {
-        this();
-        this.cliente = cliente;
-        this.tipoDeBem = tipoDeBem;
-        this.descricao = descricao;
-    }
+    private String bem;
+    private BigDecimal premio;
+    private Date prazo;
 
     @Override
-    public Long getEntityId() {
+    public Integer getEntityId() {
         return id;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -56,27 +33,27 @@ public class Apolice extends EntityId<Long> {
         this.cliente = cliente;
     }
 
-    public TipoDeBem getTipoDeBem() {
-        return tipoDeBem;
+    public String getBem() {
+        return bem;
     }
 
-    public void setTipoDeBem(TipoDeBem tipoDeBem) {
-        this.tipoDeBem = tipoDeBem;
+    public void setBem(String bem) {
+        this.bem = bem;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public BigDecimal getPremio() {
+        return premio;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setPremio(BigDecimal premio) {
+        this.premio = premio;
     }
 
-    public Collection<Ocorrencia> getOcorrencias() {
-        return ocorrencias;
+    public Date getPrazo() {
+        return prazo;
     }
 
-    public void setOcorrencias(Collection<Ocorrencia> ocorrencias) {
-        this.ocorrencias = ocorrencias;
+    public void setPrazo(Date prazo) {
+        this.prazo = prazo;
     }
 }

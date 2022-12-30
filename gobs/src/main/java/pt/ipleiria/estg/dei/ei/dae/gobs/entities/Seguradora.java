@@ -1,22 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-
-@Entity
 public class Seguradora extends EntityId<Integer> {
-    @Id
     private Integer id;
-    @NotBlank
-    private String name;
-
-    public Seguradora() {
-    }
-
-    public Seguradora(String name) {
-        this.name = name;
-    }
+    private String nome;
 
     @Override
     public Integer getEntityId() {
@@ -31,11 +17,11 @@ public class Seguradora extends EntityId<Integer> {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 }

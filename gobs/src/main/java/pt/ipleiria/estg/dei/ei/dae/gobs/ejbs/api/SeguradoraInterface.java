@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api;
 
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
 
 import javax.ws.rs.GET;
@@ -9,14 +10,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 
-@Path("/Seguradoras") // TODO trocar S por s aqui e no mockapi
+@Path("/seguradoras")
 @Produces({MediaType.APPLICATION_JSON})
 public interface SeguradoraInterface {
     @GET
     @Path("/")
-    Collection<Seguradora> getAll();
+    Collection<Seguradora> getSeguradoras();
 
     @GET
-    @Path("/{id}")
-    Seguradora getSeguradora(@PathParam("id") Integer id);
+    @Path("/{seguradoraId}")
+    Seguradora getSeguradora(@PathParam("seguradoraId") Integer seguradoraId);
+
+    @GET
+    @Path("/{seguradoraId}/apolices")
+    Collection<Apolice> getApolices(@PathParam("seguradoraId") Integer seguradoraId);
+
+    @GET
+    @Path("/{seguradoraId}/apolices/{apoliceId}")
+    Apolice getApolice(@PathParam("seguradoraId") Integer seguradoraId, @PathParam("apoliceId") Integer apoliceId);
 }

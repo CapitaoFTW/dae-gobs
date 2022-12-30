@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 
-@Path("/apolices") // TODO ADICIONAR APOLICES AO MOCKAPI QUE EU NAO CONSIGO
+@Path("/apolices")
 @Produces({MediaType.APPLICATION_JSON})
 public interface ApoliceInterface {
     @GET
@@ -17,6 +17,6 @@ public interface ApoliceInterface {
     Collection<Apolice> getAllApolices();
 
     @GET
-    @Path("/{id}")
-    Apolice getApolice(@PathParam("id") Integer id);
+    @Path("/{apoliceId}")
+    Apolice getApolice(@PathParam("apoliceId") Integer apoliceId);
 }
