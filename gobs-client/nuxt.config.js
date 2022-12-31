@@ -78,6 +78,9 @@ export default {
 		strategies: {
 			client: {
 				scheme: 'local',
+				user: {
+					property: false
+				},
 				endpoints: {
 					login: {
 						url: '/api/auth/login-client',
@@ -92,6 +95,9 @@ export default {
 			},
 			employee: {
 				scheme: 'local',
+				user: {
+					property: false
+				},
 				endpoints: {
 					login: {
 						url: '/api/auth/login-employee',
