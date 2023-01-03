@@ -1,13 +1,11 @@
-package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
+/*package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.PeritoDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Perito;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityExistsException;
-import pt.ipleiria.estg.dei.ei.dae.gobs.security.Hasher;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
@@ -17,9 +15,6 @@ import java.security.NoSuchAlgorithmException;
 public class PeritoBean {
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Inject
-    private Hasher hasher;
 
     public Perito create(PeritoDTO dto) throws NoSuchAlgorithmException {
         String username = dto.getUsername();
@@ -42,4 +37,4 @@ public class PeritoBean {
     public boolean exists(String username) {
         return entityManager.createNamedQuery("existsPerito", Long.class).setParameter("username", username).getSingleResult() > 0;
     }
-}
+}*/

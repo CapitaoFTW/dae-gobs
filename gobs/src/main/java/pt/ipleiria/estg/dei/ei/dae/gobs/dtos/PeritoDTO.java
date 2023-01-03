@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
+/*package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Perito;
 
@@ -16,4 +16,4 @@ public class PeritoDTO extends UsuarioDTO {
                 this.getPassword()
         );
     }
-}
+}*/

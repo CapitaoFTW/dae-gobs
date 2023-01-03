@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-@Entity
+/*@Entity
 @NamedQueries({
         @NamedQuery(
                 name = "existsPerito",
@@ -37,4 +37,4 @@ public class Perito extends Usuario {
     public void setOcorrencias(Collection<Ocorrencia> ocorrencias) {
         this.ocorrencias = ocorrencias;
     }
-}
+}*/

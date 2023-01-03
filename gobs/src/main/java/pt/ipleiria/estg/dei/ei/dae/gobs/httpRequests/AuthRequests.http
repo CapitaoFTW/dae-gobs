@@ -4,8 +4,8 @@ POST {{host}}/api/auth/login-client
 Content-Type: application/json
 
 {
-  "nif": "123456789",
-  "password": "test"
+  "nif": "{{test_user}}",
+  "password": "{{test_password}}"
 }
 
 > {%
@@ -19,39 +19,18 @@ Content-Type: application/json
 %}
 
 
-### Login with known credentials into user
+### Try login into client with invalid credentials
 // @no-log
-POST {{host}}/api/auth/login-employee
+POST {{host}}/api/auth/login-client
 Content-Type: application/json
 
 {
-  "username": "test",
-  "password": "test"
-}
-
-> {%
-    client.test('Login with known credentials into user', function () {
-        const status = response.status;
-        client.assert(status === 200, `Response status is not 200 | Received ${status}`);
-        const type = response.contentType.mimeType;
-        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
-        client.global.set("auth_token", String(response.body));
-    });
-%}
-
-
-### Try login with invalid credentials
-// @no-log
-POST {{host}}/api/auth/login-employee
-Content-Type: application/json
-
-{
-  "username": "test0",
+  "nif": "{{test_user}}",
   "password": "test0"
 }
 
 > {%
-    client.test('Try login with invalid credentials', function () {
+    client.test('Try login into client with invalid credentials', function () {
         const status = response.status;
         client.assert(status === 401, `Response status is not 401 | Received ${status}`);
         const type = response.contentType.mimeType;
@@ -60,7 +39,6 @@ Content-Type: application/json
     });
 %}
 
-
 ### Change password with know credentials
 // @no-log
 PATCH {{host}}/api/auth/change-password
@@ -68,7 +46,7 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "oldPassword": "test",
+  "oldPassword": "{{test_password}}",
   "newPassword": "test2",
   "confirmPassword": "test2"
 }
@@ -95,7 +73,7 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
-  "oldPassword": "test",
+  "oldPassword": "{{test_password}}",
   "newPassword": "test2",
   "confirmPassword": "test2"
 }
@@ -112,7 +90,7 @@ Content-Type: application/json
 
 
 ### Change password with unmatch confirm password
-
+// @no-log
 PATCH {{host}}/api/auth/change-password
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
@@ -142,8 +120,8 @@ Content-Type: application/json
 
 {
   "oldPassword": "test2",
-  "newPassword": "test",
-  "confirmPassword": "test"
+  "newPassword": "{{test_password}}",
+  "confirmPassword": "{{test_password}}"
 }
 
 > {%

@@ -2,47 +2,20 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ClienteDTO;
 
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import javax.json.bind.annotation.JsonbTransient;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@NamedQueries({
-        @NamedQuery(
-                name = "existsCliente",
-                query = "SELECT COUNT(c.nif) FROM Cliente c WHERE c.nif = :nif"
-        ),
-        @NamedQuery(
-                name = "getAllClientes",
-                query = "SELECT c FROM Cliente c ORDER BY c.nif ASC"//todo change order
-        )
-})
-public class Cliente extends BaseAuth<Integer> {
-    @Id
-    @Min(value = 100000000)
-    @Max(value = 999999999)
+public class Cliente {
+    private Integer id;
     private Integer nif;
-    @NotNull
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.REMOVE)
-    private Collection<Ocorrencia> ocorrencias;
+    private String password;
+    private String nome;
 
-    public Cliente() {
-        this.ocorrencias = new LinkedHashSet<>();
+    public Integer getId() {
+        return id;
     }
 
-    public Cliente(Integer nif, String password) {
-        super(password);
-        this.nif = nif;
-        this.ocorrencias = new LinkedHashSet<>();
-    }
-
-    @Override
-    public Integer getEntityId() {
-        return nif;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getNif() {
@@ -53,18 +26,28 @@ public class Cliente extends BaseAuth<Integer> {
         this.nif = nif;
     }
 
-    public Collection<Ocorrencia> getOcorrencias() {
-        return ocorrencias;
+    public String getPassword() {
+        return password;
     }
 
-    public void setOcorrencias(Collection<Ocorrencia> ocorrencias) {
-        this.ocorrencias = ocorrencias;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    @JsonbTransient
     public boolean isColetivo() {
         return !isParticular();
     }
 
+    @JsonbTransient
     public boolean isParticular() {
         return nif < 500000000;
     }
@@ -72,7 +55,7 @@ public class Cliente extends BaseAuth<Integer> {
     public ClienteDTO toDto() {
         return new ClienteDTO(
                 this.getNif(),
-                this.getPassword()
+                this.getNome()
         );
     }
 }

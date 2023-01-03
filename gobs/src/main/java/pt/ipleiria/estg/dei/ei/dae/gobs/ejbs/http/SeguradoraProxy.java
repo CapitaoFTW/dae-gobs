@@ -10,3 +10,4 @@ public class SeguradoraProxy extends ResteasyProxy<SeguradoraInterface> {
         super(SeguradoraInterface.class);
     }
 }
+

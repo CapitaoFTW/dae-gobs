@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
+/*package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -24,4 +24,4 @@ public class Reparador extends Usuario {
     public Reparador(String username, String password) {
         super(username, password);
     }
-}
+}*/

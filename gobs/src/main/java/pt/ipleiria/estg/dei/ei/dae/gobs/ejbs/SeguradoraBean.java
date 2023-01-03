@@ -2,7 +2,6 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.SeguradoraInterface;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.SeguradoraProxy;
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
 
 import javax.ejb.EJB;
@@ -26,14 +25,6 @@ public class SeguradoraBean {
         return wrapRequest(SeguradoraInterface::getSeguradoras);
     }
 
-    public Collection<Apolice> getApolices(Integer seguradoraId) {
-        return wrapRequest(b -> b.getApolices(seguradoraId));
-    }
-
-    public Apolice getApolice(Integer seguradoraId, Integer apoliceId) {
-        return wrapRequest(b -> b.getApolice(seguradoraId, apoliceId));
-    }
-
     private SeguradoraInterface getBridge() {
         if (seguradoraBridge == null)
             seguradoraBridge = seguradoraProxy.getProxy();
@@ -52,4 +43,3 @@ public class SeguradoraBean {
         }
     }
 }
-

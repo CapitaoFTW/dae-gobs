@@ -14,22 +14,30 @@ public class OcorrenciaBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public boolean exists(Integer nif) {
-        return entityManager.createNamedQuery("existsOcorrencia", Long.class).setParameter("nif", nif).getSingleResult() > 0;
+    public boolean exists(Integer id) {
+        return entityManager.createNamedQuery("existsOcorrencia", Long.class).setParameter("id", id).getSingleResult() > 0;
     }
 
-    public Ocorrencia find(Integer nif) {
-        return find(nif, LockModeType.OPTIMISTIC);
+    public Ocorrencia find(Integer id) {
+        return find(id, LockModeType.OPTIMISTIC);
     }
 
-    public Ocorrencia find(Integer nif, LockModeType lockModeType) {
-        return entityManager.find(Ocorrencia.class, nif, lockModeType);
+    public Ocorrencia find(Integer id, LockModeType lockModeType) {
+        return entityManager.find(Ocorrencia.class, id, lockModeType);
     }
 
-    public Collection<Ocorrencia> findByCliente(Integer nif) {
+    public Collection<Ocorrencia> findByCliente(Integer id) {
         return entityManager
                 .createNamedQuery("getAllOcorrenciaByCliente", Ocorrencia.class)
-                .setParameter("nif", nif)
+                .setParameter("cliente_id", id)
+                .getResultStream()
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Ocorrencia> findByClienteWaiting(Integer id) {//todo update
+        return entityManager
+                .createNamedQuery("getAllOcorrenciaByCliente", Ocorrencia.class)
+                .setParameter("cliente_id", id)
                 .getResultStream()
                 .collect(Collectors.toList());
     }

@@ -1,9 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.security;
 
-import org.hibernate.Hibernate;
 import org.jboss.resteasy.plugins.server.embedded.SimplePrincipal;
+import org.jboss.resteasy.spi.NotImplementedYetException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean;
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.BaseAuth;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsNotAuthorizedException;
 
 import javax.annotation.Priority;
@@ -44,13 +43,16 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String jwToken = authorization.substring("Bearer".length()).trim();
         AuthInfo authInfo = issuer.revertIssue(jwToken);
 
-        BaseAuth<?> auth;
-        if (authInfo.isClient())
-            auth = authBean.find(Integer.valueOf(authInfo.getEntityId()));
-        else
-            auth = authBean.find(authInfo.getEntityId());
+        String mainRole;
+        String token;
+        if (authInfo.isClient()) {
+            mainRole = CLIENTE_ROLE;
+            token = authBean.getToken(Integer.valueOf(authInfo.getEntityId()));
+        } else
+            throw new NotImplementedYetException("Auth for not clientes");
+        // auth = authBean.find(authInfo.getEntityId());
 
-        if (auth == null || !authInfo.getToken().equals(auth.getToken()))
+        if (!authInfo.getToken().equals(token))
             throw new GobsNotAuthorizedException("O autenticador recebeu um token inválido.");
 
         containerRequestContext.setSecurityContext(new SecurityContext() {
@@ -78,7 +80,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                         return true;
                 }*/
 
-                return Hibernate.getClass(auth).getSimpleName().equals(s);
+                return mainRole.equals(s);
             }
 
             @Override

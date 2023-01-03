@@ -18,12 +18,22 @@ public class OcorrenciaService {
     private OcorrenciaBean ocorrenciaBean;
 
     @GET
-    @Path("/cliente/{nif}")
-    public Response getAllOcorrencias(@PathParam("nif") Integer nif) {
-        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByCliente(nif);
+    @Path("/cliente/{id}")
+    public Response getAllOcorrencias(@PathParam("id") Integer id) {
+        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByCliente(id);
         if (ocorrencias == null)
-            throw new GobsEntityNotFoundException(nif, "Falha ao obter Ocorrencias, Cliente não existe");
+            throw new GobsEntityNotFoundException(id, "Falha ao obter Ocorrencias, Cliente não existe");
 
-        return Response.ok(ocorrencias).build();
+        return Response.ok(ocorrencias).build();//todo dto
+    }
+
+    @GET
+    @Path("/cliente/{id}/waiting")
+    public Response getAllOcorrenciasWaiting(@PathParam("id") Integer id) {
+        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByClienteWaiting(id);
+        if (ocorrencias == null)
+            throw new GobsEntityNotFoundException(id, "Falha ao obter Ocorrencias, Cliente não existe");
+
+        return Response.ok(ocorrencias).build();//todo dto
     }
 }

@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
+/*package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.UsuarioDTO;
 
@@ -46,3 +46,4 @@ public class Usuario extends BaseAuth<String> {
         );
     }
 }
+*/

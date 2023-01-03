@@ -15,21 +15,19 @@ import java.util.LinkedHashSet;
         ),
         @NamedQuery(
                 name = "getAllOcorrenciaByCliente",
-                query = "SELECT o FROM Ocorrencia o WHERE o.cliente.nif = :nif"
+                query = "SELECT o FROM Ocorrencia o WHERE o.cliente_id = :cliente_id"
         )
 })
 public class Ocorrencia extends EntityId<Integer> {
     @Id
     @GeneratedValue
     private Integer id;
-    @JoinColumn(name = "cliente_id")
-    @ManyToOne
     @NotNull
-    private Cliente cliente;
+    private Integer cliente_id;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
-    @ManyToOne
-    private Perito perito;
+    /*@ManyToOne
+    private Perito perito;*/
     @NotNull
     @OneToMany(mappedBy = "ocorrencia", cascade = CascadeType.REMOVE)
     private Collection<Ficheiro> ficheiros;
@@ -64,13 +62,13 @@ public class Ocorrencia extends EntityId<Integer> {
         this.estadoOcorrencia = estadoOcorrencia;
     }
 
-    public Perito getPerito() {
+    /*public Perito getPerito() {
         return perito;
     }
 
     public void setPerito(Perito perito) {
         this.perito = perito;
-    }
+    }*/
 
     public Collection<Ficheiro> getFicheiros() {
         return ficheiros;
