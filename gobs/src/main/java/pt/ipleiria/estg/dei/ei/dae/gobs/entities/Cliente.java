@@ -54,6 +54,7 @@ public class Cliente {
 
     public ClienteDTO toDto() {
         return new ClienteDTO(
+                this.getId(),
                 this.getNif(),
                 this.getNome()
         );

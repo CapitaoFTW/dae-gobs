@@ -1,22 +1,22 @@
 <template>
 	<b-container>
-		<h4>Ocorrencias</h4>
+		<h4 class="text-center">Ocorrencias</h4>
 		<b-table
 			:busy="$fetchState.pending"
 			:current-page="currentPage"
-			empty-text="Não existem ocorrências registadas."
 			:items="ocorrencias"
 			:per-page="perPage"
 			bordered
-			hover
+			empty-text="Não existem ocorrências registadas."
 			head-variant="dark"
+			hover
 			responsive
 			show-empty
 			striped>
 			<template #table-busy>
 				<div class="text-center text-primary my-2">
 					<b-spinner class="align-middle"></b-spinner>
-					<strong>Loading...</strong>
+					<strong>Carregando...</strong>
 				</div>
 			</template>
 		</b-table>
@@ -38,13 +38,7 @@
 export default {
 	computed: {
 		id() {
-			const u = this.$auth.user;
-			// noinspection JSUnresolvedVariable
-			const nif = u.nif;
-			if (nif)
-				return nif;
-			else// noinspection JSUnresolvedVariable
-				return u.username;
+			return this.$auth.user.id;
 		}
 	},
 	data() {
@@ -68,6 +62,6 @@ export default {
 				this.$router.push('/')
 			});
 	},
-	fetchOnServer: false,
+	fetchOnServer: false
 }
 </script>
