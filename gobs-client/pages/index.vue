@@ -31,7 +31,7 @@
 						:items="ocorrencias"
 						bordered
 						class="m-0"
-						empty-text="Não existem ocorrencias registadas."
+						empty-text="Não existem ocorrências registadas."
 						hover
 						show-empty
 						thead-class="d-none">
@@ -43,7 +43,7 @@
 						</template>
 					</b-table>
 				</div>
-				<b-button to="/ocorrencias" variant="primary">Mais ocorrencias</b-button>
+				<b-button to="/ocorrencias" variant="primary">Mais ocorrências</b-button>
 			</b-col>
 		</b-row>
 	</b-container>

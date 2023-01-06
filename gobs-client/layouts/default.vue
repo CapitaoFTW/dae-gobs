@@ -8,7 +8,7 @@
 					<b-nav-item-dropdown v-if="$auth.loggedIn" right>
 						<!-- Using 'button-content' slot -->
 						<template #button-content>
-							{{ $auth.user.nif }}
+							{{ $auth.user.nome }}
 						</template>
 						<b-dropdown-item @click.prevent="logout">
 							Logout
