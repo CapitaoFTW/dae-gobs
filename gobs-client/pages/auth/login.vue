@@ -1,5 +1,5 @@
 <template>
-	<b-container class="align-items-center d-flex justify-content-center h-75">
+	<b-container class="align-items-center d-flex justify-content-center h-75 mt-5 pt-5">
 		<b-tabs v-model="loginIndex" align="center" lazy pills @activate-tab="reset">
 			<br>
 			<b-form :validated="isFormValid" class="border border-primary p-4 rounded"
@@ -8,14 +8,14 @@
 					<b-form-group
 						:invalid-feedback="invalidIdFeedback"
 						:state="isIdValid"
-						label="Introduzir Nif/Nipc:"
+						label="Introduzir NIF/NIPC:"
 						label-for="input-nif">
 						<b-form-input
 							id="input-nif"
 							v-model.trim="nif"
 							:no-wheel=true
 							:state="isIdValid"
-							placeholder="Nif/Nipc"
+							placeholder="NIF/NIPC"
 							required
 							type="number"/>
 					</b-form-group>
@@ -84,7 +84,7 @@ export default {
 
 					const nifLen = nif.length;
 					if (nifLen !== 9) {
-						return 'Nif/NIPC inválido.';
+						return 'NIF/NIPC inválido.';
 					}
 
 					return '';

@@ -1,6 +1,6 @@
 <template>
 	<b-container>
-		<h1 class="text-center">Dashboard</h1>
+		<h1 class="text-center mb-5">Dashboard</h1>
 		<b-row class="row-cols-2 flex-fill">
 			<b-col class="h-100">
 				<div class="border border-primary">
