@@ -15,6 +15,6 @@ public interface SeguradoraInterface {
     Collection<Seguradora> getSeguradoras();
 
     @GET
-    @Path("/{seguradoraId}")
-    Seguradora getSeguradora(@PathParam("seguradoraId") Integer seguradoraId);
+    @Path("/{id}")
+    Seguradora getSeguradora(@PathParam("id") Integer id);
 }

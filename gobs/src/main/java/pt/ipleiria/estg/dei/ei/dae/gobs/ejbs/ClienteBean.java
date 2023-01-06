@@ -5,6 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.ClienteInterface;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.ClienteProxy;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
