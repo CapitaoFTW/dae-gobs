@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 public class ClienteAuth extends EntityId<Integer> {

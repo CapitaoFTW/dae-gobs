@@ -14,7 +14,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collection;
 
 @Stateless
 public class AuthBean {
@@ -52,13 +51,7 @@ public class AuthBean {
     }
 
     public Cliente findClienteByNif(Integer nif) {
-        Collection<Cliente> clientes = clienteBean.getClientes();
-        for (Cliente cliente : clientes) {
-            if (cliente.getNif().equals(nif))
-                return cliente;
-        }
-
-        return null;
+        return clienteBean.getClienteByNif(nif);
     }
 
     /*public Usuario find(String username) {

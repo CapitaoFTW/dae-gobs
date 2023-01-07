@@ -1,7 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ClienteAuthDTO;
-
 import java.io.Serializable;
 
 @SuppressWarnings("unused")

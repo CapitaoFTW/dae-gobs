@@ -1,10 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
 /*@Entity
 @NamedQueries({
         @NamedQuery(

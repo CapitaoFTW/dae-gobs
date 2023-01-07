@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 @Path("seguradoras")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class SeguradoraService {//todo DTOs
+public class SeguradoraService {//todo DTOs add Authentication
     @EJB
     private SeguradoraBean seguradoraBean;
 

@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
@@ -9,7 +8,6 @@ public abstract class EntityId<T> {
     @Version
     private int version;
 
-    @JsonbTransient
     public abstract T getEntityId();
 
     @Override

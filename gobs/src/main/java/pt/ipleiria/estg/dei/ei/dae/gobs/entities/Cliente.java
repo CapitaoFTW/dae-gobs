@@ -2,8 +2,6 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ClienteDTO;
 
-import javax.json.bind.annotation.JsonbTransient;
-
 public class Cliente {
     private Integer id;
     private Integer nif;
@@ -42,12 +40,10 @@ public class Cliente {
         this.nome = nome;
     }
 
-    @JsonbTransient
     public boolean isColetivo() {
         return !isParticular();
     }
 
-    @JsonbTransient
     public boolean isParticular() {
         return nif < 500000000;
     }

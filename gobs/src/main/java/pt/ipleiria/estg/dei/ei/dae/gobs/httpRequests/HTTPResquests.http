@@ -13,7 +13,8 @@ Accept: application/json
 ###
 DELETE http://localhost:8080/gobs/api/students/capitao_22
 Accept: application/json
-##
+
+###
 PUT http://localhost:8080/gobs/api/students
 Content-Type: application/json
 

@@ -34,10 +34,11 @@ public class OcorrenciaBean {
                 .collect(Collectors.toList());
     }
 
-    public Collection<Ocorrencia> findByClienteWaiting(Integer id) {//todo update
+    public Collection<Ocorrencia> findByClienteRecente(Integer id, Integer limite) {
         return entityManager
-                .createNamedQuery("getAllOcorrenciaByCliente", Ocorrencia.class)
+                .createNamedQuery("getAllOcorrenciaByClienteRecente", Ocorrencia.class)
                 .setParameter("cliente_id", id)
+                .setMaxResults(limite)
                 .getResultStream()
                 .collect(Collectors.toList());
     }

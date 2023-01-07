@@ -1,10 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashSet;
 
 @Entity
@@ -14,8 +17,8 @@ import java.util.LinkedHashSet;
                 query = "SELECT COUNT(o.id) FROM Ocorrencia o WHERE o.id = :id"
         ),
         @NamedQuery(
-                name = "getAllOcorrenciaByCliente",
-                query = "SELECT o FROM Ocorrencia o WHERE o.cliente_id = :cliente_id"
+                name = "getAllOcorrenciaByClienteRecente",
+                query = "SELECT o FROM Ocorrencia o WHERE o.cliente_id = :cliente_id order by o.atualizado desc"
         )
 })
 public class Ocorrencia extends EntityId<Integer> {
@@ -26,8 +29,13 @@ public class Ocorrencia extends EntityId<Integer> {
     private Integer cliente_id;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
-    /*@ManyToOne
-    private Perito perito;*/
+
+    @UpdateTimestamp
+    private Date atualizado;
+
+    @CreationTimestamp
+    private Date criado;
+
     @NotNull
     @OneToMany(mappedBy = "ocorrencia", cascade = CascadeType.REMOVE)
     private Collection<Ficheiro> ficheiros;
@@ -60,18 +68,6 @@ public class Ocorrencia extends EntityId<Integer> {
 
     public void setEstadoOcorrencia(EstadoOcorrencia estadoOcorrencia) {
         this.estadoOcorrencia = estadoOcorrencia;
-    }
-
-    /*public Perito getPerito() {
-        return perito;
-    }
-
-    public void setPerito(Perito perito) {
-        this.perito = perito;
-    }*/
-
-    public Collection<Ficheiro> getFicheiros() {
-        return ficheiros;
     }
 
     public void setFicheiros(Collection<Ficheiro> ficheiros) {

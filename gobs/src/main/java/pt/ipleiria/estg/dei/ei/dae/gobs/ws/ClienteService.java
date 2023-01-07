@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 @Path("clientes")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class ClienteService {//todo DTOs
+public class ClienteService {//todo DTOs add Authentication
     @EJB
     private ClienteBean clienteBean;
 

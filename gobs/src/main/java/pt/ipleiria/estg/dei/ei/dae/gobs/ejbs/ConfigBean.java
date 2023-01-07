@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -11,8 +10,6 @@ import java.util.logging.Logger;
 @Singleton
 @Startup
 public class ConfigBean {
-    @EJB
-    private ClienteBean clienteBean;
     @Inject
     private Logger logger;
 
