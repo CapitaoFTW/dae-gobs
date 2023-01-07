@@ -62,6 +62,11 @@ export default {
 				this.$router.push('/')
 			});
 	},
-	fetchOnServer: false
+	fetchOnServer: false,
+	methods: {
+		formatDate(value) {
+			return new Date(value.replace("[UTC]", "")).toLocaleString();
+		}
+	}
 }
 </script>

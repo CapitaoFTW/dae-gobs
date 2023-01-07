@@ -4,10 +4,11 @@
 		<b-table
 			:busy="$fetchState.pending"
 			:current-page="currentPage"
+			:fields="apolicesFields"
 			:items="apolices"
 			:per-page="perPage"
 			bordered
-			empty-text="Não existem apólices registadas."
+			empty-text="Não existem apolices registadas."
 			head-variant="dark"
 			hover
 			responsive
@@ -43,9 +44,21 @@ export default {
 	},
 	data() {
 		return {
+			apolices: [],
+			apolicesFields: [
+				{
+					key: 'bem'
+				},
+				{
+					key: 'premio'
+				},
+				{
+					key: 'prazo',
+					formatter: "formatDate"
+				}
+			],
 			currentPage: 1,
-			perPage: 10,
-			ocorrencias: []
+			perPage: 10
 		}
 	},
 	async fetch() {
@@ -62,6 +75,11 @@ export default {
 				this.$router.push('/')
 			});
 	},
-	fetchOnServer: false
+	fetchOnServer: false,
+	methods: {
+		formatDate(value) {
+			return new Date(value.replace("[UTC]", "")).toLocaleString();
+		}
+	}
 }
 </script>

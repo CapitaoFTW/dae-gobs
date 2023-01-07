@@ -43,7 +43,7 @@
 						</template>
 					</b-table>
 				</div>
-				<b-button to="/ocorrencias" variant="primary">Mais ocorrências</b-button>
+				<b-button to="/ocorrencias" variant="primary">Ver detalhes</b-button>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -77,14 +77,14 @@ export default {
 		}
 	},
 	async fetch() {
-		const requestApolices = this.$axios.$get('/api/apolices')
+		const requestApolices = this.$axios.$get('/api/apolices/recent?limit=5')
 			.then(data => {
 				this.apolices = data
 				this.apolicesLoading = false;
 			})
 			.catch(e => {
 				console.error(`Erro ao obter apolices: ${e}`)
-				this.$root.$bvToast.toast("Erro ao obter ocorrencias.", {
+				this.$root.$bvToast.toast("Erro ao obter apolices.", {
 					solid: true,
 					title: 'Erro ao obter dados',
 					toaster: 'b-toaster-top-center',
@@ -92,7 +92,7 @@ export default {
 				});
 				this.$router.push('/')
 			});
-		const requestOcorrencias = this.$axios.$get(`/api/ocorrencias/cliente/${this.id}/waiting`)
+		const requestOcorrencias = this.$axios.$get(`/api/ocorrencias/cliente/${this.id}/recent?limit=5`)
 			.then(data => {
 				this.ocorrencias = data
 				this.ocorrenciasLoading = false;
@@ -113,7 +113,7 @@ export default {
 	fetchOnServer: false,
 	methods: {
 		formatDate(value) {
-			return new Date(Date(value)).toLocaleString();
+			return new Date(value.replace("[UTC]", "")).toLocaleString();
 		}
 	}
 }

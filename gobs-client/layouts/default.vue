@@ -1,30 +1,27 @@
 <template>
 	<div id="app" class="vh-100">
 		<b-navbar toggleable="lg">
-			<b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-			<b-collapse id="nav-collapse" is-nav>
-				<!-- Right aligned nav items -->
+			<b-navbar-brand href="/">
+				Gestão de ocorrências em bens segurados (Gobs)
+			</b-navbar-brand>
+			<b-navbar-toggle target="nav-menu"/>
+			<b-collapse id="nav-menu" is-nav>
 				<b-navbar-nav class="ml-auto">
 					<b-nav-item-dropdown v-if="$auth.loggedIn" right>
-						<!-- Using 'button-content' slot -->
-						<template #button-content>
+						<b-dropdown-item to="/">
 							{{ $auth.user.nome }}
-						</template>
+						</b-dropdown-item>
 						<b-dropdown-item @click.prevent="logout">
 							Logout
 						</b-dropdown-item>
 					</b-nav-item-dropdown>
-					<li class="nav-item" v-else>
-						<nuxt-link class="nav-link" to="/auth/login">
-							Login
-						</nuxt-link>
-					</li>
+					<b-nav-item v-else href="/auth/login">
+						Login
+					</b-nav-item>
 				</b-navbar-nav>
 			</b-collapse>
 		</b-navbar>
-		<main>
-			<router-view/>
-		</main>
+		<router-view/>
 	</div>
 </template>
 
