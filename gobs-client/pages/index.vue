@@ -1,7 +1,7 @@
 <template>
 	<b-container>
 		<h1 class="text-center mb-5">Dashboard</h1>
-		<b-row class="row-cols-2 flex-fill">
+		<b-row class="row-cols-2 flex-fill text-center">
 			<b-col class="h-100">
 				<div class="border border-primary">
 					<b-table
@@ -90,7 +90,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.push('/')
+				//todo reload
 			});
 		const requestOcorrencias = this.$axios.$get(`/api/ocorrencias/cliente/${this.id}/recent?limit=5`)
 			.then(data => {
@@ -105,7 +105,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.push('/')
+				//todo reload
 			});
 
 		await Promise.all([requestApolices, requestOcorrencias])
