@@ -11,7 +11,7 @@ import java.util.Calendar;
 public class TokenIssuer {
     public static final int EXPIRY_MINUTES = 60;
     protected static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final String IS_CLIENT = "isClient";
+    private static final String MAIN_ROLE = "mainRole";
 
     public String issue(AuthInfo authInfo) {
         Calendar calendar = Calendar.getInstance();
@@ -21,7 +21,7 @@ public class TokenIssuer {
                 .builder()
                 .setSubject(authInfo.getEntityId())
                 .setIssuer(authInfo.getToken())
-                .claim(IS_CLIENT, authInfo.isClient())
+                .claim(MAIN_ROLE, authInfo.getMainRole())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(calendar.getTime())
                 .compact();
@@ -35,6 +35,6 @@ public class TokenIssuer {
                 .parseClaimsJws(jwToken)
                 .getBody();
 
-        return new AuthInfo(body.getSubject(), body.get(IS_CLIENT, Boolean.class), body.getIssuer());
+        return new AuthInfo(body.getSubject(), body.getIssuer(), body.get(MAIN_ROLE, String.class));
     }
 }

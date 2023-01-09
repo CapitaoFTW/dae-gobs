@@ -2,19 +2,8 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ClienteDTO;
 
-public class Cliente {
-    private Integer id;
+public class Cliente extends UserBase {
     private Integer nif;
-    private String password;
-    private String nome;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getNif() {
         return nif;
@@ -22,22 +11,6 @@ public class Cliente {
 
     public void setNif(Integer nif) {
         this.nif = nif;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public boolean isColetivo() {
@@ -56,3 +29,4 @@ public class Cliente {
         );
     }
 }
+

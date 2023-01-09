@@ -1,28 +1,19 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
-import java.io.Serializable;
+import java.util.List;
+
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 
 @SuppressWarnings("unused")
-public class ClienteDTO implements Serializable {
-    private Integer id;
+public class ClienteDTO extends UserDTO {
     private Integer nif;
-    private String nome;
 
     public ClienteDTO() {
     }
 
     public ClienteDTO(Integer id, Integer nif, String nome) {
-        this.id = id;
+        super(id, nome, List.of(CLIENTE_ROLE));
         this.nif = nif;
-        this.nome = nome;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getNif() {
@@ -32,12 +23,5 @@ public class ClienteDTO implements Serializable {
     public void setNif(Integer nif) {
         this.nif = nif;
     }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }
+

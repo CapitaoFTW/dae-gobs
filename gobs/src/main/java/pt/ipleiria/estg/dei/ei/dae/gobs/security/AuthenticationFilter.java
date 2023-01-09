@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.security;
 
 import org.jboss.resteasy.plugins.server.embedded.SimplePrincipal;
-import org.jboss.resteasy.spi.NotImplementedYetException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsNotAuthorizedException;
 
@@ -18,9 +17,6 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.security.Principal;
-
-import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
-import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.USUARIO_ROLE;
 
 @Authenticated
 @Priority(Priorities.AUTHENTICATION)
@@ -43,14 +39,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String jwToken = authorization.substring("Bearer".length()).trim();
         AuthInfo authInfo = issuer.revertIssue(jwToken);
 
-        String mainRole;
-        String token;
-        if (authInfo.isClient()) {
-            mainRole = CLIENTE_ROLE;
-            token = authBean.getToken(Integer.valueOf(authInfo.getEntityId()));
-        } else
-            throw new NotImplementedYetException("Auth for not clientes");
-        // auth = authBean.find(authInfo.getEntityId());
+        String mainRole = authInfo.getMainRole();
+        String token = authBean.getToken(Integer.valueOf(authInfo.getEntityId()), mainRole);
 
         if (!authInfo.getToken().equals(token))
             throw new GobsNotAuthorizedException("O autenticador recebeu um token inválido.");
@@ -66,14 +56,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             @Override
             public boolean isUserInRole(String s) {
-                if (authInfo.isClient()) {
-                    if (s.equals(CLIENTE_ROLE))
-                        return true;
-                } else {
-                    if (s.equals(USUARIO_ROLE))
-                        return true;
-                }
-
                 //todo related to roles
                 /*for (Role role : roles) {
                     if (role.getRoleId().equals(s))

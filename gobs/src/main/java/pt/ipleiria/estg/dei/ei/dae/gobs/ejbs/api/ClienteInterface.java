@@ -53,3 +53,4 @@ public interface ClienteInterface {
     @Path("/{id}/apolices/{apoliceId}")
     Apolice getApolice(@PathParam("id") Integer id, @PathParam("apoliceId") Integer apoliceId);
 }
+

@@ -5,8 +5,11 @@ import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ChangePasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ClienteAuthDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.UsuarioAuthDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.ClienteAuth;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Funcionario;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.UserBase;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.auth.UserAuth;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.AuthInfo;
 
@@ -18,10 +21,12 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class AuthBean {
     public static final String CLIENTE_ROLE = "Cliente";
-    public static final String USUARIO_ROLE = "Usuario";
+    public static final String FUNCIONARIO_ROLE = "Funcionario";
 
     @EJB
     private ClienteBean clienteBean;
+    @EJB
+    private FuncionarioBean funcionarioBean;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -38,28 +43,32 @@ public class AuthBean {
         return generateAuthInfo(cliente);
     }
 
-    /*public AuthInfo canLogin(UsuarioAuthDTO dto) throws NoSuchAlgorithmException {
-        Usuario user = validateCredentials(dto.getUsername(), dto.getPassword());
-        if (user == null)
+    public AuthInfo canLogin(UsuarioAuthDTO dto) {
+        Funcionario funcionario = validateByUsername(dto.getUsername(), dto.getPassword());
+        if (funcionario == null)
             return null;
 
-        return generateAuthInfo(user);
-    }*/
+        return generateAuthInfo(funcionario);
+    }
 
     public Cliente findClienteById(Integer id) {
         return clienteBean.getCliente(id);
     }
 
-    public Cliente findClienteByNif(Integer nif) {
+    public Funcionario findFuncionarioById(Integer id) {
+        return funcionarioBean.getFuncionario(id);
+    }
+
+    public Cliente findByNif(Integer nif) {
         return clienteBean.getClienteByNif(nif);
     }
 
-    /*public Usuario find(String username) {
-        return entityManager.find(Usuario.class, username);
-    }*/
+    public Funcionario findByUsername(String username) {
+        return funcionarioBean.getFuncionario(username);
+    }
 
     protected Cliente validateByNif(Integer nif, String password) {
-        Cliente cliente = findClienteByNif(nif);
+        Cliente cliente = findByNif(nif);
         if (cliente == null) {
             return null;
         }
@@ -67,7 +76,16 @@ public class AuthBean {
         return cliente.getPassword().equals(password) ? cliente : null;
     }
 
-    protected Cliente validateById(Integer id, String password) {
+    protected Funcionario validateByUsername(String username, String password) {
+        Funcionario funcionario = findByUsername(username);
+        if (funcionario == null) {
+            return null;
+        }
+
+        return funcionario.getPassword().equals(password) ? funcionario : null;
+    }
+
+    protected Cliente validateClienteById(Integer id, String password) {
         Cliente cliente = findClienteById(id);
         if (cliente == null) {
             return null;
@@ -76,42 +94,48 @@ public class AuthBean {
         return cliente.getPassword().equals(password) ? cliente : null;
     }
 
-    /*protected Usuario validateCredentials(String username, String password) throws NoSuchAlgorithmException {
-        Usuario user = find(username);
-        if (user == null)
+    protected Funcionario validateFuncionarioById(Integer id, String password) {
+        Funcionario funcionario = findFuncionarioById(id);
+        if (funcionario == null) {
             return null;
+        }
 
-        String hashedPassword = hasher.hash(password);
-        return user.getPassword().equals(hashedPassword) ? user : null;
-    }*/
-
-    public String getToken(Integer id) {
-        ClienteAuth auth = entityManager.find(ClienteAuth.class, id);
-        if (auth == null)
-            throw new GobsEntityNotFoundException(id, "Não existe dados de autenticação.");
-
-        return auth.getToken();
+        return funcionario.getPassword().equals(password) ? funcionario : null;
     }
 
-    public AuthInfo changePassword(Integer id, ChangePasswordDTO dto) {
-        Cliente cliente = validateById(id, dto.getOldPassword());
+    public String getToken(Integer id, String mainRole) {
+        String token = entityManager
+                .createNamedQuery("getAuthToken", String.class)
+                .setParameter("id", id)
+                .setParameter("mainRole", mainRole)
+                .getSingleResult();
+        if (token == null)
+            throw new GobsEntityNotFoundException(id, "Não existe dados de autenticação.");
+
+        return token;
+    }
+
+    public AuthInfo changeClientePassword(Integer id, ChangePasswordDTO dto) {
+        Cliente cliente = validateClienteById(id, dto.getOldPassword());
         if (!changePasswordInternal(cliente, dto))
             return null;
 
+        clienteBean.updateCliente(cliente.getId(), cliente);
         return generateAuthInfo(cliente);
     }
 
-    /*public AuthInfo changePassword(String username, ChangePasswordDTO dto) throws NoSuchAlgorithmException {
-        Usuario user = validateCredentials(username, dto.getOldPassword());
-        if (!changePasswordInternal(user, dto))
+    public AuthInfo changeFuncionarioPassword(Integer id, ChangePasswordDTO dto) {
+        Funcionario funcionario = validateFuncionarioById(id, dto.getOldPassword());
+        if (!changePasswordInternal(funcionario, dto))
             return null;
 
-        return generateAuthInfo(user);
-    }*/
+        funcionarioBean.updateFuncionario(funcionario.getId(), funcionario);
+        return generateAuthInfo(funcionario);
+    }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean changePasswordInternal(Cliente cliente, ChangePasswordDTO dto) {
-        if (cliente == null)
+    private boolean changePasswordInternal(UserBase user, ChangePasswordDTO dto) {
+        if (user == null)
             return false;
 
         String newPassword = dto.getNewPassword();
@@ -121,22 +145,29 @@ public class AuthBean {
         if (!newPassword.equals(dto.getConfirmPassword()))
             return false;
 
-        cliente.setPassword(newPassword);
-        clienteBean.updateCliente(cliente.getId(), cliente);
+        user.setPassword(newPassword);
         return true;
     }
 
-    protected AuthInfo generateAuthInfo(Cliente cliente) {
+    private AuthInfo generateAuthInfo(Cliente cliente) {
+        return generateAuthInfoInternal(cliente, CLIENTE_ROLE);
+    }
+
+    private AuthInfo generateAuthInfo(Funcionario funcionario) {
+        return generateAuthInfoInternal(funcionario, FUNCIONARIO_ROLE);
+    }
+
+    protected AuthInfo generateAuthInfoInternal(UserBase funcionario, String mainRole) {
         String token = genToken();
 
-        Integer id = cliente.getId();
-        ClienteAuth clienteAuth = entityManager.find(ClienteAuth.class, id);
-        if (clienteAuth == null) {
-            clienteAuth = new ClienteAuth(id, token);
-            entityManager.persist(clienteAuth);
+        Integer id = funcionario.getId();
+        UserAuth userAuth = entityManager.find(UserAuth.class, id);
+        if (userAuth == null) {
+            userAuth = new UserAuth(id, token, mainRole);
+            entityManager.persist(userAuth);
         } else
-            clienteAuth.setToken(token);
+            userAuth.setToken(token);
 
-        return new AuthInfo(id, token);
+        return new AuthInfo(id.toString(), token, mainRole);
     }
 }
