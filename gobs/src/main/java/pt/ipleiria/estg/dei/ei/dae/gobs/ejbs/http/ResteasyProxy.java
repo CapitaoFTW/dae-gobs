@@ -10,10 +10,10 @@ import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 public abstract class ResteasyProxy<T> {
     private static final String MOCKAPI = "https://639ac6ded5141501973ea7c6.mockapi.io/api/V1/";
     private static final ResteasyWebTarget target = getHttpClient();
-    private final T proxy;
+    private final T bridge;
 
     public ResteasyProxy(Class<T> proxyType) {
-        this.proxy = target.proxy(proxyType);
+        this.bridge = target.proxy(proxyType);
     }
 
     private static ResteasyWebTarget getHttpClient() {
@@ -25,7 +25,7 @@ public abstract class ResteasyProxy<T> {
         return resteasyClient.target(MOCKAPI);
     }
 
-    public T getProxy() {
-        return proxy;
+    public T getBridge() {
+        return bridge;
     }
 }

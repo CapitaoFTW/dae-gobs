@@ -6,40 +6,23 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.function.Function;
 
 @Stateless
-public class SeguradoraBean {
+public class SeguradoraBean extends ExternalService<SeguradoraInterface, SeguradoraProxy> {
     @EJB
-    private SeguradoraProxy seguradoraProxy;
-    private SeguradoraInterface seguradoraBridge;
+    private SeguradoraProxy proxy;
 
-    public Seguradora find(Integer seguradoraId) {
-        return wrapRequest(b -> b.getSeguradora(seguradoraId));
+    @Override
+    protected SeguradoraProxy getProxy() {
+        return proxy;
     }
 
-    public Collection<Seguradora> getAll() {
+    public Collection<Seguradora> getSeguradoras() {
         return wrapRequest(SeguradoraInterface::getSeguradoras);
     }
 
-    private SeguradoraInterface getBridge() {
-        if (seguradoraBridge == null)
-            seguradoraBridge = seguradoraProxy.getProxy();
-
-        return seguradoraBridge;
-    }
-
-    private <R> R wrapRequest(Function<SeguradoraInterface, R> function) {
-        try {
-            return function.apply(getBridge());
-        } catch (WebApplicationException ex) {
-            if (ex.getResponse().getStatusInfo() == Response.Status.INTERNAL_SERVER_ERROR)//MockAPi.io returns error 500 instead of 404
-                return null;
-
-            throw ex;
-        }
+    public Seguradora getSeguradora(Integer seguradoraId) {
+        return wrapRequest(b -> b.getSeguradora(seguradoraId));
     }
 }

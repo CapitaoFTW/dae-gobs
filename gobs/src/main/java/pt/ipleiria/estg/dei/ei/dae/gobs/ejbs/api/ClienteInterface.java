@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 
 import javax.ws.rs.*;
@@ -26,31 +25,5 @@ public interface ClienteInterface {
     @Path("/{id}")
     @PUT
     Cliente updateCliente(@PathParam("id") Integer id, Cliente cliente);
-
-    @GET
-    @Path("/{id}/apolices")
-    Collection<Apolice> getApolices(@PathParam("id") Integer id);
-
-    @GET
-    @Path("/{id}/apolices")
-    Collection<Apolice> getApolices(
-            @PathParam("id") Integer id,
-            @QueryParam("sortBy") String sortBy,
-            @QueryParam("order") OrderEnum order
-    );
-
-    @GET
-    @Path("/{id}/apolices")
-    Collection<Apolice> getApolices(
-            @PathParam("id") Integer id,
-            @QueryParam("sortBy") String sortBy,
-            @QueryParam("order") OrderEnum order,
-            @QueryParam("limit") Integer limit,
-            @QueryParam("page") Integer page
-    );
-
-    @GET
-    @Path("/{id}/apolices/{apoliceId}")
-    Apolice getApolice(@PathParam("id") Integer id, @PathParam("apoliceId") Integer apoliceId);
 }
 

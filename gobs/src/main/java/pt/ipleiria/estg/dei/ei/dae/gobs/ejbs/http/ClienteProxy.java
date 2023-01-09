@@ -10,4 +10,3 @@ public class ClienteProxy extends ResteasyProxy<ClienteInterface> {
         super(ClienteInterface.class);
     }
 }
-

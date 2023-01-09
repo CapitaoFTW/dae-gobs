@@ -19,13 +19,13 @@ public class SeguradoraService {//todo DTOs add Authentication
     @GET
     @Path("/")
     public Response getAllSeguradoras() {
-        return Response.ok(seguradoraBean.getAll()).build();//todo dto
+        return Response.ok(seguradoraBean.getSeguradoras()).build();//todo dto
     }
 
     @GET
     @Path("/{id}")
     public Response getSeguradora(@PathParam("id") Integer id) throws GobsEntityNotFoundException {
-        Seguradora seguradora = seguradoraBean.find(id);
+        Seguradora seguradora = seguradoraBean.getSeguradora(id);
         if (seguradora == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter Seguradora, Seguradora não existe");
 

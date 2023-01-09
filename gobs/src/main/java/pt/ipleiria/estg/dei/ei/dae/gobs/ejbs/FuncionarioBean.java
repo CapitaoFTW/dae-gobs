@@ -7,20 +7,20 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Funcionario;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 @Stateless
-public class FuncionarioBean {
+public class FuncionarioBean extends ExternalService<FuncionarioInterface, FuncionarioProxy> {
     @EJB
-    private FuncionarioProxy funcionarioProxy;
-    private FuncionarioInterface funcionarioBridge;
-
+    private FuncionarioProxy proxy;
     @Inject
     private Logger logger;
+
+    @Override
+    protected FuncionarioProxy getProxy() {
+        return proxy;
+    }
 
     public Collection<Funcionario> getFuncionarios() {
         return wrapRequest(FuncionarioInterface::getFuncionarios);
@@ -45,23 +45,5 @@ public class FuncionarioBean {
     @SuppressWarnings("UnusedReturnValue")
     public Funcionario updateFuncionario(Integer id, Funcionario funcionario) {
         return wrapRequest(c -> c.updateFuncionario(id, funcionario));
-    }
-
-    private FuncionarioInterface getBridge() {
-        if (funcionarioBridge == null)
-            funcionarioBridge = funcionarioProxy.getProxy();
-
-        return funcionarioBridge;
-    }
-
-    private <R> R wrapRequest(Function<FuncionarioInterface, R> function) {
-        try {
-            return function.apply(getBridge());
-        } catch (WebApplicationException ex) {
-            if (ex.getResponse().getStatusInfo() == Response.Status.INTERNAL_SERVER_ERROR)//MockAPi.io returns error 500 instead of 404
-                return null;
-
-            throw ex;
-        }
     }
 }

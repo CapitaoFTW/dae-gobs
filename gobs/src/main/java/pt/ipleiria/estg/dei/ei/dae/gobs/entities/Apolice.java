@@ -1,13 +1,12 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import javax.persistence.JoinColumn;
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class Apolice extends EntityId<Integer> {
     private Integer id;
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    private Integer seguradoraId;
+    private Integer clienteId;
     private String bem;
     private BigDecimal premio;
     private Date prazo;
@@ -25,12 +24,20 @@ public class Apolice extends EntityId<Integer> {
         this.id = id;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Integer getSeguradoraId() {
+        return seguradoraId;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setSeguradoraId(Integer seguradoraId) {
+        this.seguradoraId = seguradoraId;
+    }
+
+    public Integer getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Integer clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getBem() {

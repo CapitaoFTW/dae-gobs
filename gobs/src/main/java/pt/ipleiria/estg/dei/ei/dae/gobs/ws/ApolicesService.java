@@ -1,6 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ClienteBean;
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
 import javax.annotation.security.RolesAllowed;
@@ -24,7 +24,7 @@ public class ApolicesService {
     @Inject
     Logger logger;
     @EJB
-    private ClienteBean clienteBean;
+    private ApoliceBean apoliceBean;
     @Context
     private SecurityContext securityContext;
 
@@ -32,7 +32,7 @@ public class ApolicesService {
     @Path("/")
     public Response getAllApolices() {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
-        return Response.ok(clienteBean.getApolices(id)).build();//todo dto
+        return Response.ok(apoliceBean.getClienteApolices(id)).build();//todo dto
     }
 
     @GET
@@ -40,13 +40,6 @@ public class ApolicesService {
     public Response getAllApolicesRecentes(@QueryParam("limit") Integer limit) {
         logger.finest("limit " + limit);
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
-        return Response.ok(clienteBean.getApolicesRecent(id, limit)).build();//todo dto
-    }
-
-    @GET
-    @Path("/{apoliceId}")
-    public Response getApolice(@PathParam("apoliceId") Integer apoliceId) {
-        Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
-        return Response.ok(clienteBean.getApolice(id, apoliceId)).build();//todo dto
+        return Response.ok(apoliceBean.getClienteApolicesRecent(id, limit)).build();//todo dto
     }
 }
