@@ -18,7 +18,7 @@ import java.util.LinkedHashSet;
         ),
         @NamedQuery(
                 name = "getAllOcorrenciaByClienteRecente",
-                query = "SELECT o FROM Ocorrencia o WHERE o.cliente_id = :cliente_id order by o.atualizado desc"
+                query = "SELECT o FROM Ocorrencia o WHERE o.clienteId = :clienteId order by o.atualizado desc"
         )
 })
 public class Ocorrencia extends EntityId<Integer> {
@@ -26,7 +26,7 @@ public class Ocorrencia extends EntityId<Integer> {
     @GeneratedValue
     private Integer id;
     @NotNull
-    private Integer cliente_id;
+    private Integer clienteId;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
 
@@ -44,7 +44,8 @@ public class Ocorrencia extends EntityId<Integer> {
         this.ficheiros = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(EstadoOcorrencia estadoOcorrencia) {
+    public Ocorrencia(Integer clienteId, EstadoOcorrencia estadoOcorrencia) {
+        this.clienteId = clienteId;
         this.estadoOcorrencia = estadoOcorrencia;
         this.ficheiros = new LinkedHashSet<>();
     }
@@ -62,12 +63,40 @@ public class Ocorrencia extends EntityId<Integer> {
         this.id = id;
     }
 
+    public Integer getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Integer clienteId) {
+        this.clienteId = clienteId;
+    }
+
     public EstadoOcorrencia getEstadoOcorrencia() {
         return estadoOcorrencia;
     }
 
     public void setEstadoOcorrencia(EstadoOcorrencia estadoOcorrencia) {
         this.estadoOcorrencia = estadoOcorrencia;
+    }
+
+    public Date getAtualizado() {
+        return atualizado;
+    }
+
+    public void setAtualizado(Date atualizado) {
+        this.atualizado = atualizado;
+    }
+
+    public Date getCriado() {
+        return criado;
+    }
+
+    public void setCriado(Date criado) {
+        this.criado = criado;
+    }
+
+    public Collection<Ficheiro> getFicheiros() {
+        return ficheiros;
     }
 
     public void setFicheiros(Collection<Ficheiro> ficheiros) {
