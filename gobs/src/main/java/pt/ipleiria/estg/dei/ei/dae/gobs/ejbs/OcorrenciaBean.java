@@ -20,6 +20,7 @@ public class OcorrenciaBean {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @SuppressWarnings("UnusedReturnValue")
     public Ocorrencia create(Ocorrencia ocorrencia) {
         Integer clienteId = ocorrencia.getClienteId();
         if (clienteBean.getCliente(clienteId) == null)
@@ -47,15 +48,15 @@ public class OcorrenciaBean {
 
     public Collection<Ocorrencia> findByCliente(Integer id) {
         return entityManager
-                .createNamedQuery("getAllOcorrenciaByCliente", Ocorrencia.class)
-                .setParameter("cliente_id", id)
+                .createNamedQuery("getOcorrenciasByCliente", Ocorrencia.class)
+                .setParameter("clienteId", id)
                 .getResultStream()
                 .collect(Collectors.toList());
     }
 
     public Collection<Ocorrencia> findByClienteRecente(Integer id, Integer limite) {
         return entityManager
-                .createNamedQuery("getAllOcorrenciaByClienteRecente", Ocorrencia.class)
+                .createNamedQuery("getOcorrenciaByClienteRecente", Ocorrencia.class)
                 .setParameter("clienteId", id)
                 .setMaxResults(limite)
                 .getResultStream()
