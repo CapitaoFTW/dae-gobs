@@ -4,6 +4,7 @@
 		<b-table
 			:busy="$fetchState.pending"
 			:current-page="currentPage"
+			:fields="ocorrenciasFields"
 			:items="ocorrencias"
 			:per-page="perPage"
 			bordered
@@ -45,7 +46,16 @@ export default {
 		return {
 			currentPage: 1,
 			perPage: 10,
-			ocorrencias: []
+			ocorrencias: [],
+			ocorrenciasFields: [
+				{
+					key: 'estadoOcorrencia'
+				},
+				{
+					key: 'atualizado',
+					formatter: 'formatDate'
+				}
+			],
 		}
 	},
 	async fetch() {

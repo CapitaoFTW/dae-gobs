@@ -28,6 +28,7 @@
 				<div class="border border-primary">
 					<b-table
 						:busy="ocorrenciasLoading"
+						:fields="ocorrenciasFields"
 						:items="ocorrencias"
 						bordered
 						class="m-0"
@@ -87,6 +88,15 @@ export default {
 			],
 			apolicesLoading: true,
 			ocorrencias: [],
+			ocorrenciasFields: [
+				{
+					key: 'estadoOcorrencia'
+				},
+				{
+					key: 'atualizado',
+					formatter: 'formatDate'
+				}
+			],
 			ocorrenciasLoading: true
 		}
 	},

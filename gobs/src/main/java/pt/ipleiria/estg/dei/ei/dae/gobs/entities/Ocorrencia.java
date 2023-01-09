@@ -4,6 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -95,6 +96,7 @@ public class Ocorrencia extends EntityId<Integer> {
         this.criado = criado;
     }
 
+    @JsonbTransient//todo
     public Collection<Ficheiro> getFicheiros() {
         return ficheiros;
     }
