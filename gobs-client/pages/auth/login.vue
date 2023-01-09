@@ -176,7 +176,7 @@ export default {
 					return;
 
 				default:
-					this.$root.$bvToast.toast("Erro interno detetado, recarregando...", {
+					this.$root.$bvToast.toast('Erro interno detetado, recarregando...', {
 						solid: true,
 						title: 'Erro de pagina',
 						toaster: 'b-toaster-top-center',

@@ -54,7 +54,7 @@ export default {
 				},
 				{
 					key: 'prazo',
-					formatter: "formatDate"
+					formatter: 'formatDate'
 				}
 			],
 			currentPage: 1,
@@ -66,7 +66,7 @@ export default {
 			.then(data => this.apolices = data)
 			.catch(e => {
 				console.error(`Erro ao obter apolices: ${e}`)
-				this.$root.$bvToast.toast("Erro ao obter apolices.", {
+				this.$root.$bvToast.toast('Erro ao obter apolices.', {
 					solid: true,
 					title: 'Erro ao obter dados',
 					toaster: 'b-toaster-top-center',
@@ -78,7 +78,7 @@ export default {
 	fetchOnServer: false,
 	methods: {
 		formatDate(value) {
-			return new Date(value.replace("[UTC]", "")).toLocaleString();
+			return new Date(value.replace('[UTC]', '')).toLocaleString();
 		}
 	}
 }

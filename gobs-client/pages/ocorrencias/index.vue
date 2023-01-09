@@ -53,7 +53,7 @@ export default {
 			.then(data => this.ocorrencias = data)
 			.catch(e => {
 				console.error(`Erro ao obter ocorrencias: ${e}`)
-				this.$root.$bvToast.toast("Erro ao obter ocorrencias.", {
+				this.$root.$bvToast.toast('Erro ao obter ocorrencias.', {
 					solid: true,
 					title: 'Erro ao obter dados',
 					toaster: 'b-toaster-top-center',
@@ -65,7 +65,7 @@ export default {
 	fetchOnServer: false,
 	methods: {
 		formatDate(value) {
-			return new Date(value.replace("[UTC]", "")).toLocaleString();
+			return new Date(value.replace('[UTC]', '')).toLocaleString();
 		}
 	}
 }
