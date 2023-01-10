@@ -5,6 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@SuppressWarnings("unused")
 public class ApoliceDTO {
     private Integer id;
     private Seguradora seguradora;//todo seguradora dto

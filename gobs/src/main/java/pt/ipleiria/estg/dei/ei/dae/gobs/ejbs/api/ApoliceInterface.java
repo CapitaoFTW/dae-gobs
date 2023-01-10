@@ -39,6 +39,10 @@ public interface ApoliceInterface {
             @QueryParam("page") Integer page
     );
 
+    @GET
+    @Path("/{id}")
+    Apolice getApolice(@PathParam("id") Integer id);
+
     @Path("/{id}")
     @PUT
     Apolice updateApolice(@PathParam("id") Integer id, Apolice apolice);

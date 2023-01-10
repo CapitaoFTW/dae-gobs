@@ -27,6 +27,10 @@ public class ApoliceBean extends ExternalService<ApoliceInterface, ApoliceProxy>
         return wrapRequest(ApoliceInterface::getApolices);
     }
 
+    public Apolice getApolice(Integer apoliceId) {
+        return wrapRequest(b -> b.getApolice(apoliceId));
+    }
+
     public Collection<Apolice> getClienteApolices(Integer id) {
         return wrapRequest(c -> c.getApolices(id));
     }

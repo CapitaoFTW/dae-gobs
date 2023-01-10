@@ -75,6 +75,7 @@ public class ApolicesService {
             }
             dto.setSeguradora(seguradora);
 
+            //noinspection DuplicatedCode
             if (needCliente) {
                 Integer clienteId = apolice.getClienteId();
                 Cliente cliente = clientes.get(clienteId);

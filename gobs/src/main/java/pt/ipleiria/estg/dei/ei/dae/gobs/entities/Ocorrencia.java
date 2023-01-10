@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
@@ -80,6 +81,14 @@ public class Ocorrencia extends EntityId<Integer> {
         this.clienteId = clienteId;
     }
 
+    public Integer getApoliceId() {
+        return apoliceId;
+    }
+
+    public void setApoliceId(Integer apoliceId) {
+        this.apoliceId = apoliceId;
+    }
+
     public EstadoOcorrencia getEstadoOcorrencia() {
         return estadoOcorrencia;
     }
@@ -119,5 +128,15 @@ public class Ocorrencia extends EntityId<Integer> {
 
     public void setFicheiros(Collection<Ficheiro> ficheiros) {
         this.ficheiros = ficheiros;
+    }
+
+    public OcorrenciaDTO toDto() {
+        return new OcorrenciaDTO(
+                this.getId(),
+                this.getEstadoOcorrencia(),
+                this.getDescricaoDeOcorrencia(),
+                this.getAtualizado(),
+                this.getCriado()
+        );
     }
 }

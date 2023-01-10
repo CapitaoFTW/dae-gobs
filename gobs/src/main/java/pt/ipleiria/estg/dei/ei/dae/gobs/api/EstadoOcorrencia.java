@@ -10,6 +10,7 @@ public enum EstadoOcorrencia {
     Invalida(7);
 
     private final Integer value;
+
     EstadoOcorrencia(Integer value) {
         this.value = value;
     }
