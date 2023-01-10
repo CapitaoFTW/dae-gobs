@@ -12,6 +12,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,34 +48,51 @@ public class ConfigBean {
         //verifica se as apolices tem dados validos da seguradora e cliente
         //isto e necessario pois estamos a gerar data aleatorio sem controlo no mockapi
         Collection<Apolice> apolices = apoliceBean.getApolices();
-        Collection<Cliente> clientes = clienteBean.getClientes();
-        Collection<Seguradora> seguradoras = seguradoraBean.getSeguradoras();
-
-        for (Apolice apolice : apolices) {
-            boolean needSave = false;
-            Integer seguradoraId = apolice.getSeguradoraId();
-            if (seguradoras.stream().noneMatch(c -> c.getId().equals(seguradoraId))) {
-                Seguradora seguradora = randomValue(seguradoras);
-                apolice.setSeguradoraId(seguradora.getId());
-                needSave = true;
+        if (apolices != null) {//MOCKAPI is down or returned 500
+            Collection<Cliente> clientes = clienteBean.getClientes();
+            Collection<Seguradora> seguradoras = seguradoraBean.getSeguradoras();
+            if (clientes == null && seguradoras == null) {
+                logger.warning("Clientes & Seguradoras are null!! Check Mockapi");
+                clientes = new LinkedHashSet<>();
+                seguradoras = new LinkedHashSet<>();
+            }
+            else if (clientes == null) {
+                logger.warning("Clientes is null!! Check Mockapi");
+                clientes = new LinkedHashSet<>();
+            }
+            else if (seguradoras == null) {
+                logger.warning("Seguradoras is null!! Check Mockapi");
+                seguradoras = new LinkedHashSet<>();
             }
 
-            Integer clienteId = apolice.getClienteId();
-            if (clientes.stream().noneMatch(c -> c.getId().equals(clienteId))) {
-                Cliente cliente = randomValue(clientes);
-                apolice.setClienteId(cliente.getId());
-                needSave = true;
-            }
+            for (Apolice apolice : apolices) {
+                boolean needSave = false;
+                Integer clienteId = apolice.getClienteId();
+                if (clientes.stream().noneMatch(c -> c.getId().equals(clienteId))) {
+                    Cliente cliente = randomValue(clientes);
+                    apolice.setClienteId(cliente.getId());
+                    needSave = true;
+                }
 
-            if (needSave)
-                apoliceBean.updateApolice(apolice.getId(), apolice);
+                Integer seguradoraId = apolice.getSeguradoraId();
+                if (seguradoras.stream().noneMatch(c -> c.getId().equals(seguradoraId))) {
+                    Seguradora seguradora = randomValue(seguradoras);
+                    apolice.setSeguradoraId(seguradora.getId());
+                    needSave = true;
+                }
+
+                if (needSave)
+                    apoliceBean.updateApolice(apolice.getId(), apolice);
+            }
+        } else {
+          logger.warning("Apolices is null!! Check Mockapi");
         }
 
         //Cria algumas ocorrencias com estados aleatorios
         final EstadoOcorrencia[] estados = EstadoOcorrencia.values();
         for (int i = 0; i < 30; i++) {
             EstadoOcorrencia estadoOcorrencia = estados[random.nextInt(estados.length)];
-            ocorrenciaBean.create(new Ocorrencia(i % 10 + 1, estadoOcorrencia));
+            ocorrenciaBean.create(new Ocorrencia(i % 10 + 1, estadoOcorrencia, "Exemplo de descricao para uma ocorrencia"));
         }
     }
 

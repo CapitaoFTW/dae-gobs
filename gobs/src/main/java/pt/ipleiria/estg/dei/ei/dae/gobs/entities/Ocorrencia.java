@@ -6,6 +6,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Date;
@@ -34,10 +35,10 @@ public class Ocorrencia extends EntityId<Integer> {
     private Integer clienteId;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
-
+    @NotBlank
+    private String descricaoDeOcorrencia;
     @UpdateTimestamp
     private Date atualizado;
-
     @CreationTimestamp
     private Date criado;
 
@@ -49,9 +50,10 @@ public class Ocorrencia extends EntityId<Integer> {
         this.ficheiros = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(Integer clienteId, EstadoOcorrencia estadoOcorrencia) {
+    public Ocorrencia(Integer clienteId, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia) {
         this.clienteId = clienteId;
         this.estadoOcorrencia = estadoOcorrencia;
+        this.descricaoDeOcorrencia = descricaoDeOcorrencia;
         this.ficheiros = new LinkedHashSet<>();
     }
 
@@ -82,6 +84,14 @@ public class Ocorrencia extends EntityId<Integer> {
 
     public void setEstadoOcorrencia(EstadoOcorrencia estadoOcorrencia) {
         this.estadoOcorrencia = estadoOcorrencia;
+    }
+
+    public String getDescricaoDeOcorrencia() {
+        return descricaoDeOcorrencia;
+    }
+
+    public void setDescricaoDeOcorrencia(String descricaoDeOcorrencia) {
+        this.descricaoDeOcorrencia = descricaoDeOcorrencia;
     }
 
     public Date getAtualizado() {

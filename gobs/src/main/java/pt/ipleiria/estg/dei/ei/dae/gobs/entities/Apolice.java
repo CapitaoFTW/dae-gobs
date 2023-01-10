@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ApoliceDTO;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -62,5 +64,14 @@ public class Apolice extends EntityId<Integer> {
 
     public void setPrazo(Date prazo) {
         this.prazo = prazo;
+    }
+
+    public ApoliceDTO toDto() {
+        return new ApoliceDTO(
+                this.getId(),
+                this.getBem(),
+                this.getPremio(),
+                this.getPrazo()
+        );
     }
 }
