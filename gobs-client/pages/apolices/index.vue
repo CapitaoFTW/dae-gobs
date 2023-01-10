@@ -37,20 +37,20 @@
 
 <script>
 export default {
-	computed: {
-		id() {
-			return this.$auth.user.id;
-		}
-	},
 	data() {
 		return {
 			apolices: [],
 			apolicesFields: [
 				{
+					key: 'seguradora.nome',
+					label: 'Seguradora'
+				},
+				{
 					key: 'bem'
 				},
 				{
-					key: 'premio'
+					key: 'premio',
+					formatter: 'formatMoney'
 				},
 				{
 					key: 'prazo',
@@ -62,7 +62,7 @@ export default {
 		}
 	},
 	async fetch() {
-		await this.$axios.$get(`/api/apolices`)
+		await this.$axios.$get('/api/apolices')
 			.then(data => this.apolices = data)
 			.catch(e => {
 				console.error(`Erro ao obter apolices: ${e}`)
@@ -79,6 +79,9 @@ export default {
 	methods: {
 		formatDate(value) {
 			return new Date(value.replace('[UTC]', '')).toLocaleString();
+		},
+		formatMoney(value) {
+			return `${value}€`
 		}
 	}
 }

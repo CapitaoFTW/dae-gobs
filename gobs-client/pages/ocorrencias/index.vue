@@ -4,7 +4,7 @@
 		<b-table
 			:busy="$fetchState.pending"
 			:current-page="currentPage"
-			:fields="ocorrenciasFields"
+
 			:items="ocorrencias"
 			:per-page="perPage"
 			bordered
@@ -37,11 +37,6 @@
 
 <script>
 export default {
-	computed: {
-		id() {
-			return this.$auth.user.id;
-		}
-	},
 	data() {
 		return {
 			currentPage: 1,
@@ -49,7 +44,8 @@ export default {
 			ocorrencias: [],
 			ocorrenciasFields: [
 				{
-					key: 'estadoOcorrencia'
+					key: 'estado',
+					formatter: 'formatEstado'
 				},
 				{
 					key: 'atualizado',
@@ -59,7 +55,7 @@ export default {
 		}
 	},
 	async fetch() {
-		await this.$axios.$get(`/api/ocorrencias/cliente/${this.id}`)
+		await this.$axios.$get('/api/ocorrencias')
 			.then(data => this.ocorrencias = data)
 			.catch(e => {
 				console.error(`Erro ao obter ocorrencias: ${e}`)

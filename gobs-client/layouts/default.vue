@@ -25,6 +25,7 @@
 	</div>
 </template>
 
+<!--suppress JSUnusedGlobalSymbols -->
 <script>
 export default {
 	beforeCreate() {

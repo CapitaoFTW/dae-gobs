@@ -4,6 +4,7 @@
 		<b-row class="row-cols-2 flex-fill text-center">
 			<b-col class="h-100">
 				<div class="border border-primary">
+					<h4 class="my-2">Apólices</h4>
 					<b-table
 						:busy="apolicesLoading"
 						:fields="apolicesFields"
@@ -22,10 +23,11 @@
 						</template>
 					</b-table>
 				</div>
-				<b-button to="/apolices" variant="primary">Ver detalhes</b-button>
+				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
 			</b-col>
 			<b-col class="h-100">
 				<div class="border border-primary">
+					<h4 class="my-2">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
 						:fields="ocorrenciasFields"
@@ -44,7 +46,7 @@
 						</template>
 					</b-table>
 				</div>
-				<b-button to="/ocorrencias" variant="primary">Ver detalhes</b-button>
+				<b-button class="mt-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -61,9 +63,6 @@
 <script>
 export default {
 	computed: {
-		id() {
-			return this.$auth.user.id;
-		},
 		isCliente() {
 			return this.$auth.user.roles.includes('Cliente');
 		},
@@ -79,7 +78,8 @@ export default {
 					key: 'bem'
 				},
 				{
-					key: 'premio'
+					key: 'premio',
+					formatter: 'formatMoney'
 				},
 				{
 					key: 'prazo',
@@ -90,7 +90,8 @@ export default {
 			ocorrencias: [],
 			ocorrenciasFields: [
 				{
-					key: 'estadoOcorrencia'
+					key: 'estado',
+					formatter: 'formatEstado'
 				},
 				{
 					key: 'atualizado',
@@ -122,7 +123,7 @@ export default {
 					});
 					//todo reload
 				});
-			const requestOcorrencias = this.$axios.$get(`/api/ocorrencias/cliente/${this.id}/recent?limit=5`)
+			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/recent?limit=5')
 				.then(data => {
 					this.ocorrencias = data
 					this.ocorrenciasLoading = false;
@@ -142,6 +143,26 @@ export default {
 		},
 		formatDate(value) {
 			return new Date(value.replace('[UTC]', '')).toLocaleString();
+		},
+		formatMoney(value) {
+			return `${value}€`
+		},
+		formatEstado(value) {
+			switch (value) {
+				case 1:
+				case 2:
+				case 4:
+					return 'Em processo'
+				case 3:
+				case 5:
+					return 'Aguardando utilizador'
+				case 6:
+					return 'Concluida'
+				case 7:
+					return 'Pedido inválido'
+				default:
+					return 'Algo correu mal! Contacte-nos'
+			}
 		}
 	}
 }
