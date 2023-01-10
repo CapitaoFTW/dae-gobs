@@ -33,6 +33,7 @@ public class Ocorrencia extends EntityId<Integer> {
     private Integer id;
     @NotNull
     private Integer clienteId;
+    private Integer apoliceId;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
     @NotBlank
@@ -50,8 +51,9 @@ public class Ocorrencia extends EntityId<Integer> {
         this.ficheiros = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(Integer clienteId, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia) {
+    public Ocorrencia(Integer clienteId, Integer apoliceId, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia) {
         this.clienteId = clienteId;
+        this.apoliceId = apoliceId;
         this.estadoOcorrencia = estadoOcorrencia;
         this.descricaoDeOcorrencia = descricaoDeOcorrencia;
         this.ficheiros = new LinkedHashSet<>();
