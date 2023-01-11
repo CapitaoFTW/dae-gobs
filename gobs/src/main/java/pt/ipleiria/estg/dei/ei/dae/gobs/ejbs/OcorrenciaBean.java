@@ -17,21 +17,25 @@ import java.util.stream.Collectors;
 public class OcorrenciaBean {
     @EJB
     private ClienteBean clienteBean;
+    @EJB
+    private ApoliceBean apoliceBean;
     @PersistenceContext
     private EntityManager entityManager;
 
-    @SuppressWarnings("UnusedReturnValue")
-    public Ocorrencia create(Ocorrencia ocorrencia) {
+    public void create(Ocorrencia ocorrencia) {
         Integer clienteId = ocorrencia.getClienteId();
         if (clienteBean.getCliente(clienteId) == null)
-            throw new GobsEntityNotFoundException(clienteId, "Falha ao criar ocorrencia, cliente não existe.");
+            throw new GobsEntityNotFoundException(clienteId, "Falha ao registar ocorrencia, cliente não existe.");
+
+        Integer apoliceId = ocorrencia.getApoliceId();
+        if (apoliceBean.getApolice(apoliceId) == null)
+            throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
         try {
             entityManager.persist(ocorrencia);
         } catch (ConstraintViolationException ex) {
             throw new GobsConstraintViolationException(ex);
         }
-        return ocorrencia;
     }
 
     public boolean exists(Integer id) {

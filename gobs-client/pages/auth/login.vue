@@ -37,13 +37,13 @@
 					<b-form-group
 						:invalid-feedback="invalidIdFeedback"
 						:state="isIdValid"
-						label="Introduzir nome de usuário:"
+						label="Introduzir nome de utilizador:"
 						label-for="input-username">
 						<b-form-input
 							id="input-username"
 							v-model.trim="username"
 							:state="isIdValid"
-							placeholder="Nome de usuáario"
+							placeholder="Nome de utilizador"
 							required
 							type="text"/>
 					</b-form-group>

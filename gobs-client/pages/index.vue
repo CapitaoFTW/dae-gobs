@@ -47,6 +47,7 @@
 					</b-table>
 				</div>
 				<b-button class="mt-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
+				<b-button class="mt-2" to="/ocorrencias/create" variant="success">Registar nova ocorrência</b-button>
 			</b-col>
 		</b-row>
 	</b-container>

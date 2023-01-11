@@ -130,13 +130,15 @@ public class Ocorrencia extends EntityId<Integer> {
         this.ficheiros = ficheiros;
     }
 
-    public OcorrenciaDTO toDto() {
+    public OcorrenciaDTO toDTO() {
         return new OcorrenciaDTO(
                 this.getId(),
                 this.getEstadoOcorrencia(),
                 this.getDescricaoDeOcorrencia(),
                 this.getAtualizado(),
-                this.getCriado()
+                this.getCriado(),
+                this.getClienteId(),
+                this.getApoliceId()
         );
     }
 }

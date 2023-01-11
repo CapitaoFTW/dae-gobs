@@ -1,16 +1,16 @@
 <template>
 	<div id="app" class="vh-100">
 		<b-navbar toggleable="lg">
-			<b-navbar-brand href="/">
+			<b-navbar-brand href="/" class="text-secondary">
 				Gestão de ocorrências em bens segurados (Gobs)
 			</b-navbar-brand>
 			<b-navbar-toggle target="nav-menu"/>
 			<b-collapse id="nav-menu" is-nav>
 				<b-navbar-nav class="ml-auto">
 					<b-nav-item-dropdown v-if="$auth.loggedIn" right>
-						<b-dropdown-item to="/">
+						<template #button-content>
 							{{ $auth.user.nome }}
-						</b-dropdown-item>
+						</template>
 						<b-dropdown-item @click.prevent="logout">
 							Logout
 						</b-dropdown-item>

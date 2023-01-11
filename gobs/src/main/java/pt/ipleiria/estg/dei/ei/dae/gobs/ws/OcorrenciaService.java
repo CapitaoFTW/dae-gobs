@@ -60,7 +60,7 @@ public class OcorrenciaService {
         Map<Integer, Cliente> clientes = new LinkedHashMap<>();
 
         for (Ocorrencia ocorrencia : ocorrencias) {
-            OcorrenciaDTO dto = ocorrencia.toDto();
+            OcorrenciaDTO dto = ocorrencia.toDTO();
             ocorrenciaDTOs.add(dto);
 
             Integer apoliceId = ocorrencia.getApoliceId();
@@ -84,5 +84,16 @@ public class OcorrenciaService {
         }
 
         return ocorrenciaDTOs;
+    }
+
+    @POST
+    @Path("/")
+    public Response create(OcorrenciaDTO ocorrenciaDTO) {
+        Ocorrencia newOcorrencia = ocorrenciaBean.find(ocorrenciaDTO.getId());
+        ocorrenciaBean.create(newOcorrencia);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(newOcorrencia.toDTO())
+                .build();
     }
 }
