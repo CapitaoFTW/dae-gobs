@@ -5,7 +5,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 
 import java.util.Date;
 
-
+@SuppressWarnings("unused")
 public class OcorrenciaDTO {
     private Integer id;
     private ClienteDTO cliente;
