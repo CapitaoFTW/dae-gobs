@@ -1,33 +1,25 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 
 import java.util.Date;
 
 @SuppressWarnings("unused")
-public class OcorrenciaDTO {
+public class OcorrenciaDTO extends BaseOcorrenciaDTO {
     private Integer id;
     private ClienteDTO cliente;
     private ApoliceDTO apolice;
-    private Integer estado;
-    private String descricaoDeOcorrencia;
     private Date atualizado;
     private Date criado;
-    protected long clienteId;
-    protected long apoliceId;
 
     public OcorrenciaDTO() {
     }
 
-    public OcorrenciaDTO(Integer id, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia, Date atualizado, Date criado, long clienteId, long apoliceId) {
+    public OcorrenciaDTO(Integer id, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia, Date atualizado, Date criado) {
+        super(estadoOcorrencia, descricaoDeOcorrencia);
         this.id = id;
-        this.estado = estadoOcorrencia.getValue();
-        this.descricaoDeOcorrencia = descricaoDeOcorrencia;
         this.atualizado = atualizado;
         this.criado = criado;
-        this.clienteId = clienteId;
-        this.apoliceId = apoliceId;
     }
 
     public Integer getId() {
@@ -54,26 +46,6 @@ public class OcorrenciaDTO {
         this.apolice = apolice;
     }
 
-    public Integer getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Integer estado) {
-        this.estado = estado;
-    }
-
-    public void setEstado(EstadoOcorrencia estadoOcorrencia) {
-        this.estado = estadoOcorrencia.getValue();
-    }
-
-    public String getDescricaoDeOcorrencia() {
-        return descricaoDeOcorrencia;
-    }
-
-    public void setDescricaoDeOcorrencia(String descricaoDeOcorrencia) {
-        this.descricaoDeOcorrencia = descricaoDeOcorrencia;
-    }
-
     public Date getAtualizado() {
         return atualizado;
     }
@@ -90,3 +62,4 @@ public class OcorrenciaDTO {
         this.criado = criado;
     }
 }
+
