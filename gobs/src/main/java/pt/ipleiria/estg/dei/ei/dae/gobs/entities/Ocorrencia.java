@@ -136,9 +136,7 @@ public class Ocorrencia extends EntityId<Integer> {
                 this.getEstadoOcorrencia(),
                 this.getDescricaoDeOcorrencia(),
                 this.getAtualizado(),
-                this.getCriado(),
-                this.getClienteId(),
-                this.getApoliceId()
+                this.getCriado()
         );
     }
 }

@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.CreateOcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ClienteBean;
@@ -11,11 +12,10 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -54,6 +54,14 @@ public class OcorrenciaService {
         return Response.ok(ocorrenciasToDTOs(ocorrencias, false)).build();
     }
 
+    @POST
+    @Path("/")
+    public Response create(@Valid CreateOcorrenciaDTO ocorrenciaDTO) {
+        Ocorrencia ocorrencia = ocorrenciaBean.create(ocorrenciaDTO);
+        URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrencia.getId().toString()).build();
+        return Response.created(uri).entity(ocorrenciaDTO(ocorrencia, false)).build();
+    }
+
     private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias, boolean needCliente) {
         Collection<OcorrenciaDTO> ocorrenciaDTOs = new LinkedList<>();
         Map<Integer, Apolice> apolices = new LinkedHashMap<>();
@@ -86,14 +94,19 @@ public class OcorrenciaService {
         return ocorrenciaDTOs;
     }
 
-    @POST
-    @Path("/")
-    public Response create(OcorrenciaDTO ocorrenciaDTO) {
-        Ocorrencia newOcorrencia = ocorrenciaBean.find(ocorrenciaDTO.getId());
-        ocorrenciaBean.create(newOcorrencia);
+    private OcorrenciaDTO ocorrenciaDTO(Ocorrencia ocorrencia, boolean needCliente) {
+        OcorrenciaDTO dto = ocorrencia.toDTO();
+        Integer apoliceId = ocorrencia.getApoliceId();
+        Apolice apolice = apoliceBean.getApolice(apoliceId);
+        dto.setApolice(apolice.toDto());
 
-        return Response.status(Response.Status.CREATED)
-                .entity(newOcorrencia.toDTO())
-                .build();
+        //noinspection DuplicatedCode
+        if (needCliente) {
+            Integer clienteId = ocorrencia.getClienteId();
+            Cliente cliente = clienteBean.getCliente(clienteId);
+            dto.setCliente(cliente.toDto());
+        }
+
+        return dto;
     }
 }

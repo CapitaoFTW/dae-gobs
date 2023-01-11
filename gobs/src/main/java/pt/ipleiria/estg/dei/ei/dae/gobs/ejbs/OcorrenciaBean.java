@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.CreateOcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
@@ -22,20 +23,23 @@ public class OcorrenciaBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void create(Ocorrencia ocorrencia) {
-        Integer clienteId = ocorrencia.getClienteId();
-        if (clienteBean.getCliente(clienteId) == null)
-            throw new GobsEntityNotFoundException(clienteId, "Falha ao registar ocorrencia, cliente não existe.");
-
-        Integer apoliceId = ocorrencia.getApoliceId();
+    public Ocorrencia create(CreateOcorrenciaDTO ocorrenciaDTO) {
+        Integer apoliceId = ocorrenciaDTO.getApoliceId();
         if (apoliceBean.getApolice(apoliceId) == null)
             throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
+        Integer clienteId = ocorrenciaDTO.getClienteId();
+        if (clienteBean.getCliente(clienteId) == null)
+            throw new GobsEntityNotFoundException(clienteId, "Falha ao registar ocorrencia, cliente não existe.");
+
+        Ocorrencia ocorrencia = ocorrenciaDTO.toEntity();
         try {
             entityManager.persist(ocorrencia);
         } catch (ConstraintViolationException ex) {
             throw new GobsConstraintViolationException(ex);
         }
+
+        return ocorrencia;
     }
 
     public boolean exists(Integer id) {
