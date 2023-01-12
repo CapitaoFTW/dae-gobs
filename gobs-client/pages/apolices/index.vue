@@ -23,7 +23,7 @@
 		</b-table>
 		<b-row>
 			<b-col>
-				<b-button to="/">Return</b-button>
+				<b-button @click=$router.back()>Voltar</b-button>
 			</b-col>
 			<b-col class="flex-grow-0">
 				<b-pagination

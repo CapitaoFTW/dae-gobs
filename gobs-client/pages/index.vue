@@ -3,7 +3,7 @@
 		<h1 class="text-center mb-5">Dashboard</h1>
 		<b-row class="row-cols-2 flex-fill text-center">
 			<b-col class="h-100">
-				<b-row class="border border-primary">
+				<b-row class="border border-primary mx-1">
 					<h4 class="my-2 w-100">Apólices</h4>
 					<b-table
 						:busy="apolicesLoading"
@@ -26,7 +26,7 @@
 				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
 			</b-col>
 			<b-col class="h-100">
-				<b-row class="border border-primary">
+				<b-row class="border border-primary mx-1">
 					<h4 class="my-2 w-100">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
@@ -57,31 +57,8 @@
 	<b-container v-else-if="isFuncionario">
 		<h1 class="text-center mb-5">Dashboard</h1>
 		<b-row class="flex-fill text-center">
-			<!--<b-col class="h-100">
-				<b-row class="border border-primary">
-					<h4 class="my-2 w-100">Apólices</h4>
-					<b-table
-						:busy="apolicesLoading"
-						:fields="apolicesFields"
-						:items="apolices"
-						bordered
-						class="m-0"
-						empty-text="Não existem apolices registadas."
-						hover
-						show-empty
-						thead-class="d-none">
-						<template #table-busy>
-							<div class="text-center text-primary my-2">
-								<b-spinner class="align-middle"></b-spinner>
-								<strong>Carregando...</strong>
-							</div>
-						</template>
-					</b-table>
-				</b-row>
-				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
-			</b-col>-->
 			<b-col class="h-100">
-				<b-row class="border border-primary">
+				<b-row class="border border-primary mx-1">
 					<h4 class="my-2 w-100">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
@@ -151,7 +128,7 @@ export default {
 					formatter: 'formatDate'
 				}
 			],
-			ocorrenciasLoading: true,
+			ocorrenciasLoading: true
 		}
 	},
 	async fetch() {
@@ -179,7 +156,7 @@ export default {
 					});
 					//todo reload
 				});
-			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/minhas/recent?limit=5')
+			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/recent?limit=5')
 				.then(data => {
 					this.ocorrencias = data
 					this.ocorrenciasLoading = false;

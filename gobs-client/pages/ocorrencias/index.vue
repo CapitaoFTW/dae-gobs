@@ -23,9 +23,8 @@
 		</b-table>
 		<b-row>
 			<b-col>
-				<b-button to="/">Return</b-button>
-				<b-button to="/ocorrencias/create" variant="success">Registar nova ocorrência
-				</b-button>
+				<b-button @click=$router.back()>Voltar</b-button>
+				<b-button to="/ocorrencias/create" variant="success">Registar nova ocorrência</b-button>
 			</b-col>
 			<b-col class="flex-grow-0">
 				<b-pagination
@@ -75,16 +74,28 @@ export default {
 		}
 	},
 	async fetch() {
-		if (this.isCliente)
+		await this.$axios.$get('/api/ocorrencias')
+			.then(data => this.ocorrencias = data)
+			.catch(e => {
+				console.error(`Erro ao obter ocorrencias: ${e}`)
+				this.$root.$bvToast.toast('Erro ao obter ocorrencias.', {
+					solid: true,
+					title: 'Erro ao obter dados',
+					toaster: 'b-toaster-top-center',
+					variant: 'danger'
+				});
+				this.$router.push('/')
+			});
+		/*if (this.isCliente)
 			await this.getClienteData();
 
 		if (this.isFuncionario)
-			await this.getFuncionarioData();
+			await this.getFuncionarioData();*/
 	},
 	fetchOnServer: false,
 	methods: {
-		async getClienteData() {
-			await this.$axios.$get('/api/ocorrencias/minhas')
+		/*async getClienteData() {
+			await this.$axios.$get('/api/ocorrencias')
 				.then(data => this.ocorrencias = data)
 				.catch(e => {
 					console.error(`Erro ao obter ocorrencias: ${e}`)
@@ -110,9 +121,12 @@ export default {
 					});
 					this.$router.push('/')
 				});
-		},
+		},*/
 		formatDate(value) {
-			return new Date(value.replace('[UTC]', '')).toLocaleString();
+			if (!value)
+				return '-'
+
+			return new Date(value.replace('[UTC]', '')).toLocaleString()
 		},
 		formatEstado(value) {
 			switch (value) {
