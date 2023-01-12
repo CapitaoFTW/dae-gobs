@@ -56,6 +56,21 @@ public class OcorrenciaBean {
                 .collect(Collectors.toList());
     }
 
+    public Collection<Ocorrencia> getOcorrencias() {
+        return entityManager
+                .createNamedQuery("getOcorrencias", Ocorrencia.class)
+                .getResultStream()
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Ocorrencia> getOcorrenciasRecentes(Integer limite) {
+        return entityManager
+                .createNamedQuery("getOcorrenciasRecentes", Ocorrencia.class)
+                .setMaxResults(limite)
+                .getResultStream()
+                .collect(Collectors.toList());
+    }
+
     public Collection<Ocorrencia> findByClienteRecente(Integer id, Integer limite) {
         return entityManager
                 .createNamedQuery("getOcorrenciaByClienteRecente", Ocorrencia.class)

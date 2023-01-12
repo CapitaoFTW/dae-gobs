@@ -43,7 +43,15 @@ public class OcorrenciaService {
     private SecurityContext securityContext;
 
     @GET
+    @RolesAllowed({"Funcionario"})
     @Path("/")
+    public Response getOcorrencias() {
+        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.getOcorrencias();
+        return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
+    }
+
+    @GET
+    @Path("/minhas")
     public Response getOcorrenciasByCliente() {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByCliente(id);
@@ -51,7 +59,15 @@ public class OcorrenciaService {
     }
 
     @GET
+    @RolesAllowed({"Funcionario"})
     @Path("/recent")
+    public Response getOcorrenciasRecentes(@DefaultValue("50") @QueryParam("limit") Integer limit) {
+        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.getOcorrenciasRecentes(limit);
+        return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
+    }
+
+    @GET
+    @Path("/minhas/recent")
     public Response getOcorrenciaByClienteRecente(@DefaultValue("50") @QueryParam("limit") Integer limit) {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByClienteRecente(id, limit);

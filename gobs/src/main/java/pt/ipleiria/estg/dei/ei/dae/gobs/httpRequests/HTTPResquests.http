@@ -30,13 +30,13 @@ POST http://localhost:8080/gobs/api/students
 Content-Type: application/json
 
 ### REQUEST JWT TOKEN
-POST http://localhost:8080/gobs/api/auth/login
+POST http://localhost:8080/gobs/api/auth/login-employee
 Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "crisgama",
-  "password": "arrozdoce2420"
+  "username": "Therese.Zemlak51",
+  "password": "JWZhM_vkaZ_NeBq"
 }
 
 ### GET ALL STUDENTS
@@ -47,8 +47,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjcmlzZ2FtYSIsImlhdCI6MTY2O
 
 
 ##### Teachers
-GET http://localhost:8080/gobs/api/teachers
+GET http://localhost:8080/gobs/api/ocorrencias
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaXNzIjoiMDFIU2loTU15MTFDYzZ0TWVMMlJqMko4ODhNYjNBMVhSazFjY1JiZm5UOD0iLCJtYWluUm9sZSI6IkZ1bmNpb25hcmlvIiwiZXhwIjoxNjczNTAyMDMzfQ.tJ5-qRZGnm5jhfeFtPFwsp5lZGmdL9suVPrddDDm8fM
 
 ###
 GET http://localhost:8080/gobs/api/teachers/crisgama

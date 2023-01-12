@@ -54,12 +54,61 @@
 			</b-col>
 		</b-row>
 	</b-container>
-	<b-container v-else-if="isFuncinario">
+	<b-container v-else-if="isFuncionario">
 		<h1 class="text-center mb-5">Dashboard</h1>
-		<h2 class="text-center mb-5">This is the funcionario dashboard</h2>
+		<b-row class="flex-fill text-center">
+			<!--<b-col class="h-100">
+				<b-row class="border border-primary">
+					<h4 class="my-2 w-100">Apólices</h4>
+					<b-table
+						:busy="apolicesLoading"
+						:fields="apolicesFields"
+						:items="apolices"
+						bordered
+						class="m-0"
+						empty-text="Não existem apolices registadas."
+						hover
+						show-empty
+						thead-class="d-none">
+						<template #table-busy>
+							<div class="text-center text-primary my-2">
+								<b-spinner class="align-middle"></b-spinner>
+								<strong>Carregando...</strong>
+							</div>
+						</template>
+					</b-table>
+				</b-row>
+				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
+			</b-col>-->
+			<b-col class="h-100">
+				<b-row class="border border-primary">
+					<h4 class="my-2 w-100">Ocorrências</h4>
+					<b-table
+						:busy="ocorrenciasLoading"
+						:fields="ocorrenciasFields"
+						:items="ocorrencias"
+						bordered
+						class="m-0"
+						empty-text="Não existem ocorrências registadas."
+						hover
+						show-empty
+						thead-class="d-none">
+						<template #table-busy>
+							<div class="text-center text-primary my-2">
+								<b-spinner class="align-middle"></b-spinner>
+								<strong>Carregando...</strong>
+							</div>
+						</template>
+					</b-table>
+				</b-row>
+				<b-row class="d-flex justify-content-around">
+					<b-button class="mt-2 mb-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
+				</b-row>
+			</b-col>
+		</b-row>
 	</b-container>
 	<b-container v-else>
-		<h1 class="text-center mb-5">Algo correu mal, usário inválido.</h1>
+		<h1 class="text-center mb-5">Algo correu mal, utilizador inválido.</h1>
 		<h2 class="text-center mb-5">Por favor contacte-nos.</h2>
 	</b-container>
 </template>
@@ -70,7 +119,7 @@ export default {
 		isCliente() {
 			return this.$auth.user.roles.includes('Cliente');
 		},
-		isFuncinario() {
+		isFuncionario() {
 			return this.$auth.user.roles.includes('Funcionario');
 		}
 	},
@@ -102,12 +151,15 @@ export default {
 					formatter: 'formatDate'
 				}
 			],
-			ocorrenciasLoading: true
+			ocorrenciasLoading: true,
 		}
 	},
 	async fetch() {
 		if (this.isCliente)
 			await this.getClienteData();
+
+		if (this.isFuncionario)
+			await this.getFuncionarioData();
 	},
 	fetchOnServer: false,
 	methods: {
@@ -119,7 +171,7 @@ export default {
 				})
 				.catch(e => {
 					console.error(`Erro ao obter apolices: ${e}`)
-					this.$root.$bvToast.toast('Erro ao obter apolices.', {
+					this.$root.$bvToast.toast('Erro ao obter apólices.', {
 						solid: true,
 						title: 'Erro ao obter dados',
 						toaster: 'b-toaster-top-center',
@@ -127,14 +179,14 @@ export default {
 					});
 					//todo reload
 				});
-			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/recent?limit=5')
+			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/minhas/recent?limit=5')
 				.then(data => {
 					this.ocorrencias = data
 					this.ocorrenciasLoading = false;
 				})
 				.catch(e => {
 					console.error(`Erro ao obter ocorrencias: ${e}`)
-					this.$root.$bvToast.toast('Erro ao obter ocorrencias.', {
+					this.$root.$bvToast.toast('Erro ao obter ocorrências.', {
 						solid: true,
 						title: 'Erro ao obter dados',
 						toaster: 'b-toaster-top-center',
@@ -144,6 +196,23 @@ export default {
 				});
 
 			await Promise.all([requestApolices, requestOcorrencias]);
+		},
+		async getFuncionarioData() {
+			await this.$axios.$get('/api/ocorrencias/recent?limit=5')
+				.then(data => {
+					this.ocorrencias = data
+					this.ocorrenciasLoading = false;
+				})
+				.catch(e => {
+					console.error(`Erro ao obter ocorrencias: ${e}`)
+					this.$root.$bvToast.toast('Erro ao obter ocorrências.', {
+						solid: true,
+						title: 'Erro ao obter dados',
+						toaster: 'b-toaster-top-center',
+						variant: 'danger'
+					});
+					//todo reload
+				});
 		},
 		formatDate(value) {
 			return new Date(value.replace('[UTC]', '')).toLocaleString();

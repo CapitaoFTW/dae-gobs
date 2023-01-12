@@ -20,8 +20,16 @@ import java.util.LinkedHashSet;
                 query = "SELECT COUNT(o.id) FROM Ocorrencia o WHERE o.id = :id"
         ),
         @NamedQuery(
+                name = "getOcorrencias",
+                query = "SELECT o FROM Ocorrencia o"
+        ),
+        @NamedQuery(
                 name = "getOcorrenciasByCliente",
                 query = "SELECT o FROM Ocorrencia o WHERE o.clienteId = :clienteId"
+        ),
+        @NamedQuery(
+                name = "getOcorrenciasRecentes",
+                query = "SELECT o FROM Ocorrencia o order by o.atualizado desc"
         ),
         @NamedQuery(
                 name = "getOcorrenciaByClienteRecente",

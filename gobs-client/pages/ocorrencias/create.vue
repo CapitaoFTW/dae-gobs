@@ -16,10 +16,8 @@
 						required
 						text-field="bem"
 						value-field="id">
-						<template #first>
 							<b-form-select-option :value="null" disabled>-- Selecione a apólice --
 							</b-form-select-option>
-						</template>
 					</b-form-select>
 				</b-form-group>
 				<template #overlay>
@@ -58,7 +56,7 @@
 					show-progress
 					striped></b-progress>
 			</b-form-group>
-			<b-button to="/">Return</b-button>
+			<b-button @click=$router.back()>Return</b-button>
 			<b-button type="reset" variant="danger">Limpar</b-button>
 			<b-button :disabled="!isFormValid || creating" type="submit" variant="success" @click.prevent="create">
 				Registar Ocorrência
