@@ -1,8 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 public class Ficheiro extends EntityId<Integer> {
@@ -17,6 +20,8 @@ public class Ficheiro extends EntityId<Integer> {
     @ManyToOne
     @NotNull
     private Ocorrencia ocorrencia;
+    @CreationTimestamp
+    private Date criado;
 
     public Ficheiro() {
     }
@@ -62,5 +67,13 @@ public class Ficheiro extends EntityId<Integer> {
 
     public void setOcorrencia(Ocorrencia ocorrencia) {
         this.ocorrencia = ocorrencia;
+    }
+
+    public Date getCriado() {
+        return criado;
+    }
+
+    public void setCriado(Date criado) {
+        this.criado = criado;
     }
 }

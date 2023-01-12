@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.CreateOcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
@@ -11,7 +12,11 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import java.util.*;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +53,7 @@ public class ConfigBean {
         Collection<Apolice> apolices = apoliceBean.getApolices();
         Collection<Cliente> clientes = clienteBean.getClientes();
         Collection<Seguradora> seguradoras = seguradoraBean.getSeguradoras();
-        Map<Integer, Collection<Integer>> clienteApolices = new LinkedHashMap<>();
+        MultivaluedMap<Integer, Integer> clienteApolices = new MultivaluedHashMap<>();
 
         for (Apolice apolice : apolices) {
             boolean needSave = false;
@@ -84,7 +89,8 @@ public class ConfigBean {
 
             Integer apoliceId = randomValue(ap);
             EstadoOcorrencia estadoOcorrencia = estados[random.nextInt(estados.length)];
-            ocorrenciaBean.create(new Ocorrencia(clienteId, apoliceId, estadoOcorrencia, "Exemplo de descricao para uma ocorrencia"));
+            Ocorrencia ocorrencia = ocorrenciaBean.create(clienteId, new CreateOcorrenciaDTO(apoliceId, "Exemplo de descricao para uma ocorrencia"));
+            ocorrencia.setEstadoOcorrencia(estadoOcorrencia);
         }
     }
 

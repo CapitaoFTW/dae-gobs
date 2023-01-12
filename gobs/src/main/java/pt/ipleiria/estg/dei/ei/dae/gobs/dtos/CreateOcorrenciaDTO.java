@@ -3,36 +3,25 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-public class CreateOcorrenciaDTO extends BaseOcorrenciaDTO {
-    @NotNull
-    private Integer clienteId;
+
+public class CreateOcorrenciaDTO {
     @NotNull
     private Integer apoliceId;
+
+    @NotBlank
+    @Min(15)
+    private String descricao;
 
     public CreateOcorrenciaDTO() {
     }
 
-    public CreateOcorrenciaDTO(Integer clienteId, Integer apoliceId, Integer estado, String descricaoDeOcorrencia) {
-        super(estado, descricaoDeOcorrencia);
-        this.clienteId = clienteId;
+    public CreateOcorrenciaDTO(Integer apoliceId, String descricao) {
         this.apoliceId = apoliceId;
-    }
-
-    public CreateOcorrenciaDTO(Integer clienteId, Integer apoliceId, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia) {
-        super(estadoOcorrencia, descricaoDeOcorrencia);
-        this.clienteId = clienteId;
-        this.apoliceId = apoliceId;
-    }
-
-    public Integer getClienteId() {
-        return clienteId;
-    }
-
-    public void setClienteId(Integer clienteId) {
-        this.clienteId = clienteId;
+        this.descricao = descricao;
     }
 
     public Integer getApoliceId() {
@@ -43,12 +32,20 @@ public class CreateOcorrenciaDTO extends BaseOcorrenciaDTO {
         this.apoliceId = apoliceId;
     }
 
-    public Ocorrencia toEntity() {
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public Ocorrencia toEntity(Integer clienteId) {
         return new Ocorrencia(
-                this.getClienteId(),
+                clienteId,
                 this.getApoliceId(),
-                EstadoOcorrencia.fromValue(this.getEstado()),
-                this.getDescricaoDeOcorrencia()
+                EstadoOcorrencia.Criada,
+                this.getDescricao()
         );
     }
 }

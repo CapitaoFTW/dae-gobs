@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.ExternalService;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.FuncionarioInterface;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.FuncionarioProxy;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Funcionario;

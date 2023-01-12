@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.ClienteInterface;
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.ExternalService;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.ClienteProxy;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 

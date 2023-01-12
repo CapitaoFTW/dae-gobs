@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
+package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.ResteasyProxy;
 

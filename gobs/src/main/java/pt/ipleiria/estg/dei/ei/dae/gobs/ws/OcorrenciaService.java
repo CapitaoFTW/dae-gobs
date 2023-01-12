@@ -1,9 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.CreateOcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.FicheiroBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.OcorrenciaBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
@@ -11,14 +15,15 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 
@@ -30,6 +35,8 @@ import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 public class OcorrenciaService {
     @EJB
     private ApoliceBean apoliceBean;
+    @EJB
+    private FicheiroBean ficheiroBean;
     @EJB
     private OcorrenciaBean ocorrenciaBean;
     @Context
@@ -57,11 +64,36 @@ public class OcorrenciaService {
         return Response.ok(EstadoOcorrencia.values()).build();
     }
 
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @POST
     @Path("/")
-    public Response create(@Valid CreateOcorrenciaDTO ocorrenciaDTO) {
+    public Response create(MultipartFormDataInput input) throws IOException {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
-        Ocorrencia ocorrencia = ocorrenciaBean.create(id, ocorrenciaDTO);
+
+        Map<String, List<InputPart>> form = input.getFormDataMap();
+
+        Integer apoliceId = form.get("apoliceId").get(0).getBody(Integer.class, Integer.TYPE);
+        String descricao = form.get("descricao").get(0).getBodyAsString();
+        CreateOcorrenciaDTO createOcorrenciaDTO = new CreateOcorrenciaDTO(apoliceId, descricao);
+        Ocorrencia ocorrencia = ocorrenciaBean.create(id, createOcorrenciaDTO);
+
+        List<InputPart> files = form.getOrDefault("file", new ArrayList<>());
+        files.addAll(form.getOrDefault("files", new ArrayList<>()));
+
+        for (InputPart part : files) {
+            String filename = getFilename(part.getHeaders());
+            java.nio.file.Path dirPath = Paths.get(System.getProperty("user.home"), "uploads", id.toString());
+            mkdirIfNotExists(dirPath.toFile());
+
+            File file = Paths.get(dirPath.toString(), filename).toFile();
+            try (InputStream fileStream = part.getBody(InputStream.class, null)) {
+                byte[] bytes = IOUtils.toByteArray(fileStream);
+                writeFile(bytes, file);
+            }
+
+            ficheiroBean.create(ocorrencia, filename, file.getPath());
+        }
+
         URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrencia.getId().toString()).build();
         return Response.created(uri).entity(ocorrenciaDTO(ocorrencia)).build();
     }
@@ -92,5 +124,35 @@ public class OcorrenciaService {
         Apolice apolice = apoliceBean.getApolice(apoliceId);
         dto.setApolice(apolice.toDto());
         return dto;
+    }
+
+    private String getFilename(MultivaluedMap<String, String> headers) {
+        String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
+        for (String filename : contentDisposition) {
+            if (filename.trim().startsWith("filename")) {
+                String[] name = filename.split("=");
+                return name[1].trim().replaceAll("\"", "");
+            }
+        }
+        return "unknown";
+    }
+
+    private void mkdirIfNotExists(File file) {
+        if (file.exists())
+            return;
+
+        //noinspection ResultOfMethodCallIgnored
+        file.mkdirs();
+    }
+
+    private void writeFile(byte[] content, File file) throws IOException {
+        if (!file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.createNewFile();
+        }
+
+        try (FileOutputStream fop = new FileOutputStream(file)) {
+            fop.write(content);
+        }
     }
 }

@@ -17,22 +17,16 @@ import java.util.stream.Collectors;
 @Stateless
 public class OcorrenciaBean {
     @EJB
-    private ClienteBean clienteBean;
-    @EJB
     private ApoliceBean apoliceBean;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Ocorrencia create(CreateOcorrenciaDTO ocorrenciaDTO) {
+    public Ocorrencia create(Integer clienteId, CreateOcorrenciaDTO ocorrenciaDTO) {
         Integer apoliceId = ocorrenciaDTO.getApoliceId();
         if (apoliceBean.getApolice(apoliceId) == null)
             throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
-        Integer clienteId = ocorrenciaDTO.getClienteId();
-        if (clienteBean.getCliente(clienteId) == null)
-            throw new GobsEntityNotFoundException(clienteId, "Falha ao registar ocorrencia, cliente não existe.");
-
-        Ocorrencia ocorrencia = ocorrenciaDTO.toEntity();
+        Ocorrencia ocorrencia = ocorrenciaDTO.toEntity(clienteId);
         try {
             entityManager.persist(ocorrencia);
         } catch (ConstraintViolationException ex) {

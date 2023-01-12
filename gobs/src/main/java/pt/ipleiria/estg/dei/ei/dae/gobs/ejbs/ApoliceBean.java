@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.ApoliceInterface;
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.ExternalService;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api.OrderEnum;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.ApoliceProxy;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;

@@ -1,23 +1,32 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
-
 import java.util.Date;
 
 @SuppressWarnings("unused")
-public class OcorrenciaDTO extends BaseOcorrenciaDTO {
+public class OcorrenciaDTO {
     private Integer id;
-    private ClienteDTO cliente;
     private ApoliceDTO apolice;
+    private Integer estado;
+    private String descricao;
     private Date atualizado;
     private Date criado;
 
     public OcorrenciaDTO() {
     }
 
-    public OcorrenciaDTO(Integer id, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia, Date atualizado, Date criado) {
-        super(estadoOcorrencia, descricaoDeOcorrencia);
+    public OcorrenciaDTO(Integer id, Integer estado, String descricao, Date atualizado, Date criado) {
         this.id = id;
+        this.estado = estado;
+        this.descricao = descricao;
+        this.atualizado = atualizado;
+        this.criado = criado;
+    }
+
+    public OcorrenciaDTO(Integer id, ApoliceDTO apolice, Integer estado, String descricao, Date atualizado, Date criado) {
+        this.id = id;
+        this.apolice = apolice;
+        this.estado = estado;
+        this.descricao = descricao;
         this.atualizado = atualizado;
         this.criado = criado;
     }
@@ -30,20 +39,28 @@ public class OcorrenciaDTO extends BaseOcorrenciaDTO {
         this.id = id;
     }
 
-    public ClienteDTO getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(ClienteDTO cliente) {
-        this.cliente = cliente;
-    }
-
     public ApoliceDTO getApolice() {
         return apolice;
     }
 
     public void setApolice(ApoliceDTO apolice) {
         this.apolice = apolice;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public Date getAtualizado() {

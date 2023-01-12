@@ -34,6 +34,7 @@ public class Ocorrencia extends EntityId<Integer> {
     private Integer id;
     @NotNull
     private Integer clienteId;
+    @NotNull
     private Integer apoliceId;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
@@ -121,19 +122,23 @@ public class Ocorrencia extends EntityId<Integer> {
         this.criado = criado;
     }
 
-    @JsonbTransient//todo
+    @JsonbTransient
     public Collection<Ficheiro> getFicheiros() {
         return ficheiros;
     }
 
-    public void setFicheiros(Collection<Ficheiro> ficheiros) {
-        this.ficheiros = ficheiros;
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean adicionarFicheiro(Ficheiro ficheiro) {
+        if (ficheiros.contains(ficheiro))
+            return false;
+
+        return ficheiros.add(ficheiro);
     }
 
     public OcorrenciaDTO toDTO() {
         return new OcorrenciaDTO(
                 this.getId(),
-                this.getEstadoOcorrencia(),
+                this.getEstadoOcorrencia().getValue(),
                 this.getDescricaoDeOcorrencia(),
                 this.getAtualizado(),
                 this.getCriado()
