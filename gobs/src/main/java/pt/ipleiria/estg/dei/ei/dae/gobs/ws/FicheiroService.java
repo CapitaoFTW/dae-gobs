@@ -21,7 +21,7 @@ import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("ficheiros")
 @Produces({MediaType.APPLICATION_JSON})
-@RolesAllowed({CLIENTE_ROLE})
+@RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
 public class FicheiroService {
     @EJB
     private FicheiroBean ficheiroBean;
@@ -31,7 +31,6 @@ public class FicheiroService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getFicheiro(@PathParam("id") Long id) {
         Ficheiro ficheiro = ficheiroBean.find(id);
         if (ficheiro == null)

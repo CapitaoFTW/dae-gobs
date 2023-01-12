@@ -32,7 +32,7 @@ import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("ocorrencias")
 @Produces({MediaType.APPLICATION_JSON})
-@RolesAllowed({CLIENTE_ROLE})
+@RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
 public class OcorrenciaService {
     @EJB
     private ApoliceBean apoliceBean;
@@ -45,7 +45,6 @@ public class OcorrenciaService {
 
     @GET
     @Path("/")
-    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getOcorrencias() {
         Collection<Ocorrencia> ocorrencias;
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
@@ -60,7 +59,6 @@ public class OcorrenciaService {
 
     @GET
     @Path("/recent")
-    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getOcorrenciasRecentes(@DefaultValue("50") @QueryParam("limit") Integer limit) {
         Collection<Ocorrencia> ocorrencias;
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
@@ -76,7 +74,6 @@ public class OcorrenciaService {
 
     @GET
     @Path("/estados")
-    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getEstados() {
         return Response.ok(EstadoOcorrencia.values()).build();
     }
@@ -84,6 +81,7 @@ public class OcorrenciaService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @POST
     @Path("/")
+    @RolesAllowed({CLIENTE_ROLE})
     public Response create(MultipartFormDataInput input) throws IOException {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
 
