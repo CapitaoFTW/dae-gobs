@@ -68,7 +68,7 @@ public class OcorrenciaService {
             ocorrencias = ocorrenciaBean.findByClienteRecente(id, limit);
         }
         else {
-            ocorrencias = ocorrenciaBean.getOcorrencias();
+            ocorrencias = ocorrenciaBean.getOcorrenciasRecentes(limit);
         }
 
         return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
