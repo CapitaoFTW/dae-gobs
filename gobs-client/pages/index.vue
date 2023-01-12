@@ -3,8 +3,8 @@
 		<h1 class="text-center mb-5">Dashboard</h1>
 		<b-row class="row-cols-2 flex-fill text-center">
 			<b-col class="h-100">
-				<div class="border border-primary">
-					<h4 class="my-2">Apólices</h4>
+				<b-row class="border border-primary">
+					<h4 class="my-2 w-100">Apólices</h4>
 					<b-table
 						:busy="apolicesLoading"
 						:fields="apolicesFields"
@@ -22,12 +22,12 @@
 							</div>
 						</template>
 					</b-table>
-				</div>
+				</b-row>
 				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
 			</b-col>
 			<b-col class="h-100">
 				<b-row class="border border-primary">
-					<h4 class="my-2">Ocorrências</h4>
+					<h4 class="my-2 w-100">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
 						:fields="ocorrenciasFields"

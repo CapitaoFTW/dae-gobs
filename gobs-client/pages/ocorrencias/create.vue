@@ -152,11 +152,9 @@ export default {
 				headers: {
 					"Content-Type": "multipart/form-data"
 				},
-				onUploadProgress: (event) => {
-					console.log(event)
-				}
+				onUploadProgress: (event) => this.uploadProgress = Math.round(100 * event.loaded / event.total)
 			})
-				.then(() => this.ocorrenciaCriada())
+				.then(data => this.ocorrenciaCriada(data))
 				.catch(error => {
 					this.creating = false
 					let msg
@@ -174,16 +172,15 @@ export default {
 					})
 				})
 		},
-		ocorrenciaCriada() {
+		ocorrenciaCriada(data) {
 			this.creating = false
-			//todo finish and upload files
-			/*console.info(`${this.entityNameCapitalize} created: ${this.toCreateName} | Result: '${JSON.stringify(data)}'`)
-			this.$root.$bvToast.toast(`${this.entityNameCapitalize} created with success.`, {
+			console.info(`Nova ocorrência criada. | Result: '${JSON.stringify(data)}'`)
+			this.$root.$bvToast.toast('Nova ocorrência criada com sucesso.', {
 				solid: true,
-				title: `${this.entityNameCapitalize} created`,
+				title: `Ocorrência criada`,
 				variant: 'success'
-			})*/
-			this.$router.push('/ocorrencias')
+			})
+			this.$router.push('/ocorrencias')//todo change
 		}
 	}
 }
