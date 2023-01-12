@@ -1,12 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
+import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.CreateOcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
-import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ClienteBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.OcorrenciaBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
@@ -32,8 +31,6 @@ public class OcorrenciaService {
     @EJB
     private ApoliceBean apoliceBean;
     @EJB
-    private ClienteBean clienteBean;
-    @EJB
     private OcorrenciaBean ocorrenciaBean;
     @Context
     private SecurityContext securityContext;
@@ -43,7 +40,7 @@ public class OcorrenciaService {
     public Response getOcorrenciasByCliente() {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByCliente(id);
-        return Response.ok(ocorrenciasToDTOs(ocorrencias, false)).build();
+        return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
     }
 
     @GET
@@ -51,21 +48,27 @@ public class OcorrenciaService {
     public Response getOcorrenciaByClienteRecente(@DefaultValue("50") @QueryParam("limit") Integer limit) {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByClienteRecente(id, limit);
-        return Response.ok(ocorrenciasToDTOs(ocorrencias, false)).build();
+        return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
+    }
+
+    @GET
+    @Path("/estados")
+    public Response getEstados() {
+        return Response.ok(EstadoOcorrencia.values()).build();
     }
 
     @POST
     @Path("/")
     public Response create(@Valid CreateOcorrenciaDTO ocorrenciaDTO) {
-        Ocorrencia ocorrencia = ocorrenciaBean.create(ocorrenciaDTO);
+        Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
+        Ocorrencia ocorrencia = ocorrenciaBean.create(id, ocorrenciaDTO);
         URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrencia.getId().toString()).build();
-        return Response.created(uri).entity(ocorrenciaDTO(ocorrencia, false)).build();
+        return Response.created(uri).entity(ocorrenciaDTO(ocorrencia)).build();
     }
 
-    private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias, boolean needCliente) {
+    private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias) {
         Collection<OcorrenciaDTO> ocorrenciaDTOs = new LinkedList<>();
         Map<Integer, Apolice> apolices = new LinkedHashMap<>();
-        Map<Integer, Cliente> clientes = new LinkedHashMap<>();
 
         for (Ocorrencia ocorrencia : ocorrencias) {
             OcorrenciaDTO dto = ocorrencia.toDTO();
@@ -78,35 +81,16 @@ public class OcorrenciaService {
                 apolices.put(apoliceId, apolice);
             }
             dto.setApolice(apolice.toDto());
-
-            //noinspection DuplicatedCode
-            if (needCliente) {
-                Integer clienteId = ocorrencia.getClienteId();
-                Cliente cliente = clientes.get(clienteId);
-                if (cliente == null) {
-                    cliente = clienteBean.getCliente(clienteId);
-                    clientes.put(clienteId, cliente);
-                }
-                dto.setCliente(cliente.toDto());
-            }
         }
 
         return ocorrenciaDTOs;
     }
 
-    private OcorrenciaDTO ocorrenciaDTO(Ocorrencia ocorrencia, boolean needCliente) {
+    private OcorrenciaDTO ocorrenciaDTO(Ocorrencia ocorrencia) {
         OcorrenciaDTO dto = ocorrencia.toDTO();
         Integer apoliceId = ocorrencia.getApoliceId();
         Apolice apolice = apoliceBean.getApolice(apoliceId);
         dto.setApolice(apolice.toDto());
-
-        //noinspection DuplicatedCode
-        if (needCliente) {
-            Integer clienteId = ocorrencia.getClienteId();
-            Cliente cliente = clienteBean.getCliente(clienteId);
-            dto.setCliente(cliente.toDto());
-        }
-
         return dto;
     }
 }
