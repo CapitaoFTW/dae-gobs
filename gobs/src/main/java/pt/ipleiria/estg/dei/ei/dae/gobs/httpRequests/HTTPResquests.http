@@ -1,35 +1,8 @@
-##### Students
+### Seguradoras
 GET http://localhost:8080/gobs/api/seguradoras
 Accept: application/json
 
-###
-GET http://localhost:8080/gobs/api/peritos
-Accept: application/json
-
-###
-GET http://localhost:8080/gobs/api/students/capitao_22
-Accept: application/json
-
-###
-DELETE http://localhost:8080/gobs/api/students/capitao_22
-Accept: application/json
-
-###
-PUT http://localhost:8080/gobs/api/students
-Content-Type: application/json
-
-{
-  "username": "capitao_22",
-  "password": "arrozdoce2420",
-  "name": "Rodrigo Capitão",
-  "email": "rodrigofilipecapitao@gmail.com"
-}
-
-###
-POST http://localhost:8080/gobs/api/students
-Content-Type: application/json
-
-### REQUEST JWT TOKEN
+### Login with known credentials into funcionario
 POST http://localhost:8080/gobs/api/auth/login-employee
 Content-Type: application/json
 Accept: application/json
@@ -39,17 +12,20 @@ Accept: application/json
   "password": "JWZhM_vkaZ_NeBq"
 }
 
-### GET ALL STUDENTS
-GET http://localhost:8080/gobs/api/students
-Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjcmlzZ2FtYSIsImlhdCI6MTY2OTEzMTMyNCwiZXhwIjoxNjY5MTM0OTI0fQ.rk_hPT4gCgg38foOdjAlNmX4DC8O3mi3SvbLAacjiZ4
+> {%
+    client.test('Login with known credentials into funcionario', function () {
+        const status = response.status;
+        client.assert(status === 200, `Response status is not 200 | Received ${status}`);
+        const type = response.contentType.mimeType;
+        client.assert(type === 'application/json', `Expected 'application/json' but received '${type}'`);
+        client.global.set("auth_token", String(response.body));
+    });
+%}
 
-
-
-##### Teachers
+### All ocorrencias
 GET http://localhost:8080/gobs/api/ocorrencias
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaXNzIjoiMDFIU2loTU15MTFDYzZ0TWVMMlJqMko4ODhNYjNBMVhSazFjY1JiZm5UOD0iLCJtYWluUm9sZSI6IkZ1bmNpb25hcmlvIiwiZXhwIjoxNjczNTAyMDMzfQ.tJ5-qRZGnm5jhfeFtPFwsp5lZGmdL9suVPrddDDm8fM
+Authorization: Bearer {{auth_token}}
 
 ###
 GET http://localhost:8080/gobs/api/teachers/crisgama

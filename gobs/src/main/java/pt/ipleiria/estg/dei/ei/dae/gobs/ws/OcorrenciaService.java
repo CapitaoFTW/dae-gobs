@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
@@ -43,39 +44,39 @@ public class OcorrenciaService {
     private SecurityContext securityContext;
 
     @GET
-    @RolesAllowed({"Funcionario"})
     @Path("/")
+    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getOcorrencias() {
-        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.getOcorrencias();
+        Collection<Ocorrencia> ocorrencias;
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
+            ocorrencias = ocorrenciaBean.findByCliente(id);
+        }
+        else {
+            ocorrencias = ocorrenciaBean.getOcorrencias();
+        }
         return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
     }
 
     @GET
-    @Path("/minhas")
-    public Response getOcorrenciasByCliente() {
-        Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
-        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByCliente(id);
-        return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
-    }
-
-    @GET
-    @RolesAllowed({"Funcionario"})
     @Path("/recent")
+    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getOcorrenciasRecentes(@DefaultValue("50") @QueryParam("limit") Integer limit) {
-        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.getOcorrenciasRecentes(limit);
-        return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
-    }
+        Collection<Ocorrencia> ocorrencias;
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
+            ocorrencias = ocorrenciaBean.findByClienteRecente(id, limit);
+        }
+        else {
+            ocorrencias = ocorrenciaBean.getOcorrencias();
+        }
 
-    @GET
-    @Path("/minhas/recent")
-    public Response getOcorrenciaByClienteRecente(@DefaultValue("50") @QueryParam("limit") Integer limit) {
-        Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
-        Collection<Ocorrencia> ocorrencias = ocorrenciaBean.findByClienteRecente(id, limit);
         return Response.ok(ocorrenciasToDTOs(ocorrencias)).build();
     }
 
     @GET
     @Path("/estados")
+    @RolesAllowed({FUNCIONARIO_ROLE})
     public Response getEstados() {
         return Response.ok(EstadoOcorrencia.values()).build();
     }
