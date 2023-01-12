@@ -1,206 +1,189 @@
 <template>
-	<b-container class="w-50 py-3">
-		<b-row class="justify-content-center">
-			<h2>Registar Nova Ocorrência</h2>
-		</b-row>
-		<form :disabled="!isFormValid" @submit.prevent="create">
-			<b-form-group id="id" label="Id" label-for="id"
-						  :invalid-feedback="invalidIdFeedback"
-						  :state="isIdValid">
-				<b-input v-model.trim="id" :state="isIdValid" trim/>
-			</b-form-group>
-			<b-form-group id="estado" label="Estado" label-for="estado"
-						  :invalid-feedback="invalidEstadoFeedback"
-						  :state="isEstadoValid">
-				<b-input v-model.trim="estado" :state="isEstadoValid"/>
-			</b-form-group>
-			<b-form-group id="descricao" label="Descricao" label-for="descricao"
-						  :invalid-feedback="invalidDescricaoFeedback"
-						  :state="isDescricaoValid">
-				<b-textarea v-model.trim="descricao" :state="isDescricaoValid"/>
-			</b-form-group>
-			<b-form-group id="atualizado" label="Atualizado" label-for="atualizado"
-						  :invalid-feedback="invalidAtualizadoFeedback"
-						  :state="isAtualizadoValid">
-				<b-input v-model.trim="atualizado" :state="isAtualizadoValid"/>
-			</b-form-group>
-			<b-form-group id="criado" label="Criado" label-for="criado"
-						  :invalid-feedback="invalidCriadoFeedback"
-						  :state="isCriadoValid">
-				<b-input v-model.trim="criado" type="radio" :state="isCriadoValid"/>
-			</b-form-group>
-			<b-form-group label="Apolice" label-for="apoliceId"
-						  :state="isApoliceValid">
-				<b-select
-					v-model="apoliceId"
-					:options="apolices"
+	<b-container class="d-flex align-items-center flex-column h-75 mt-3">
+		<h2>Registar uma nova ocorrência</h2>
+		<b-form :validated="isFormValid" class="mt-5" @submit.prevent="create">
+			<b-overlay :show="$fetchState.pending" spinner-variant="primary">
+				<b-form-group
+					:invalid-feedback="invalidApoliceFeedback"
 					:state="isApoliceValid"
+					label="Apolice:"
+					label-for="input-apolice">
+					<b-form-select
+						id="input-apolice"
+						v-model="apoliceId"
+						:options="apolices"
+						:state="isApoliceValid"
+						required
+						text-field="bem"
+						value-field="id">
+						<template #first>
+							<b-form-select-option :value="null" disabled>-- Selecione a apólice --
+							</b-form-select-option>
+						</template>
+					</b-form-select>
+				</b-form-group>
+				<template #overlay>
+					<div class="text-center text-primary my-2">
+						<b-spinner class="align-middle"></b-spinner>
+						<strong>Carregando...</strong>
+					</div>
+				</template>
+			</b-overlay>
+			<b-form-group
+				:invalid-feedback="invalidDescricaoFeedback"
+				:state="isDescricaoValid"
+				label="Descricao:"
+				label-for="input-descricao">
+				<b-form-textarea
+					id="input-descricao"
+					v-model="descricao"
+					:state="isDescricaoValid"
 					required
-					value-field="id"
-					text-field="name"
-				>
-					<template v-slot:first>
-						<option :value="null" disabled>-- Seleciona a Apólice --</option>
-					</template>
-				</b-select>
+					rows="5"/>
 			</b-form-group>
-			<p v-show="errorMsg" class="text-danger">
-				{{ errorMsg }}
-			</p>
-			<div class="d-flex justify-content-between">
-				<b-button to="/">Return</b-button>
-				<button class="btn btn-success" @click.prevent="create">Registar Ocorrência</button>
-				<button class="btn btn-danger" type="reset" @click=reset>Limpar</button>
-			</div>
-		</form>
+			<b-form-group
+				label="Ficheiros (opcional):"
+				label-for="input-files">
+				<b-form-file
+					id="input-files"
+					v-model="ficheiros"
+					drop-placeholder="Largar os ficheiros aqui."
+					multiple
+					no-traverse
+					placeholder="Nenhum ficheiro"/>
+				<b-progress
+					:value="uploadProgress"
+					animated
+					class="mt-3"
+					show-progress
+					striped></b-progress>
+			</b-form-group>
+			<b-button to="/">Return</b-button>
+			<b-button type="reset" variant="danger">Limpar</b-button>
+			<b-button :disabled="!isFormValid || creating" type="submit" variant="success" @click.prevent="create">
+				Registar Ocorrência
+			</b-button>
+		</b-form>
 	</b-container>
 </template>
+<!--suppress JSCheckFunctionSignatures -->
 <script>
 export default {
-	data() {
-		return {
-			id: null,
-			estado: null,
-			descricao: null,
-			atualizado: null,
-			criado: null,
-			apoliceId: null,
-			apolices: [],
-			errorMsg: false
-		}
-	},
-
 	computed: {
-		invalidIdFeedback() {
-			if (!this.id) {
+		invalidApoliceFeedback() {
+			const apoliceId = this.apoliceId
+			if (!apoliceId) {
 				return null
+			}
+
+			if (!this.apolices.some(apolice => apolice.id === apoliceId)) {
+				return 'The course does not exists.'
 			}
 
 			return ''
 		},
-
-		isIdValid() {
-			if (this.invalidIdFeedback === null) {
+		isApoliceValid() {
+			if (this.invalidApoliceFeedback == null) {
 				return null
 			}
-			return this.invalidIdFeedback === ''
-		},
 
-		invalidEstadoFeedback() {
-			if (!this.estado) {
-				return null
-			}
-			let estadoLen = this.estado.length
-			if (estadoLen < 10) {
-				return 'O estado tem de ter mais de 10 caracteres.'
-			}
-			return ''
-		},
-
-		isEstadoValid() {
-			if (this.invalidEstadoFeedback === null) {
-				return null
-			}
-			return this.invalidEstadoFeedback === ''
+			return this.invalidApoliceFeedback === ''
 		},
 
 		invalidDescricaoFeedback() {
-			if (!this.descricao) {
+			const descricao = this.descricao
+			if (!descricao) {
 				return null
 			}
-			let descricaoLen = this.descricao.length
-			if (descricaoLen < 10) {
-				return 'A descrição tem de ter mais de 10 caracteres.'
+
+			let descricaoLen = descricao.length
+			if (descricaoLen < 15) {
+				return 'A descrição tem de ter pelo menos 15 caracteres.'
 			}
+
 			return ''
 		},
-
 		isDescricaoValid() {
 			if (this.invalidDescricaoFeedback === null) {
 				return null
 			}
+
 			return this.invalidDescricaoFeedback === ''
 		},
-
-		invalidAtualizadoFeedback() {
-			if (!this.atualizado) {
-				return null
-			}
-			return ''
-		},
-
-		isAtualizadoValid() {
-			if (this.invalidAtualizadoFeedback === null) {
-				return null
-			}
-			return this.invalidAtualizadoFeedback === ''
-		},
-
-		invalidCriadoFeedback() {
-			if (!this.criado) {
-				return null
-			}
-			return ''
-		},
-
-		isCriadoValid() {
-			if (this.invalidCriadoFeedback === null) {
-				return null
-			}
-			return this.invalidCriadoFeedback === ''
-		},
-
-		isApoliceValid() {
-			if (!this.apoliceId) {
-				return null;
-			}
-			return this.apolices.some((apolice) => this.apoliceId === apolice.id);
-		},
-
 		isFormValid() {
-			if (!this.isIdValid) {
-				return false
-			}
-			if (!this.isEstadoValid) {
-				return false
-			}
-			if (!this.isDescricaoValid) {
-				return false
-			}
-			if (!this.isAtualizadoValid) {
-				return false
-			}
-			if (!this.isCriadoValid) {
-				return false
-			}
-			if (!this.isApoliceValid) {
-				return false;
-			}
-			return true
+			return this.isApoliceValid && this.isDescricaoValid;
 		}
 	},
-
+	data() {
+		return {
+			apolices: [],
+			apoliceId: null,
+			creating: false,
+			descricao: null,
+			ficheiros: [],
+			uploadProgress: 0
+		}
+	},
+	async fetch() {
+		await this.$axios.$get('/api/apolices')
+			.then(data => this.apolices = data)
+			.catch(e => {
+				console.error(`Erro ao obter apolices: ${e}`)
+				this.$root.$bvToast.toast('Erro ao obter apolices.', {
+					solid: true,
+					title: 'Erro ao obter dados',
+					toaster: 'b-toaster-top-center',
+					variant: 'danger'
+				});
+				this.$router.push('/')
+			});
+	},
+	fetchOnServer: false,
 	methods: {
-		reset() {
-			this.errorMsg = false
-		},
-
 		create() {
-			this.$axios.$post('/api/ocorrencias', {
-				id: this.id,
-				estado: this.estado,
-				descricao: this.descricao,
-				atualizado: this.atualizado,
-				criado: this.criado,
-				apoliceId: this.apoliceId,
-			})
-				.then(() => {
-					this.$router.push('/ocorrencias')
-				})
+			this.creating = true
 
+			const formData = new FormData()
+			formData.append("apoliceId", this.apoliceId);
+			formData.append("descricao", this.descricao);
+			this.ficheiros.forEach(file => formData.append("files", file));
+
+			this.$axios.$post('/api/ocorrencias', formData, {
+				headers: {
+					"Content-Type": "multipart/form-data"
+				},
+				onUploadProgress: (event) => {
+					console.log(event)
+				}
+			})
+				.then(() => this.ocorrenciaCriada())
 				.catch(error => {
-					this.errorMsg = error.response.data
+					this.creating = false
+					let msg
+					if (error.response && error.response.data)
+						msg = error.response.data
+					else
+						msg = error.message
+
+					console.error(`Erro ao criar apólice: ${msg}`)
+					this.$bvToast.toast(msg, {
+						solid: true,
+						title: `Erro ao criar apólice`,
+						toaster: 'b-toaster-top-center',
+						variant: 'danger'
+					})
 				})
+		},
+		ocorrenciaCriada() {
+			this.creating = false
+			//todo finish and upload files
+			/*console.info(`${this.entityNameCapitalize} created: ${this.toCreateName} | Result: '${JSON.stringify(data)}'`)
+			this.$root.$bvToast.toast(`${this.entityNameCapitalize} created with success.`, {
+				solid: true,
+				title: `${this.entityNameCapitalize} created`,
+				variant: 'success'
+			})*/
+			this.$router.push('/ocorrencias')
 		}
 	}
 }

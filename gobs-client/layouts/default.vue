@@ -1,7 +1,7 @@
 <template>
 	<div id="app" class="vh-100">
 		<b-navbar toggleable="lg">
-			<b-navbar-brand href="/" class="text-secondary">
+			<b-navbar-brand class="text-secondary" href="/">
 				Gestão de ocorrências em bens segurados (Gobs)
 			</b-navbar-brand>
 			<b-navbar-toggle target="nav-menu"/>

@@ -26,7 +26,7 @@
 				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
 			</b-col>
 			<b-col class="h-100">
-				<div class="border border-primary">
+				<b-row class="border border-primary">
 					<h4 class="my-2">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
@@ -45,9 +45,12 @@
 							</div>
 						</template>
 					</b-table>
-				</div>
-				<b-button class="mt-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
-				<b-button class="mt-2" to="/ocorrencias/create" variant="success">Registar nova ocorrência</b-button>
+				</b-row>
+				<b-row class="d-flex justify-content-around">
+					<b-button class="mt-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
+					<b-button class="mt-2" to="/ocorrencias/create" variant="success">Registar nova ocorrência
+					</b-button>
+				</b-row>
 			</b-col>
 		</b-row>
 	</b-container>
