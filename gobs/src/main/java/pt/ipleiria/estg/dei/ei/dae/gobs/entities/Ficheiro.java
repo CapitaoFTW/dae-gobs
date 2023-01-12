@@ -1,13 +1,17 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import org.hibernate.annotations.CreationTimestamp;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.FicheiroDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaMensagemDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Entity
+@SuppressWarnings("unused")
 public class Ficheiro extends EntityId<Integer> {
     @Id
     @GeneratedValue
@@ -16,20 +20,20 @@ public class Ficheiro extends EntityId<Integer> {
     private String filename;
     @NotBlank
     private String filepath;
-    @JoinColumn(name = "ocorrencia_id")
+    @JoinColumn(name = "mensagem_id")
     @ManyToOne
     @NotNull
-    private Ocorrencia ocorrencia;
+    private OcorrenciaMensagem mensagem;
     @CreationTimestamp
     private Date criado;
 
     public Ficheiro() {
     }
 
-    public Ficheiro(String filename, String filepath, Ocorrencia ocorrencia) {
+    public Ficheiro(String filename, String filepath, OcorrenciaMensagem mensagem) {
         this.filename = filename;
         this.filepath = filepath;
-        this.ocorrencia = ocorrencia;
+        this.mensagem = mensagem;
     }
 
     @Override
@@ -61,12 +65,12 @@ public class Ficheiro extends EntityId<Integer> {
         this.filepath = filepath;
     }
 
-    public Ocorrencia getOcorrencia() {
-        return ocorrencia;
+    public OcorrenciaMensagem getOcorrenciaMensagem() {
+        return mensagem;
     }
 
-    public void setOcorrencia(Ocorrencia ocorrencia) {
-        this.ocorrencia = ocorrencia;
+    public void setOcorrenciaMensagem(OcorrenciaMensagem mensagem) {
+        this.mensagem = mensagem;
     }
 
     public Date getCriado() {
@@ -75,5 +79,13 @@ public class Ficheiro extends EntityId<Integer> {
 
     public void setCriado(Date criado) {
         this.criado = criado;
+    }
+
+    public FicheiroDTO toDTO() {
+        return new FicheiroDTO(
+                this.getId(),
+                this.getFilename(),
+                this.getCriado()
+        );
     }
 }

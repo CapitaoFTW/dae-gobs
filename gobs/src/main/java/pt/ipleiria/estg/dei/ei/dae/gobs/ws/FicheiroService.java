@@ -36,9 +36,9 @@ public class FicheiroService {
         if (ficheiro == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter ficheiro, ficheiro não encontrado.");
 
-        if (!securityContext.isUserInRole(FUNCIONARIO_ROLE)) {
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
             Integer clientId = Integer.valueOf(securityContext.getUserPrincipal().getName());
-            if (!ficheiro.getOcorrencia().getId().equals(clientId))
+            if (!ficheiro.getOcorrenciaMensagem().getOcorrencia().getClienteId().equals(clientId))
                 return Response.status(Response.Status.FORBIDDEN).build();
         }
 

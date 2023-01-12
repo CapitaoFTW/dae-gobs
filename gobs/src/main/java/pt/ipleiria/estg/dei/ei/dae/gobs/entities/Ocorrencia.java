@@ -1,17 +1,15 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 @Entity
 @NamedQueries({
@@ -46,27 +44,29 @@ public class Ocorrencia extends EntityId<Integer> {
     private Integer apoliceId;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
-    @NotBlank
-    private String descricaoDeOcorrencia;
-    @UpdateTimestamp
-    private Date atualizado;
-    @CreationTimestamp
-    private Date criado;
-
     @NotNull
     @OneToMany(mappedBy = "ocorrencia", cascade = CascadeType.REMOVE)
-    private Collection<Ficheiro> ficheiros;
+    @OrderColumn(name = "criado")
+    private Collection<OcorrenciaMensagem> mensagems;
+    @UpdateTimestamp
+    private Date atualizado;
 
     public Ocorrencia() {
-        this.ficheiros = new LinkedHashSet<>();
+        this.mensagems = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(Integer clienteId, Integer apoliceId, EstadoOcorrencia estadoOcorrencia, String descricaoDeOcorrencia) {
+    public Ocorrencia(Integer clienteId, Integer apoliceId) {
+        this.clienteId = clienteId;
+        this.apoliceId = apoliceId;
+        this.estadoOcorrencia = EstadoOcorrencia.Criada;
+        this.mensagems = new LinkedHashSet<>();
+    }
+
+    public Ocorrencia(Integer clienteId, Integer apoliceId, EstadoOcorrencia estadoOcorrencia) {
         this.clienteId = clienteId;
         this.apoliceId = apoliceId;
         this.estadoOcorrencia = estadoOcorrencia;
-        this.descricaoDeOcorrencia = descricaoDeOcorrencia;
-        this.ficheiros = new LinkedHashSet<>();
+        this.mensagems = new LinkedHashSet<>();
     }
 
     @Override
@@ -106,12 +106,12 @@ public class Ocorrencia extends EntityId<Integer> {
         this.estadoOcorrencia = estadoOcorrencia;
     }
 
-    public String getDescricaoDeOcorrencia() {
-        return descricaoDeOcorrencia;
+    public Collection<OcorrenciaMensagem> getMensagems() {
+        return mensagems;
     }
 
-    public void setDescricaoDeOcorrencia(String descricaoDeOcorrencia) {
-        this.descricaoDeOcorrencia = descricaoDeOcorrencia;
+    public void setMensagems(Collection<OcorrenciaMensagem> mensagems) {
+        this.mensagems = mensagems;
     }
 
     public Date getAtualizado() {
@@ -122,34 +122,21 @@ public class Ocorrencia extends EntityId<Integer> {
         this.atualizado = atualizado;
     }
 
-    public Date getCriado() {
-        return criado;
-    }
-
-    public void setCriado(Date criado) {
-        this.criado = criado;
-    }
-
-    @JsonbTransient
-    public Collection<Ficheiro> getFicheiros() {
-        return ficheiros;
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean adicionarFicheiro(Ficheiro ficheiro) {
-        if (ficheiros.contains(ficheiro))
-            return false;
-
-        return ficheiros.add(ficheiro);
-    }
-
     public OcorrenciaDTO toDTO() {
         return new OcorrenciaDTO(
                 this.getId(),
                 this.getEstadoOcorrencia().getValue(),
-                this.getDescricaoDeOcorrencia(),
-                this.getAtualizado(),
-                this.getCriado()
+                this.getAtualizado()
+        );
+    }
+
+    public OcorrenciaDTO toDTOcomMensagens() {
+        return new OcorrenciaDTO(
+                this.getId(),
+                this.getEstadoOcorrencia().getValue(),
+                this.getMensagems().stream().map(OcorrenciaMensagem::toDTO).collect(Collectors.toList()),
+                this.getAtualizado()
         );
     }
 }
+

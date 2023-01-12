@@ -1,34 +1,41 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashSet;
 
 @SuppressWarnings("unused")
 public class OcorrenciaDTO {
     private Integer id;
     private ApoliceDTO apolice;
     private Integer estado;
-    private String descricao;
+    private Collection<OcorrenciaMensagemDTO> mensagens;
     private Date atualizado;
-    private Date criado;
 
     public OcorrenciaDTO() {
+        this.mensagens = new LinkedHashSet<>();
     }
 
-    public OcorrenciaDTO(Integer id, Integer estado, String descricao, Date atualizado, Date criado) {
+    public OcorrenciaDTO(Integer id, Integer estado, Date atualizado) {
         this.id = id;
         this.estado = estado;
-        this.descricao = descricao;
         this.atualizado = atualizado;
-        this.criado = criado;
+        this.mensagens = new LinkedHashSet<>();
     }
 
-    public OcorrenciaDTO(Integer id, ApoliceDTO apolice, Integer estado, String descricao, Date atualizado, Date criado) {
+    public OcorrenciaDTO(Integer id, ApoliceDTO apolice, Integer estado, Date atualizado) {
         this.id = id;
         this.apolice = apolice;
         this.estado = estado;
-        this.descricao = descricao;
         this.atualizado = atualizado;
-        this.criado = criado;
+        this.mensagens = new LinkedHashSet<>();
+    }
+
+    public OcorrenciaDTO(Integer id, Integer estado, Collection<OcorrenciaMensagemDTO> mensagens, Date atualizado) {
+        this.id = id;
+        this.estado = estado;
+        this.mensagens = mensagens;
+        this.atualizado = atualizado;
     }
 
     public Integer getId() {
@@ -55,12 +62,12 @@ public class OcorrenciaDTO {
         this.estado = estado;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public Collection<OcorrenciaMensagemDTO> getMensagens() {
+        return mensagens;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setMensagens(Collection<OcorrenciaMensagemDTO> mensagens) {
+        this.mensagens = mensagens;
     }
 
     public Date getAtualizado() {
@@ -69,14 +76,6 @@ public class OcorrenciaDTO {
 
     public void setAtualizado(Date atualizado) {
         this.atualizado = atualizado;
-    }
-
-    public Date getCriado() {
-        return criado;
-    }
-
-    public void setCriado(Date criado) {
-        this.criado = criado;
     }
 }
 

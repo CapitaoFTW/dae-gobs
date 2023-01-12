@@ -1,7 +1,8 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.CreateOcorrenciaDTO;
+import org.apache.commons.lang3.tuple.Pair;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 
@@ -12,28 +13,32 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Stateless
 public class OcorrenciaBean {
+    private static int i = 0;
     @EJB
     private ApoliceBean apoliceBean;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Ocorrencia create(Integer clienteId, CreateOcorrenciaDTO ocorrenciaDTO) {
-        Integer apoliceId = ocorrenciaDTO.getApoliceId();
+    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String descricao) {
         if (apoliceBean.getApolice(apoliceId) == null)
             throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
-        Ocorrencia ocorrencia = ocorrenciaDTO.toEntity(clienteId);
+        Ocorrencia ocorrencia = new Ocorrencia(clienteId, apoliceId);
+        OcorrenciaMensagem mensagem = new OcorrenciaMensagem(descricao, ocorrencia);
+
         try {
             entityManager.persist(ocorrencia);
+            entityManager.persist(mensagem);
         } catch (ConstraintViolationException ex) {
             throw new GobsConstraintViolationException(ex);
         }
 
-        return ocorrencia;
+        return Pair.of(ocorrencia, mensagem);
     }
 
     public boolean exists(Integer id) {
