@@ -28,6 +28,10 @@ public class ApoliceBean extends ExternalService<ApoliceInterface, ApoliceProxy>
         return wrapRequest(ApoliceInterface::getApolices);
     }
 
+    public Collection<Apolice> getApolicesRecent(Integer limite) {
+        return wrapRequest(c -> c.getApolices("updatedAt", OrderEnum.desc, limite, 1));
+    }
+
     public Apolice getApolice(Integer apoliceId) {
         return wrapRequest(b -> b.getApolice(apoliceId));
     }

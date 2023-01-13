@@ -17,9 +17,24 @@ public interface ApoliceInterface {
     @GET
     @Path("/")
     Collection<Apolice> getApolices(
-            @QueryParam("clienteId") Integer clienteId
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("order") OrderEnum order
     );
 
+    @GET
+    @Path("/")
+    Collection<Apolice> getApolices(
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("order") OrderEnum order,
+            @QueryParam("limit") Integer limit,
+            @QueryParam("page") Integer page
+    );
+
+    @GET
+    @Path("/")
+    Collection<Apolice> getApolices(
+            @QueryParam("clienteId") Integer clienteId
+    );
 
     @GET
     @Path("/")

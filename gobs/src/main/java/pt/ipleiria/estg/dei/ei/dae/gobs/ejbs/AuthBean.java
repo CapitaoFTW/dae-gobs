@@ -161,7 +161,7 @@ public class AuthBean {
         String token = genToken();
 
         Integer id = funcionario.getId();
-        UserAuth userAuth = entityManager.find(UserAuth.class, id);
+        UserAuth userAuth = entityManager.find(UserAuth.class, new UserAuth(id, mainRole));
         if (userAuth == null) {
             userAuth = new UserAuth(id, token, mainRole);
             entityManager.persist(userAuth);
