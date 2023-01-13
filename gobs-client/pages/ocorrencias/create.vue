@@ -14,11 +14,10 @@
 						:options="apolices"
 						:state="isApoliceValid"
 						required
-						text-field="bem"
+						text-field="nome"
 						value-field="id">
 						<template #first>
-							<b-form-select-option :value="null" disabled>-- Selecione a apólice --
-							</b-form-select-option>
+							<b-form-select-option :value="null" disabled>-- Selecione a apólice --</b-form-select-option>
 						</template>
 					</b-form-select>
 				</b-form-group>
@@ -52,6 +51,7 @@
 					no-traverse
 					placeholder="Nenhum ficheiro"/>
 				<b-progress
+					v-if="uploadProgress > 0"
 					:value="uploadProgress"
 					animated
 					class="mt-3"
@@ -126,7 +126,21 @@ export default {
 	},
 	async fetch() {
 		await this.$axios.$get('/api/apolices')
-			.then(data => this.apolices = data)
+			.then(data => {
+				if (!data)
+					return
+
+				data.forEach(i => {
+					// noinspection JSUnresolvedVariable
+					if (!i.seguradora)
+						return i
+
+					// noinspection JSUnresolvedVariable
+					i.nome = `Seguradora: ${i.seguradora.nome} | Bem: ${i.bem}`
+					return i
+				})
+				this.apolices = data
+			})
 			.catch(e => {
 				console.error(`Erro ao obter apolices: ${e}`)
 				this.$root.$bvToast.toast('Erro ao obter apolices.', {
