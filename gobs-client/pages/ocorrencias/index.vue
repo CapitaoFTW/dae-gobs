@@ -13,7 +13,8 @@
 			hover
 			responsive
 			show-empty
-			striped>
+			striped
+			@row-clicked="clickOcorrencia">
 			<template #table-busy>
 				<div class="text-center text-primary my-2">
 					<b-spinner class="align-middle"></b-spinner>
@@ -24,7 +25,7 @@
 		<b-row>
 			<b-col>
 				<b-button @click=$router.back()>Voltar</b-button>
-				<b-button to="/ocorrencias/create" variant="success">Registar nova ocorrência</b-button>
+				<b-button to="/ocorrencias/create" variant="success" v-if="isCliente">Registar nova ocorrência</b-button>
 			</b-col>
 			<b-col class="flex-grow-0">
 				<b-pagination
@@ -144,6 +145,9 @@ export default {
 				default:
 					return 'Algo correu mal! Contacte-nos'
 			}
+		},
+		clickOcorrencia(item) {
+			this.$router.push(`/ocorrencias/${item.id}`)
 		}
 	}
 }

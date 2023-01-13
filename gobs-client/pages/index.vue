@@ -1,9 +1,9 @@
 <template>
-	<b-container v-if="isCliente">
+	<b-container>
 		<h1 class="text-center mb-5">Dashboard</h1>
 		<b-button>Reload</b-button><!-- todo change location adding reload function use variable to show-->
-		<b-row class="row-cols-2 flex-fill text-center">
-			<b-col class="h-100">
+		<b-row :class="{ 'row-cols-2': isCliente }" class="flex-fill text-center">
+			<b-col class="h-100" v-if="isCliente">
 				<b-row class="border border-primary mx-1">
 					<h4 class="my-2 w-100">Apólices</h4>
 					<b-table
@@ -42,7 +42,8 @@
 						empty-text="Não existem ocorrências registadas."
 						hover
 						show-empty
-						thead-class="d-none">
+						thead-class="d-none"
+						@row-clicked="clickOcorrencia">
 						<template #table-busy>
 							<div class="text-center text-primary my-2">
 								<b-spinner class="align-middle"></b-spinner>
@@ -53,45 +54,11 @@
 				</b-row>
 				<b-row class="d-flex justify-content-around">
 					<b-button class="mt-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
-					<b-button class="mt-2" to="/ocorrencias/create" variant="success">Registar nova ocorrência
+					<b-button class="mt-2" to="/ocorrencias/create" variant="success" v-if="isCliente">Registar nova ocorrência
 					</b-button>
 				</b-row>
 			</b-col>
 		</b-row>
-	</b-container>
-	<b-container v-else-if="isFuncionario">
-		<h1 class="text-center mb-5">Dashboard</h1>
-		<b-row class="flex-fill text-center">
-			<b-col class="h-100">
-				<b-row class="border border-primary mx-1">
-					<h4 class="my-2 w-100">Ocorrências</h4>
-					<b-table
-						:busy="ocorrenciasLoading"
-						:fields="ocorrenciasFields"
-						:items="ocorrencias"
-						bordered
-						class="m-0"
-						empty-text="Não existem ocorrências registadas."
-						hover
-						show-empty
-						thead-class="d-none">
-						<template #table-busy>
-							<div class="text-center text-primary my-2">
-								<b-spinner class="align-middle"></b-spinner>
-								<strong>Carregando...</strong>
-							</div>
-						</template>
-					</b-table>
-				</b-row>
-				<b-row class="d-flex justify-content-around">
-					<b-button class="mt-2 mb-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
-				</b-row>
-			</b-col>
-		</b-row>
-	</b-container>
-	<b-container v-else>
-		<h1 class="text-center mb-5">Algo correu mal, utilizador inválido.</h1>
-		<h2 class="text-center mb-5">Por favor contacte-nos.</h2>
 	</b-container>
 </template>
 
@@ -183,6 +150,7 @@ export default {
 			await this.$axios.$get('/api/ocorrencias/recent?limit=5')
 				.then(data => {
 					this.ocorrencias = data
+					console.log(data)
 					this.ocorrenciasLoading = false;
 				})
 				.catch(e => {
@@ -230,6 +198,9 @@ export default {
 		},
 		clickApolice(item) {
 			this.$router.push(`/apolices/${item.id}`)
+		},
+		clickOcorrencia(item) {
+			this.$router.push(`/ocorrencias/${item.id}`)
 		}
 	}
 }
