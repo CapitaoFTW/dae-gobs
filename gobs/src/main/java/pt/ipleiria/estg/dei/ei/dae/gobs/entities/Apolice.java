@@ -12,6 +12,7 @@ public class Apolice extends EntityId<Integer> {
     private String bem;
     private BigDecimal premio;
     private Date prazo;
+    private Date criado;
 
     @Override
     public Integer getEntityId() {
@@ -66,12 +67,21 @@ public class Apolice extends EntityId<Integer> {
         this.prazo = prazo;
     }
 
+    public Date getCriado() {
+        return criado;
+    }
+
+    public void setCriado(Date criado) {
+        this.criado = criado;
+    }
+
     public ApoliceDTO toDto() {
         return new ApoliceDTO(
                 this.getId(),
                 this.getBem(),
                 this.getPremio(),
-                this.getPrazo()
+                this.getPrazo(),
+                this.getCriado()
         );
     }
 }

@@ -13,15 +13,17 @@ public class ApoliceDTO {
     private String bem;
     private BigDecimal premio;
     private Date prazo;
+    private Date criado;
 
     public ApoliceDTO() {
     }
 
-    public ApoliceDTO(Integer id, String bem, BigDecimal premio, Date prazo) {
+    public ApoliceDTO(Integer id, String bem, BigDecimal premio, Date prazo, Date criado) {
         this.id = id;
         this.bem = bem;
         this.premio = premio;
         this.prazo = prazo;
+        this.criado = criado;
     }
 
     public Integer getId() {
@@ -70,5 +72,13 @@ public class ApoliceDTO {
 
     public void setPrazo(Date prazo) {
         this.prazo = prazo;
+    }
+
+    public Date getCriado() {
+        return criado;
+    }
+
+    public void setCriado(Date criado) {
+        this.criado = criado;
     }
 }
