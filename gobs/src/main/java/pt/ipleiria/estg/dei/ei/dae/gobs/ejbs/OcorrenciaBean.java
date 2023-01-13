@@ -24,11 +24,11 @@ public class OcorrenciaBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String descricao) {
+    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, String descricao) {
         if (apoliceBean.getApolice(apoliceId) == null)
             throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
-        Ocorrencia ocorrencia = new Ocorrencia(clienteId, apoliceId);
+        Ocorrencia ocorrencia = new Ocorrencia(clienteId, apoliceId, assunto);
         OcorrenciaMensagem mensagem = new OcorrenciaMensagem(descricao, ocorrencia);
 
         try {

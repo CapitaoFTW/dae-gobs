@@ -5,7 +5,9 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -42,6 +44,9 @@ public class Ocorrencia extends EntityId<Integer> {
     private Integer clienteId;
     @NotNull
     private Integer apoliceId;
+    @NotBlank
+    @Size(min = 3)
+    private String assunto;
     @NotNull
     private EstadoOcorrencia estadoOcorrencia;
     @NotNull
@@ -55,16 +60,18 @@ public class Ocorrencia extends EntityId<Integer> {
         this.mensagems = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(Integer clienteId, Integer apoliceId) {
+    public Ocorrencia(Integer clienteId, Integer apoliceId, String assunto) {
         this.clienteId = clienteId;
         this.apoliceId = apoliceId;
+        this.assunto = assunto;
         this.estadoOcorrencia = EstadoOcorrencia.Criada;
         this.mensagems = new LinkedHashSet<>();
     }
 
-    public Ocorrencia(Integer clienteId, Integer apoliceId, EstadoOcorrencia estadoOcorrencia) {
+    public Ocorrencia(Integer clienteId, Integer apoliceId, String assunto, EstadoOcorrencia estadoOcorrencia) {
         this.clienteId = clienteId;
         this.apoliceId = apoliceId;
+        this.assunto = assunto;
         this.estadoOcorrencia = estadoOcorrencia;
         this.mensagems = new LinkedHashSet<>();
     }
@@ -98,6 +105,14 @@ public class Ocorrencia extends EntityId<Integer> {
         this.apoliceId = apoliceId;
     }
 
+    public String getAssunto() {
+        return assunto;
+    }
+
+    public void setAssunto(String assunto) {
+        this.assunto = assunto;
+    }
+
     public EstadoOcorrencia getEstadoOcorrencia() {
         return estadoOcorrencia;
     }
@@ -125,6 +140,7 @@ public class Ocorrencia extends EntityId<Integer> {
     public OcorrenciaDTO toDTO() {
         return new OcorrenciaDTO(
                 this.getId(),
+                this.getAssunto(),
                 this.getEstadoOcorrencia().getValue(),
                 this.getAtualizado()
         );
@@ -133,6 +149,7 @@ public class Ocorrencia extends EntityId<Integer> {
     public OcorrenciaDTO toDTOcomMensagens() {
         return new OcorrenciaDTO(
                 this.getId(),
+                this.getAssunto(),
                 this.getEstadoOcorrencia().getValue(),
                 this.getMensagems().stream().map(OcorrenciaMensagem::toDTO).collect(Collectors.toList()),
                 this.getAtualizado()

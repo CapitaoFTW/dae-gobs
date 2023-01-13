@@ -89,8 +89,9 @@ public class OcorrenciaService {
         Map<String, List<InputPart>> form = input.getFormDataMap();
 
         Integer apoliceId = form.get("apoliceId").get(0).getBody(Integer.class, Integer.TYPE);
+        String assunto = form.get("assunto").get(0).getBodyAsString();
         String descricao = form.get("descricao").get(0).getBodyAsString();
-        Pair<Ocorrencia, OcorrenciaMensagem> pair = ocorrenciaBean.create(id, apoliceId, descricao);
+        Pair<Ocorrencia, OcorrenciaMensagem> pair = ocorrenciaBean.create(id, apoliceId, assunto, descricao);
 
         List<InputPart> files = form.getOrDefault("file", new ArrayList<>());
         files.addAll(form.getOrDefault("files", new ArrayList<>()));
