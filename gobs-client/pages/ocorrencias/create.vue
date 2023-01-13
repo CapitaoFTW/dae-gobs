@@ -149,7 +149,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.push('/')
+				//todo reload
 			});
 	},
 	fetchOnServer: false,

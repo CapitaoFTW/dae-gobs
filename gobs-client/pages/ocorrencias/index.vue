@@ -84,7 +84,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.push('/')
+				this.$router.back()
 			});
 		/*if (this.isCliente)
 			await this.getClienteData();

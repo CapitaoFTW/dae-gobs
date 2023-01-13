@@ -13,7 +13,8 @@
 			hover
 			responsive
 			show-empty
-			striped>
+			striped
+			@row-clicked="clickApolice">
 			<template #table-busy>
 				<div class="text-center text-primary my-2">
 					<b-spinner class="align-middle"></b-spinner>
@@ -55,6 +56,10 @@ export default {
 				{
 					key: 'prazo',
 					formatter: 'formatDate'
+				},
+				{
+					key: 'criado',
+					formatter: 'formatDate'
 				}
 			],
 			currentPage: 1,
@@ -72,7 +77,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.push('/')
+				this.$router.back()
 			});
 	},
 	fetchOnServer: false,
@@ -82,6 +87,9 @@ export default {
 		},
 		formatMoney(value) {
 			return `${value}€`
+		},
+		clickApolice(item) {
+			this.$router.push(`/apolices/${item.id}`)
 		}
 	}
 }

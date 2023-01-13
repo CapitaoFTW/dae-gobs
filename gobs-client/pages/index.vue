@@ -1,6 +1,7 @@
 <template>
 	<b-container v-if="isCliente">
 		<h1 class="text-center mb-5">Dashboard</h1>
+		<b-button>Reload</b-button><!-- todo change location adding reload function use variable to show-->
 		<b-row class="row-cols-2 flex-fill text-center">
 			<b-col class="h-100">
 				<b-row class="border border-primary mx-1">
@@ -14,7 +15,8 @@
 						empty-text="Não existem apolices registadas."
 						hover
 						show-empty
-						thead-class="d-none">
+						thead-class="d-none"
+						@row-clicked="clickApolice">
 						<template v-slot:cell(dataRange)="row">
 							{{ `${formatDate(row.item.criado)} - ${formatDate(row.item.prazo)}` }}
 						</template>
@@ -119,6 +121,7 @@ export default {
 				}
 			],
 			apolicesLoading: true,
+			needReload: false,
 			ocorrencias: [],
 			ocorrenciasFields: [
 				{
@@ -156,7 +159,7 @@ export default {
 						toaster: 'b-toaster-top-center',
 						variant: 'danger'
 					});
-					//todo reload
+					this.needReload = true
 				});
 			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/recent?limit=5')
 				.then(data => {
@@ -171,7 +174,7 @@ export default {
 						toaster: 'b-toaster-top-center',
 						variant: 'danger'
 					});
-					//todo reload
+					this.needReload = true
 				});
 
 			await Promise.all([requestApolices, requestOcorrencias]);
@@ -190,7 +193,7 @@ export default {
 						toaster: 'b-toaster-top-center',
 						variant: 'danger'
 					});
-					//todo reload
+					this.needReload = true
 				});
 		},
 		formatDate(value) {
@@ -224,6 +227,9 @@ export default {
 				default:
 					return 'Algo correu mal! Contacte-nos'
 			}
+		},
+		clickApolice(item) {
+			this.$router.push(`/apolices/${item.id}`)
 		}
 	}
 }
