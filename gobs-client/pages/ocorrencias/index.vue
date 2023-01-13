@@ -25,7 +25,8 @@
 		<b-row>
 			<b-col>
 				<b-button @click=$router.back()>Voltar</b-button>
-				<b-button to="/ocorrencias/create" variant="success" v-if="isCliente">Registar nova ocorrência</b-button>
+				<b-button v-if="isCliente" to="/ocorrencias/create" variant="success">Registar nova ocorrência
+				</b-button>
 			</b-col>
 			<b-col class="flex-grow-0">
 				<b-pagination

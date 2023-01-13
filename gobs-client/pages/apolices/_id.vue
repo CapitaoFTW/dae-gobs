@@ -33,10 +33,7 @@ export default {
 	},
 	async fetch() {
 		await this.$axios.$get(`/api/apolices/${this.id}`)
-			.then(data => {
-				this.apolice = data
-				console.log(data)
-			})
+			.then(data => this.apolice = data)
 			.catch(e => {
 				console.error(`Erro ao obter apolice: ${e}`)
 				this.$root.$bvToast.toast('Erro ao obter apolice.', {

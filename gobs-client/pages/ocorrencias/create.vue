@@ -2,6 +2,19 @@
 	<b-container class="d-flex align-items-center flex-column h-75 mt-3">
 		<h2>Registar uma nova ocorrência</h2>
 		<b-form :validated="isFormValid" class="mt-5" @submit.prevent="create">
+			<b-form-group
+				:invalid-feedback="invalidAssuntoFeedback"
+				:state="isAssuntoValid"
+				label="Introduzir o assunto:"
+				label-for="input-assunto">
+				<b-form-input
+					id="input-assunto"
+					v-model.trim="assunto"
+					:state="isAssuntoValid"
+					placeholder="Assunto"
+					required
+					type="text"/>
+			</b-form-group>
 			<b-overlay :show="$fetchState.pending" spinner-variant="primary">
 				<b-form-group
 					:invalid-feedback="invalidApoliceFeedback"
@@ -17,7 +30,8 @@
 						text-field="nome"
 						value-field="id">
 						<template #first>
-							<b-form-select-option :value="null" disabled>-- Selecione a apólice --</b-form-select-option>
+							<b-form-select-option :value="null" disabled>-- Selecione a apólice --
+							</b-form-select-option>
 						</template>
 					</b-form-select>
 				</b-form-group>
@@ -70,6 +84,26 @@
 <script>
 export default {
 	computed: {
+		invalidAssuntoFeedback() {
+			const assunto = this.assunto;
+			if (!assunto) {
+				return null;
+			}
+
+			const assuntoLen = assunto.length;
+			if (assuntoLen < 3) {
+				return 'O assunto tem de ter pelo menos 3 caracteres.'
+			}
+
+			return '';
+		},
+		isAssuntoValid() {
+			if (this.invalidAssuntoFeedback == null) {
+				return null;
+			}
+
+			return this.invalidAssuntoFeedback === '';
+		},
 		invalidApoliceFeedback() {
 			const apoliceId = this.apoliceId
 			if (!apoliceId) {
@@ -77,7 +111,7 @@ export default {
 			}
 
 			if (!this.apolices.some(apolice => apolice.id === apoliceId)) {
-				return 'The course does not exists.'
+				return 'Apolice não exitente.'
 			}
 
 			return ''
@@ -111,13 +145,14 @@ export default {
 			return this.invalidDescricaoFeedback === ''
 		},
 		isFormValid() {
-			return this.isApoliceValid && this.isDescricaoValid;
+			return this.isAssuntoValid && this.isApoliceValid && this.isDescricaoValid;
 		}
 	},
 	data() {
 		return {
 			apolices: [],
 			apoliceId: null,
+			assunto: null,
 			creating: false,
 			descricao: null,
 			ficheiros: [],
@@ -159,6 +194,7 @@ export default {
 
 			const formData = new FormData()
 			formData.append("apoliceId", this.apoliceId);
+			formData.append("assunto", this.assunto);
 			formData.append("descricao", this.descricao);
 			this.ficheiros.forEach(file => formData.append("files", file));
 

@@ -3,7 +3,7 @@
 		<h1 class="text-center mb-5">Dashboard</h1>
 		<b-button>Reload</b-button><!-- todo change location adding reload function use variable to show-->
 		<b-row :class="{ 'row-cols-2': isCliente }" class="flex-fill text-center">
-			<b-col class="h-100" v-if="isCliente">
+			<b-col v-if="isCliente" class="h-100">
 				<b-row class="border border-primary mx-1">
 					<h4 class="my-2 w-100">Apólices</h4>
 					<b-table
@@ -54,7 +54,8 @@
 				</b-row>
 				<b-row class="d-flex justify-content-around">
 					<b-button class="mt-2" to="/ocorrencias" variant="primary">Ver ocorrências</b-button>
-					<b-button class="mt-2" to="/ocorrencias/create" variant="success" v-if="isCliente">Registar nova ocorrência
+					<b-button v-if="isCliente" class="mt-2" to="/ocorrencias/create" variant="success">Registar nova
+						ocorrência
 					</b-button>
 				</b-row>
 			</b-col>
@@ -90,7 +91,19 @@ export default {
 			apolicesLoading: true,
 			needReload: false,
 			ocorrencias: [],
-			ocorrenciasFields: [
+			ocorrenciasFieldsClientes: [
+				{
+					key: 'seguradora.nome'
+				},
+				{
+					key: 'apolice.bem'
+				},
+				{
+					key: 'estado',
+					formatter: 'formatEstado'
+				},
+			],
+			ocorrenciasFieldsFuncionario: [
 				{
 					key: 'estado',
 					formatter: 'formatEstado'
@@ -131,6 +144,7 @@ export default {
 			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/recent?limit=5')
 				.then(data => {
 					this.ocorrencias = data
+					console.log(data)
 					this.ocorrenciasLoading = false;
 				})
 				.catch(e => {
@@ -150,7 +164,6 @@ export default {
 			await this.$axios.$get('/api/ocorrencias/recent?limit=5')
 				.then(data => {
 					this.ocorrencias = data
-					console.log(data)
 					this.ocorrenciasLoading = false;
 				})
 				.catch(e => {
@@ -169,12 +182,6 @@ export default {
 				return value
 
 			return new Date(value.replace('[UTC]', '')).toLocaleDateString();
-		},
-		formatDateTime(value) {
-			if (!value)
-				return value
-
-			return new Date(value.replace('[UTC]', '')).toLocaleString();
 		},
 		formatMoney(value) {
 			return `${value}€`
