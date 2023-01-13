@@ -15,6 +15,9 @@
 						hover
 						show-empty
 						thead-class="d-none">
+						<template v-slot:cell(dataRange)="row">
+							{{ `${formatDate(row.item.criado)} - ${formatDate(row.item.prazo)}` }}
+						</template>
 						<template #table-busy>
 							<div class="text-center text-primary my-2">
 								<b-spinner class="align-middle"></b-spinner>
@@ -112,8 +115,7 @@ export default {
 					formatter: 'formatMoney'
 				},
 				{
-					key: 'prazo',
-					formatter: 'formatDate'
+					key: 'dataRange'
 				}
 			],
 			apolicesLoading: true,
@@ -125,7 +127,7 @@ export default {
 				},
 				{
 					key: 'atualizado',
-					formatter: 'formatDate'
+					formatter: 'formatDateTime'
 				}
 			],
 			ocorrenciasLoading: true
@@ -192,6 +194,15 @@ export default {
 				});
 		},
 		formatDate(value) {
+			if (!value)
+				return value
+
+			return new Date(value.replace('[UTC]', '')).toLocaleDateString();
+		},
+		formatDateTime(value) {
+			if (!value)
+				return value
+
 			return new Date(value.replace('[UTC]', '')).toLocaleString();
 		},
 		formatMoney(value) {
