@@ -24,12 +24,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("apolices")
 @Produces({MediaType.APPLICATION_JSON})
-@RolesAllowed({CLIENTE_ROLE})//todo change when implement funcionario
+@RolesAllowed({CLIENTE_ROLE})
 public class ApolicesService {
     @Inject
     Logger logger;
@@ -44,7 +45,7 @@ public class ApolicesService {
 
     @GET
     @Path("/")
-    public Response getAllApolices() {//todo change when implement funcionario
+    public Response getAllApolices() {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Apolice> apolices = apoliceBean.getClienteApolices(id);
         return Response.ok(apolicesToDTOs(apolices, false)).build();
@@ -52,12 +53,29 @@ public class ApolicesService {
 
     @GET
     @Path("/recent")
-    public Response getAllApolicesRecentes(@DefaultValue("50") @QueryParam("limit") Integer limit) {//todo change when implement funcionario
+    public Response getAllApolicesRecentes(@DefaultValue("50") @QueryParam("limit") Integer limit) {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Apolice> apolices = apoliceBean.getClienteApolicesRecent(id, limit);
         return Response.ok(apolicesToDTOs(apolices, false)).build();
     }
 
+    @GET
+    @Path("/{id}")
+    @RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
+    public Response getApolice(@PathParam("id") Integer apoliceId) {
+        Apolice apolice = apoliceBean.getApolice(apoliceId);
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
+            if (!apolice.getClienteId().equals(id))
+                return Response.status(Response.Status.FORBIDDEN).build();
+
+            return Response.ok(apolicesToDTO(apolice, false)).build();
+        } else {
+            return Response.ok(apolicesToDTO(apolice, true)).build();
+        }
+    }
+
+    @SuppressWarnings("SameParameterValue")
     private Collection<ApoliceDTO> apolicesToDTOs(Collection<Apolice> apolices, boolean needCliente) {
         Collection<ApoliceDTO> apolicesDTOs = new LinkedList<>();
         Map<Integer, Cliente> clientes = new LinkedHashMap<>();
@@ -88,5 +106,20 @@ public class ApolicesService {
         }
 
         return apolicesDTOs;
+    }
+
+    private ApoliceDTO apolicesToDTO(Apolice apolice, boolean needCliente) {
+        ApoliceDTO dto = apolice.toDto();
+        Integer seguradoraId = apolice.getSeguradoraId();
+        Seguradora seguradora = seguradoraBean.getSeguradora(seguradoraId);
+        dto.setSeguradora(seguradora);
+
+        if (needCliente) {
+            Integer clienteId = apolice.getClienteId();
+            Cliente cliente = clienteBean.getCliente(clienteId);
+            dto.setCliente(cliente.toDto());
+        }
+
+        return dto;
     }
 }
