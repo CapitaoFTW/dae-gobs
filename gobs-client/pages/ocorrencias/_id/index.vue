@@ -85,6 +85,14 @@
 
 export default {
 	computed: {
+		isCliente() {
+			// noinspection JSUnresolvedVariable
+			return this.$auth.user.roles.includes('Cliente');
+		},
+		isFuncionario() {
+			// noinspection JSUnresolvedVariable
+			return this.$auth.user.roles.includes('Funcionario');
+		},
 		id() {
 			return this.$route.params.id
 		},
@@ -122,9 +130,7 @@ export default {
 			novaMensagem: null,
 			ocorrencia: {},
 			sending: false,
-			senders: {
-				0: 'Eu'
-			},
+			senders: {},
 			uploadProgress: 0
 		}
 	},
@@ -230,19 +236,11 @@ export default {
 				}
 
 				const senderId = mensagem.sender
-				const sender = this.senders[senderId]
-				if (!sender) {
-					// noinspection JSUnresolvedVariable
-					const url = senderId === 0 ? `/api/clientes/${this.ocorrencia.clienteId}` : `/api/funcionarios/${senderId}`
-					await this.$axios.$get(url)
-						.then(data => {
-							// noinspection JSUnresolvedVariable
-							const sender = data.nome
-							this.senders[senderId] = sender
-							msg.sender = sender
-						})
-				} else {
-					msg.sender = sender
+				if (senderId === 0) {
+					msg.sender = this.isCliente ? 'Eu' : 'Cliente'
+				}
+				else {
+					msg.sender = this.isCliente ? 'Gobs' : 'Eu'
 				}
 
 				for (const ficheiro of mensagem.ficheiros) {
@@ -292,7 +290,8 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		for (const ficheiro of this.ficheiros.entries()) {
+		for (const ficheiro of this.ficheiros) {
+			console.log(ficheiro)
 			URL.revokeObjectURL(ficheiro.url)
 		}
 	}

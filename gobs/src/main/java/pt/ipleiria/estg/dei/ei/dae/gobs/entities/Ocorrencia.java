@@ -148,7 +148,11 @@ public class Ocorrencia extends EntityId<Integer> {
         if (mensagens.contains(mensagem))
             return false;
 
-        return mensagens.add(mensagem);
+        boolean success = mensagens.add(mensagem);
+        if (success)
+            setAtualizado(new Date());
+
+        return success;
     }
 
     public OcorrenciaDTO toDTO() {

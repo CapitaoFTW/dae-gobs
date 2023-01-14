@@ -29,7 +29,7 @@ public class ApoliceBean extends ExternalService<ApoliceInterface, ApoliceProxy>
     }
 
     public Collection<Apolice> getApolicesRecent(Integer limite) {
-        return wrapRequest(c -> c.getApolices("updatedAt", OrderEnum.desc, limite, 1));
+        return wrapRequest(c -> c.getApolices("atualizado", OrderEnum.desc, limite, 1));
     }
 
     public Apolice getApolice(Integer apoliceId) {
@@ -41,7 +41,7 @@ public class ApoliceBean extends ExternalService<ApoliceInterface, ApoliceProxy>
     }
 
     public Collection<Apolice> getClienteApolicesRecent(Integer id, Integer limite) {
-        return wrapRequest(c -> c.getApolices(id, "updatedAt", OrderEnum.desc, limite, 1));
+        return wrapRequest(c -> c.getApolices(id, "atualizado", OrderEnum.desc, limite, 1));
     }
 
     @SuppressWarnings("UnusedReturnValue")

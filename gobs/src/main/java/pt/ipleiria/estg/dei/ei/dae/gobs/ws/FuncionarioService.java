@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 
 @Authenticated
@@ -27,14 +28,15 @@ public class FuncionarioService {
 
     @GET
     @Path("/")
-    public Response getAllClientes() {
+    public Response getAllFuncionario() {
         Collection<FuncionarioDTO> funcionarioDTOs = funcionarioBean.getFuncionarios().stream().map(Funcionario::toDto).collect(Collectors.toList());
         return Response.ok(funcionarioDTOs).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response getCliente(@PathParam("id") Integer id) throws GobsEntityNotFoundException {
+    @RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
+    public Response getFuncionario(@PathParam("id") Integer id) throws GobsEntityNotFoundException {
         Funcionario funcionario = funcionarioBean.getFuncionario(id);
         if (funcionario == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter Funcionario, Funcionario não existe");
