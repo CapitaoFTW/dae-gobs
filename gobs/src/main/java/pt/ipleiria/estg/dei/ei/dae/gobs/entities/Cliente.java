@@ -4,6 +4,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ClienteDTO;
 
 public class Cliente extends UserBase {
     private Integer nif;
+    private String email;
 
     public Integer getNif() {
         return nif;
@@ -11,6 +12,14 @@ public class Cliente extends UserBase {
 
     public void setNif(Integer nif) {
         this.nif = nif;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public boolean isColetivo() {
@@ -25,7 +34,8 @@ public class Cliente extends UserBase {
         return new ClienteDTO(
                 this.getId(),
                 this.getNif(),
-                this.getNome()
+                this.getNome(),
+                this.getEmail()
         );
     }
 }

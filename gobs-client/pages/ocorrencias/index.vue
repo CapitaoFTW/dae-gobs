@@ -188,14 +188,15 @@ export default {
 			switch (value) {
 				case 1:
 				case 3:
+				case 6:
 				case 7:
 					return 'Em processo'
-
-
-
-				case 3:
-				case 8:
+				case 2:
+				case 4:
+				case 5:
 					return 'Aguardando utilizador'
+				case 8:
+					return 'Pagamento'
 				case 9:
 					return 'Concluída'
 				case 10:

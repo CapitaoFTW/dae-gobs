@@ -12,6 +12,14 @@ public class EmailDTO {
     @Size(min = 3)
     private String message;
 
+    public EmailDTO() {
+    }
+
+    public EmailDTO(String subject, String message) {
+        this.subject = subject;
+        this.message = message;
+    }
+
     public String getSubject() {
         return subject;
     }

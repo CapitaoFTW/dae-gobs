@@ -2,7 +2,10 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import org.apache.commons.lang3.tuple.Pair;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.EmailDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
+import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsBadRequestException;
@@ -23,6 +26,11 @@ import java.util.stream.Collectors;
 public class OcorrenciaBean {
     @EJB
     private ApoliceBean apoliceBean;
+    @EJB
+    private ClienteBean clienteBean;
+    @EJB
+    private EmailBean emailBean;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -37,19 +45,19 @@ public class OcorrenciaBean {
             throw new GobsConstraintViolationException(ex);
         }
 
-        return addMessageInternal(ocorrencia, mensagemDTO);
+        return addMessageInternal(ocorrencia, mensagemDTO, false);
     }
 
-    public Pair<Ocorrencia, OcorrenciaMensagem> addMessage(Integer ocorrenciaId, NewOcorrenciaMensagemDTO mensagemDTO, Integer estado) {
+    public Pair<Ocorrencia, OcorrenciaMensagem> addMessage(Integer ocorrenciaId, NewOcorrenciaMensagemDTO mensagemDTO, Integer estado, boolean notificar) {
         Ocorrencia ocorrencia = find(ocorrenciaId);
         if (ocorrencia == null)
             throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
 
-        updateEstadoInternal(ocorrencia, EstadoOcorrencia.fromValue(estado));
-        return addMessageInternal(ocorrencia, mensagemDTO);
+        updateEstadoInternal(ocorrencia, EstadoOcorrencia.fromValue(estado), false);
+        return addMessageInternal(ocorrencia, mensagemDTO, notificar);
     }
 
-    private Pair<Ocorrencia, OcorrenciaMensagem> addMessageInternal(Ocorrencia ocorrencia, NewOcorrenciaMensagemDTO mensagemDTO) {
+    private Pair<Ocorrencia, OcorrenciaMensagem> addMessageInternal(Ocorrencia ocorrencia, NewOcorrenciaMensagemDTO mensagemDTO, boolean notificar) {
         EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
         switch (estado) {
             case Concluida:
@@ -67,6 +75,11 @@ public class OcorrenciaBean {
         }
 
         ocorrencia.addMensagem(mensagem);
+
+        if (notificar) {
+            notificarCliente(ocorrencia.getId(), ocorrencia.getApoliceId(), ocorrencia.getClienteId(), String.format("Você recebeu uma nova mensagem na sua ocorrência.\nEstado atual: %s\nMensagem: %s", estado, mensagem.getMensagem()));
+        }
+
         return Pair.of(ocorrencia, mensagem);
     }
 
@@ -78,15 +91,16 @@ public class OcorrenciaBean {
         return entityManager.find(Ocorrencia.class, id, lockModeType);
     }
 
-    public Ocorrencia updateEstado(Integer ocorrenciaId, EstadoOcorrencia novoEstado) {
+    public Ocorrencia updateEstado(Integer ocorrenciaId, EstadoOcorrencia novoEstado, boolean notificar) {
         Ocorrencia ocorrencia = find(ocorrenciaId);
         if (ocorrencia == null)
             throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
 
-        return updateEstadoInternal(ocorrencia, novoEstado);
+        return updateEstadoInternal(ocorrencia, novoEstado, notificar);
     }
 
-    private Ocorrencia updateEstadoInternal(Ocorrencia ocorrencia, EstadoOcorrencia novoEstado) {
+
+    private Ocorrencia updateEstadoInternal(Ocorrencia ocorrencia, EstadoOcorrencia novoEstado, boolean notificar) {
         EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
         switch (estado) {
             case Concluida:
@@ -100,7 +114,24 @@ public class OcorrenciaBean {
             throw new GobsConstraintViolationException(ex);
         }
 
+        if (notificar) {
+            notificarCliente(ocorrencia.getId(), ocorrencia.getApoliceId(), ocorrencia.getClienteId(), String.format("Os estado da sua ocorrência foi alterado: %s", estado));
+        }
+
         return ocorrencia;
+    }
+
+    private void notificarCliente(Integer ocorrenciaId, Integer apoliceId, Integer clienteId, String mensagem) {
+        Cliente cliente = clienteBean.getCliente(clienteId);
+        if (cliente == null)
+            return;
+
+        Apolice apolice = apoliceBean.getApolice(apoliceId);
+        if (apolice == null)
+            return;
+
+        EmailDTO emailDTO = new EmailDTO(String.format("Ocorrência: %d | Bem: %s", ocorrenciaId, apolice.getBem()), mensagem);
+        emailBean.send(cliente.getEmail(), emailDTO);
     }
 
     public boolean exists(Integer id) {

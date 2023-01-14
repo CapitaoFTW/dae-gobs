@@ -36,4 +36,33 @@ public enum EstadoOcorrencia {
     public int getValue() {
         return value;
     }
+
+
+    @Override
+    public String toString() {
+        switch (this) {
+            case Criada:
+                return "Criada";
+            case AguardarMaisDados:
+                return "Dados em falta";
+            case ParaAnalise:
+                return "Para análise";
+            case ParaReparacao:
+                return "Para reparação";
+            case EmReparacao:
+                return "Em reparação";
+            case ImpossivelReparar:
+                return "Impossivel reparar";
+            case Reparado:
+                return "Reparado";
+            case EmPagamento:
+                return "Em pagammento";
+            case Concluida:
+                return "Concluida";
+            case Invalida:
+                return "Invalida";
+        }
+
+        return super.toString();
+    }
 }

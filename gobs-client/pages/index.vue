@@ -257,14 +257,16 @@ export default {
 		formatEstado(value) {
 			switch (value) {
 				case 1:
+				case 3:
+				case 6:
+				case 7:
+					return 'Em processo'
 				case 2:
 				case 4:
 				case 5:
-				case 7:
-					return 'Em processo'
-				case 3:
-				case 8:
 					return 'Aguardando utilizador'
+				case 8:
+					return 'Pagamento'
 				case 9:
 					return 'Concluída'
 				case 10:

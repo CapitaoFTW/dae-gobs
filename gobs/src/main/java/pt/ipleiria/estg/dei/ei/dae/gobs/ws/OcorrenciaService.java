@@ -129,7 +129,8 @@ public class OcorrenciaService {
     @Transactional
     public Response addMessage(@PathParam("id") Integer ocorrenciaId, MultipartFormDataInput input) throws IOException {
         int sender = Integer.parseInt(securityContext.getUserPrincipal().getName());
-        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+        boolean isCliente = securityContext.isUserInRole(CLIENTE_ROLE);
+        if (isCliente) {
             Integer owner = ocorrenciaBean.getOcorrenciaOwner(ocorrenciaId);
             if (!owner.equals(sender))
                 return ACCESS_FORBIDDEN;
@@ -142,7 +143,7 @@ public class OcorrenciaService {
 
         List<InputPart> inputEstado = form.get("estado");
         Integer estado = inputEstado.size() > 0 ? inputEstado.get(0).getBody(Integer.class, Integer.TYPE) : null;
-        Pair<Ocorrencia, OcorrenciaMensagem> pair = ocorrenciaBean.addMessage(ocorrenciaId, mensagemDTO, estado);
+        Pair<Ocorrencia, OcorrenciaMensagem> pair = ocorrenciaBean.addMessage(ocorrenciaId, mensagemDTO, estado, !isCliente);
 
         getAndSaveFiles(ocorrenciaId, pair.getRight(), form);
 
@@ -154,14 +155,15 @@ public class OcorrenciaService {
     @Path("{id}/estado")
     public Response updateEstado(@PathParam("id") Integer ocorrenciaId, @Valid UpdateEstadoDTO novoEstadoDto) {
         int sender = Integer.parseInt(securityContext.getUserPrincipal().getName());
-        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+        boolean isCliente = securityContext.isUserInRole(CLIENTE_ROLE);
+        if (isCliente) {
             Integer owner = ocorrenciaBean.getOcorrenciaOwner(ocorrenciaId);
             if (!owner.equals(sender))
                 return ACCESS_FORBIDDEN;
         }
 
         EstadoOcorrencia novoEstado = EstadoOcorrencia.fromValue(novoEstadoDto.getEstado());
-        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+        if (isCliente) {
             switch (novoEstado) {
                 case Criada:
                 case AguardarMaisDados:
@@ -180,7 +182,7 @@ public class OcorrenciaService {
             }
         }
 
-        Ocorrencia ocorrencia = ocorrenciaBean.updateEstado(ocorrenciaId, novoEstado);
+        Ocorrencia ocorrencia = ocorrenciaBean.updateEstado(ocorrenciaId, novoEstado, !isCliente);
         return Response.ok(ocorrencia.toDTO()).build();
     }
 
