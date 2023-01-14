@@ -12,14 +12,14 @@ import javax.ws.rs.core.Response;
 @Path("seguradoras")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class SeguradoraService {//todo DTOs add Authentication
+public class SeguradoraService {
     @EJB
     private SeguradoraBean seguradoraBean;
 
     @GET
     @Path("/")
     public Response getAllSeguradoras() {
-        return Response.ok(seguradoraBean.getSeguradoras()).build();//todo dto
+        return Response.ok(seguradoraBean.getSeguradoras()).build();
     }
 
     @GET
@@ -29,6 +29,6 @@ public class SeguradoraService {//todo DTOs add Authentication
         if (seguradora == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter Seguradora, Seguradora não existe");
 
-        return Response.ok(seguradora).build();//todo dto
+        return Response.ok(seguradora).build();
     }
 }
