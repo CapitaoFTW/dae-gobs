@@ -75,7 +75,7 @@
 			</b-form-group>
 			<b-button @click=$router.back()>Voltar</b-button>
 			<b-button type="reset" variant="danger">Limpar</b-button>
-			<b-button :disabled="!isFormValid || creating" type="submit" variant="success" @click.prevent="create">
+			<b-button :disabled="!isFormValid || sending" type="submit" variant="success" @click.prevent="create">
 				Registar Ocorrência
 			</b-button>
 		</b-form>
@@ -124,7 +124,6 @@ export default {
 
 			return this.invalidApoliceFeedback === ''
 		},
-
 		invalidDescricaoFeedback() {
 			const descricao = this.descricao
 			if (!descricao) {
@@ -154,9 +153,9 @@ export default {
 			apolices: [],
 			apoliceId: null,
 			assunto: null,
-			creating: false,
 			descricao: null,
 			ficheiros: [],
+			sending: false,
 			uploadProgress: 0
 		}
 	},
@@ -200,7 +199,7 @@ export default {
 	fetchOnServer: false,
 	methods: {
 		create() {
-			this.creating = true
+			this.sending = true
 
 			const formData = new FormData()
 			formData.append("apoliceId", this.apoliceId);
@@ -216,24 +215,24 @@ export default {
 			})
 				.then(data => this.ocorrenciaCriada(data))
 				.catch(error => {
-					this.creating = false
+					this.sending = false
 					let msg
 					if (error.response && error.response.data)
 						msg = error.response.data
 					else
 						msg = error.message
 
-					console.error(`Erro ao criar apólice: ${msg}`)
+					console.error(`Erro ao criar ocorrência: ${msg}`)
 					this.$bvToast.toast(msg, {
 						solid: true,
-						title: `Erro ao criar apólice`,
+						title: `Erro ao criar ocorrência`,
 						toaster: 'b-toaster-top-center',
 						variant: 'danger'
 					})
 				})
 		},
 		ocorrenciaCriada(data) {
-			this.creating = false
+			this.sending = false
 			console.info(`Nova ocorrência criada. | Result: '${JSON.stringify(data)}'`)
 			this.$root.$bvToast.toast('Nova ocorrência criada com sucesso.', {
 				solid: true,
