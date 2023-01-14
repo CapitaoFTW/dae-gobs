@@ -53,7 +53,7 @@
 							required
 							rows="5"/>
 					</b-form-group>
-					<b-form-group
+					<b-form-group v-if="isCliente"
 						label="Ficheiros (opcional):"
 						label-for="input-files">
 						<b-form-file
@@ -166,7 +166,9 @@ export default {
 
 			const formData = new FormData()
 			formData.append("descricao", this.novaMensagem);
-			this.novosFicheiros.forEach(file => formData.append("files", file));
+
+			if (this.isCliente)
+				this.novosFicheiros.forEach(file => formData.append("files", file));
 
 			this.$axios.$put(`/api/ocorrencias/message/${this.id}`, formData, {
 				headers: {
@@ -294,8 +296,7 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		for (const ficheiro of this.ficheiros) {
-			console.log(ficheiro)
+		for (const [, ficheiro] of Object.entries(this.ficheiros)) {
 			URL.revokeObjectURL(ficheiro.url)
 		}
 	}
