@@ -2,7 +2,6 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ClienteBean;
-import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.SeguradoraBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.security.AuthorizationFilter.ACCESS_FORBIDDEN;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
@@ -34,8 +34,6 @@ public class ApolicesService {
     private ApoliceBean apoliceBean;
     @EJB
     private ClienteBean clienteBean;
-    @EJB
-    private SeguradoraBean seguradoraBean;
     @Context
     private SecurityContext securityContext;
 
@@ -44,7 +42,7 @@ public class ApolicesService {
     public Response getAllApolices() {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Apolice> apolices = apoliceBean.getClienteApolices(id);
-        return Response.ok(apolices.stream().map(Apolice::toDto).collect(Collectors.toList())).build();
+        return Response.ok(apolices.stream().map(Apolice::toDTO).collect(Collectors.toList())).build();
     }
 
     @GET
@@ -52,7 +50,7 @@ public class ApolicesService {
     public Response getAllApolicesRecentes(@DefaultValue("50") @QueryParam("limit") Integer limit) {
         Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
         Collection<Apolice> apolices = apoliceBean.getClienteApolicesRecent(id, limit);
-        return Response.ok(apolices.stream().map(Apolice::toDto).collect(Collectors.toList())).build();
+        return Response.ok(apolices.stream().map(Apolice::toDTO).collect(Collectors.toList())).build();
     }
 
     @GET
@@ -66,9 +64,9 @@ public class ApolicesService {
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
             Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
             if (!apolice.getClienteId().equals(id))
-                return Response.status(Response.Status.FORBIDDEN).build();
+                return ACCESS_FORBIDDEN;
         }
 
-        return Response.ok(apolice.toDto()).build();
+        return Response.ok(apolice.toDTO()).build();
     }
 }

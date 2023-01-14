@@ -20,7 +20,6 @@ public abstract class ResteasyProxy<T> {
         ResteasyClientBuilder clientBuilder = new ResteasyClientBuilderImpl();
         ClientHttpEngine engine = new ClientHttpEngineBuilder43().resteasyClientBuilder(clientBuilder).build();
 
-        //noinspection resource
         ResteasyClient resteasyClient = clientBuilder.httpEngine(engine).connectionPoolSize(25).build();
         return resteasyClient.target(MOCKAPI);
     }

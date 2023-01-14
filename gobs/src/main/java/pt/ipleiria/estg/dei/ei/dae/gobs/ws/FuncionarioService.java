@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.FuncionarioDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.FuncionarioBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Funcionario;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
@@ -29,8 +28,8 @@ public class FuncionarioService {
     @GET
     @Path("/")
     public Response getAllFuncionario() {
-        Collection<FuncionarioDTO> funcionarioDTOs = funcionarioBean.getFuncionarios().stream().map(Funcionario::toDto).collect(Collectors.toList());
-        return Response.ok(funcionarioDTOs).build();
+        Collection<Funcionario> funcionarios = funcionarioBean.getFuncionarios();
+        return Response.ok(funcionarios.stream().map(Funcionario::toDTO).collect(Collectors.toList())).build();
     }
 
     @GET
@@ -41,6 +40,6 @@ public class FuncionarioService {
         if (funcionario == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter Funcionario, Funcionario não existe");
 
-        return Response.ok(funcionario.toDto()).build();
+        return Response.ok(funcionario.toDTO()).build();
     }
 }

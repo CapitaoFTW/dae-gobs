@@ -13,7 +13,7 @@ public class Reparador extends UserBase {
         this.username = username;
     }
 
-    public ReparadorDTO toDto() {
+    public ReparadorDTO toDTO() {
         return new ReparadorDTO(
                 this.getId(),
                 this.getUsername(),

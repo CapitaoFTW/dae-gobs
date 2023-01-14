@@ -47,9 +47,8 @@ public class ConfigBean {
     }
 
     private void populateDB() {
-        //obtem todos os apolices, clientes e seguradoras
-        //verifica se as apolices tem dados validos da seguradora e cliente
-        //isto e necessario pois estamos a gerar data aleatorio sem controlo no mockapi
+        //Obtem todos as apolices, clientes e seguradoras
+        //Verifica se os dados das apolices e corrige-os se necessário
         Collection<Apolice> apolices = apoliceBean.getApolices();
         Collection<Cliente> clientes = clienteBean.getClientes();
         Collection<Seguradora> seguradoras = seguradoraBean.getSeguradoras();

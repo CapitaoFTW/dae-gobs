@@ -7,11 +7,11 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.UpdateEstadoDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ChangePasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.FicheiroBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.OcorrenciaBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsBadRequestException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.*;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.security.AuthorizationFilter.ACCESS_FORBIDDEN;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
@@ -93,7 +95,7 @@ public class OcorrenciaService {
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
             Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
             if (!ocorrencia.getClienteId().equals(id))
-                return Response.status(Response.Status.FORBIDDEN).build();
+                return ACCESS_FORBIDDEN;
         }
 
         return Response.ok(ocorrencia.toDTOcomMensagens()).build();
@@ -121,44 +123,65 @@ public class OcorrenciaService {
         return Response.created(uri).entity(ocorrencia.toDTOcomMensagens()).build();
     }
 
-    @PATCH
-    @Path("{id}/update-estado")
-    public Response updateEstado(@PathParam("id") Integer id, @Valid UpdateEstadoDTO dto) {
-        ocorrenciaBean.updateEstado(id, dto);
-        return Response.ok(dto).build();
-    }
-
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @PUT
-    @Path("/message/{id}")
+    @Path("{id}/message")
     @Transactional
     public Response addMessage(@PathParam("id") Integer ocorrenciaId, MultipartFormDataInput input) throws IOException {
-        Ocorrencia ocorrencia = ocorrenciaBean.find(ocorrenciaId);
-        if (ocorrencia == null)
-            throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
-
         int sender = Integer.parseInt(securityContext.getUserPrincipal().getName());
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
-            if (!ocorrencia.getClienteId().equals(sender))
-                return Response.status(Response.Status.FORBIDDEN).build();
+            Integer owner = ocorrenciaBean.getOcorrenciaOwner(ocorrenciaId);
+            if (!owner.equals(sender))
+                return ACCESS_FORBIDDEN;
 
             sender = 0;
         }
 
-        EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
-        switch (estado) {
-            case Concluida:
-            case Invalida:
-                return Response.status(Response.Status.BAD_REQUEST).entity("A ocorrência está marcada como concluida ou inválida.").build();
-        }
-
         Map<String, List<InputPart>> form = input.getFormDataMap();
         NewOcorrenciaMensagemDTO mensagemDTO = getMessageDTOFromForm(input.getFormDataMap(), sender);
-        OcorrenciaMensagem mensagem = ocorrenciaBean.addMessage(ocorrencia, mensagemDTO);
 
-        getAndSaveFiles(ocorrenciaId, mensagem, form);
+        List<InputPart> inputEstado = form.get("estado");
+        Integer estado = inputEstado.size() > 0 ? inputEstado.get(0).getBody(Integer.class, Integer.TYPE) : null;
+        Pair<Ocorrencia, OcorrenciaMensagem> pair = ocorrenciaBean.addMessage(ocorrenciaId, mensagemDTO, estado);
 
+        getAndSaveFiles(ocorrenciaId, pair.getRight(), form);
+
+        Ocorrencia ocorrencia = pair.getLeft();
         return Response.ok(ocorrencia.toDTOcomMensagens()).build();
+    }
+
+    @PATCH
+    @Path("{id}/estado")
+    public Response updateEstado(@PathParam("id") Integer ocorrenciaId, @Valid UpdateEstadoDTO novoEstadoDto) {
+        int sender = Integer.parseInt(securityContext.getUserPrincipal().getName());
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Integer owner = ocorrenciaBean.getOcorrenciaOwner(ocorrenciaId);
+            if (!owner.equals(sender))
+                return ACCESS_FORBIDDEN;
+        }
+
+        EstadoOcorrencia novoEstado = EstadoOcorrencia.fromValue(novoEstadoDto.getEstado());
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            switch (novoEstado) {
+                case Criada:
+                case AguardarMaisDados:
+                case ParaReparacao:
+                case Invalida:
+                    throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estado é inválido");
+            }
+        } else {
+            switch (novoEstado) {
+                case Criada:
+                case ParaAnalise:
+                case EmReparacao:
+                case ImpossivelReparar:
+                case Reparado:
+                    throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estado é inválido");
+            }
+        }
+
+        Ocorrencia ocorrencia = ocorrenciaBean.updateEstado(ocorrenciaId, novoEstado);
+        return Response.ok(ocorrencia.toDTO()).build();
     }
 
     private NewOcorrenciaMensagemDTO getMessageDTOFromForm(Map<String, List<InputPart>> form, Integer sender) throws IOException {
@@ -186,15 +209,6 @@ public class OcorrenciaService {
             ficheiroBean.create(mensagemDTO, filename, mimeType, file.getPath());
         }
     }
-
-    /*@PUT
-    @Path("{id}")
-    public Response update(@PathParam("id") Integer Id, OcorrenciaDTO ocorrenciaDTO) {
-        ocorrenciaBean.update(Id, ocorrenciaDTO.getName());
-        ocorrenciaDTO = ocorrenciaDTO(ocorrenciaBean.find(ocorrenciaDTO.getId()), false);
-
-        return Response.ok(ocorrenciaDTO).build();
-    }*/
 
     private String getFilename(MultivaluedMap<String, String> headers) {
         String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");

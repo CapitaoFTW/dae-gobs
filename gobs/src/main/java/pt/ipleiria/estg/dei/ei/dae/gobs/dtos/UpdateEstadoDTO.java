@@ -5,6 +5,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class UpdateEstadoDTO implements Serializable {
     @NotNull
     @Min(1)
@@ -15,7 +16,6 @@ public class UpdateEstadoDTO implements Serializable {
         return estado;
     }
 
-    @SuppressWarnings("unused")
     public void setEstado(Integer estado) {
         this.estado = estado;
     }

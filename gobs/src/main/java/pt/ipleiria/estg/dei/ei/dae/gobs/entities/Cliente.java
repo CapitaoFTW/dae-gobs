@@ -21,7 +21,7 @@ public class Cliente extends UserBase {
         return nif < 500000000;
     }
 
-    public ClienteDTO toDto() {
+    public ClienteDTO toDTO() {
         return new ClienteDTO(
                 this.getId(),
                 this.getNif(),

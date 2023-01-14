@@ -13,7 +13,7 @@ public class Funcionario extends UserBase {
         this.username = username;
     }
 
-    public FuncionarioDTO toDto() {
+    public FuncionarioDTO toDTO() {
         return new FuncionarioDTO(
                 this.getId(),
                 this.getUsername(),

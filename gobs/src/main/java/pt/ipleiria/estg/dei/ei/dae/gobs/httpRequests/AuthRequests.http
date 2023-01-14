@@ -4,8 +4,8 @@ POST {{host}}/api/auth/login-client
 Content-Type: application/json
 
 {
-  "nif": "{{test_user}}",
-  "password": "{{test_password}}"
+  "nif": "{{cliente_nif}}",
+  "password": "{{cliente_password}}"
 }
 
 > {%
@@ -25,8 +25,8 @@ POST {{host}}/api/auth/login-client
 Content-Type: application/json
 
 {
-  "nif": "846239129",
-  "password": "zfoC1gPnqbKWq_A"
+  "nif": "{{cliente_nif}}",
+  "password": "test0"
 }
 
 > {%

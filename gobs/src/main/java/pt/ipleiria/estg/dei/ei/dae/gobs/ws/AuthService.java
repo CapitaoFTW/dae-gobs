@@ -100,13 +100,13 @@ public class AuthService {
             if (cliente == null)
                 throw new GobsNotAuthorizedException("Falha ao obter o próprio cliente.");
 
-            return Response.ok(cliente.toDto()).build();
+            return Response.ok(cliente.toDTO()).build();
         } else if (securityContext.isUserInRole(FUNCIONARIO_ROLE)) {
             Funcionario funcionario = authBean.findFuncionarioById(Integer.valueOf(principal.getName()));
             if (funcionario == null)
                 throw new GobsNotAuthorizedException("Falha ao obter o próprio funcionário.");
 
-            return Response.ok(funcionario.toDto()).build();
+            return Response.ok(funcionario.toDTO()).build();
         } else {
             throw new GobsNotAuthorizedException("Não tem permissão.");
         }

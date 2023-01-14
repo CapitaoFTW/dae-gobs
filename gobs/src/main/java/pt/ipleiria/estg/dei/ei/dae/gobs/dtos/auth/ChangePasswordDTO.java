@@ -4,6 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class ChangePasswordDTO implements Serializable {
     @NotBlank
     @Size(min = 3, max = 255)
@@ -19,7 +20,6 @@ public class ChangePasswordDTO implements Serializable {
         return oldPassword;
     }
 
-    @SuppressWarnings("unused")
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
     }
@@ -28,7 +28,6 @@ public class ChangePasswordDTO implements Serializable {
         return newPassword;
     }
 
-    @SuppressWarnings("unused")
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
@@ -37,7 +36,6 @@ public class ChangePasswordDTO implements Serializable {
         return confirmPassword;
     }
 
-    @SuppressWarnings("unused")
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }

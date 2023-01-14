@@ -28,8 +28,6 @@ public class AuthBean {
     private ClienteBean clienteBean;
     @EJB
     private FuncionarioBean funcionarioBean;
-    @EJB
-    private ReparadorBean reparadorBean;
     @PersistenceContext
     private EntityManager entityManager;
 

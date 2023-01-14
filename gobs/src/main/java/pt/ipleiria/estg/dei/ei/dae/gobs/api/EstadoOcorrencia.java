@@ -5,12 +5,12 @@ import java.util.Map;
 
 public enum EstadoOcorrencia {
     Criada(1),
-    ParaAnalise(2),
-    AguardarMaisDados(3),
+    AguardarMaisDados(2),
+    ParaAnalise(3),
     ParaReparacao(4),
     EmReparacao(5),
     ImpossivelReparar(6),
-    Reparada(7),
+    Reparado(7),
     EmPagamento(8),
     Concluida(9),
     Invalida(10);

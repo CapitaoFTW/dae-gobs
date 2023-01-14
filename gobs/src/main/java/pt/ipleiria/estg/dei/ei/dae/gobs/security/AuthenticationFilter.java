@@ -46,9 +46,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             throw new GobsNotAuthorizedException("O autenticador recebeu um token inválido.");
 
         containerRequestContext.setSecurityContext(new SecurityContext() {
-            //todo maybe adding roles
-            //final Collection<Role> roles = new LinkedHashSet<>(user.getRoles());
-
             @Override
             public Principal getUserPrincipal() {
                 return new SimplePrincipal(authInfo.getEntityId());
@@ -56,12 +53,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             @Override
             public boolean isUserInRole(String s) {
-                //todo related to roles
-                /*for (Role role : roles) {
-                    if (role.getRoleId().equals(s))
-                        return true;
-                }*/
-
                 return mainRole.equals(s);
             }
 

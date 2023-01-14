@@ -16,6 +16,7 @@ import java.io.File;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.security.AuthorizationFilter.ACCESS_FORBIDDEN;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
@@ -39,7 +40,7 @@ public class FicheiroService {
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
             Integer clientId = Integer.valueOf(securityContext.getUserPrincipal().getName());
             if (!ficheiro.getOcorrenciaMensagem().getOcorrencia().getClienteId().equals(clientId))
-                return Response.status(Response.Status.FORBIDDEN).build();
+                return ACCESS_FORBIDDEN;
         }
 
         File file = new File(ficheiro.getFilepath());

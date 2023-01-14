@@ -34,6 +34,10 @@ import java.util.stream.Collectors;
         @NamedQuery(
                 name = "getOcorrenciaByClienteRecente",
                 query = "SELECT o FROM Ocorrencia o WHERE o.clienteId = :clienteId order by o.atualizado desc"
+        ),
+        @NamedQuery(
+                name = "getOcorrenciaOwner",
+                query = "SELECT o.clienteId FROM Ocorrencia o WHERE o.id = :id"
         )
 })
 public class Ocorrencia extends EntityId<Integer> {

@@ -8,8 +8,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-"username": "Therese.Zemlak51",
-"password": "JWZhM_vkaZ_NeBq"
+  "username": "Samir_Upton36",
+  "password": "J7Sc1gwyGfsRBHa"
 }
 
 > {%
@@ -25,11 +25,11 @@ Accept: application/json
 ### All ocorrencias
 GET http://localhost:8080/gobs/api/ocorrencias
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaXNzIjoiU1BwVXFMMmVEZFh5Ri9aYUZibXFFVzFsQUZPRmh4bEZoU1dRRitKV0g0ND0iLCJtYWluUm9sZSI6IkZ1bmNpb25hcmlvIiwiZXhwIjoxNjczNzIyNzY5fQ.sBBix03owOefdbpR1rWEwJEcBnfAeJGjJ-Pqcv9rBks
+Authorization: Bearer  {{auth_token}}
 
 ###
 PATCH http://localhost:8080/gobs/api/ocorrencias/1/update-estado
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaXNzIjoiMHB5QXE4SzIxaW5rNS96dmFwcWJCa0Z2bHZ2R0pYSDJiLzRqd0twbGNGYz0iLCJtYWluUm9sZSI6IkZ1bmNpb25hcmlvIiwiZXhwIjoxNjczNzIyOTQ2fQ.2VlZaIjkOeI3-Eq7Zh-XP8bOfWum3F5YdTRG2Ud4_xY
+Authorization: Bearer  {{auth_token}}
 Content-Type: application/json
 
 {

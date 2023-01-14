@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ClienteDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ClienteBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
@@ -29,8 +28,8 @@ public class ClienteService {
     @GET
     @Path("/")
     public Response getAllClientes() {
-        Collection<ClienteDTO> clienteDTOs = clienteBean.getClientes().stream().map(Cliente::toDto).collect(Collectors.toList());
-        return Response.ok(clienteDTOs).build();
+        Collection<Cliente> clientes = clienteBean.getClientes();
+        return Response.ok(clientes.stream().map(Cliente::toDTO).collect(Collectors.toList())).build();
     }
 
     @GET
@@ -40,6 +39,6 @@ public class ClienteService {
         if (cliente == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter Cliente, Cliente não existe");
 
-        return Response.ok(cliente.toDto()).build();
+        return Response.ok(cliente.toDTO()).build();
     }
 }

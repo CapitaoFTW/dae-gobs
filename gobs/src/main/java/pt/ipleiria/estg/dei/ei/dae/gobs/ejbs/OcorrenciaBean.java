@@ -1,12 +1,11 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.UpdateEstadoDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsBadRequestException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 
@@ -26,7 +25,6 @@ public class OcorrenciaBean {
     private ApoliceBean apoliceBean;
     @PersistenceContext
     private EntityManager entityManager;
-    private EstadoOcorrencia estadoOcorrencia;
 
     public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, NewOcorrenciaMensagemDTO mensagemDTO) {
         if (apoliceBean.getApolice(apoliceId) == null)
@@ -39,11 +37,26 @@ public class OcorrenciaBean {
             throw new GobsConstraintViolationException(ex);
         }
 
-        OcorrenciaMensagem mensagem = addMessage(ocorrencia, mensagemDTO);
-        return Pair.of(ocorrencia, mensagem);
+        return addMessageInternal(ocorrencia, mensagemDTO);
     }
 
-    public OcorrenciaMensagem addMessage(Ocorrencia ocorrencia, NewOcorrenciaMensagemDTO mensagemDTO) {
+    public Pair<Ocorrencia, OcorrenciaMensagem> addMessage(Integer ocorrenciaId, NewOcorrenciaMensagemDTO mensagemDTO, Integer estado) {
+        Ocorrencia ocorrencia = find(ocorrenciaId);
+        if (ocorrencia == null)
+            throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
+
+        updateEstadoInternal(ocorrencia, EstadoOcorrencia.fromValue(estado));
+        return addMessageInternal(ocorrencia, mensagemDTO);
+    }
+
+    private Pair<Ocorrencia, OcorrenciaMensagem> addMessageInternal(Ocorrencia ocorrencia, NewOcorrenciaMensagemDTO mensagemDTO) {
+        EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
+        switch (estado) {
+            case Concluida:
+            case Invalida:
+                throw new GobsBadRequestException(estado, "A ocorrência está marcada como concluida ou inválida");
+        }
+
         OcorrenciaMensagem mensagem = mensagemDTO.toEntity();
         mensagem.setOcorrencia(ocorrencia);
 
@@ -54,14 +67,7 @@ public class OcorrenciaBean {
         }
 
         ocorrencia.addMensagem(mensagem);
-        return mensagem;
-    }
-
-    /*public void update(Integer clienteId, Integer apoliceId, String assunto, String descricao) {
-    }*/
-
-    public boolean exists(Integer id) {
-        return entityManager.createNamedQuery("existsOcorrencia", Long.class).setParameter("id", id).getSingleResult() > 0;
+        return Pair.of(ocorrencia, mensagem);
     }
 
     public Ocorrencia find(Integer id) {
@@ -72,11 +78,33 @@ public class OcorrenciaBean {
         return entityManager.find(Ocorrencia.class, id, lockModeType);
     }
 
-    public Ocorrencia findOrFail(Integer id) {
-        var ocorrencia = entityManager.getReference(Ocorrencia.class, id);
-        Hibernate.initialize(ocorrencia);
+    public Ocorrencia updateEstado(Integer ocorrenciaId, EstadoOcorrencia novoEstado) {
+        Ocorrencia ocorrencia = find(ocorrenciaId);
+        if (ocorrencia == null)
+            throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
+
+        return updateEstadoInternal(ocorrencia, novoEstado);
+    }
+
+    private Ocorrencia updateEstadoInternal(Ocorrencia ocorrencia, EstadoOcorrencia novoEstado) {
+        EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
+        switch (estado) {
+            case Concluida:
+            case Invalida:
+                throw new GobsBadRequestException(estado, "A ocorrência está marcada como concluida ou inválida");
+        }
+
+        try {
+            ocorrencia.setEstadoOcorrencia(novoEstado);
+        } catch (ConstraintViolationException ex) {
+            throw new GobsConstraintViolationException(ex);
+        }
 
         return ocorrencia;
+    }
+
+    public boolean exists(Integer id) {
+        return entityManager.createNamedQuery("existsOcorrencia", Long.class).setParameter("id", id).getSingleResult() > 0;
     }
 
     public Collection<Ocorrencia> findByCliente(Integer id) {
@@ -111,8 +139,13 @@ public class OcorrenciaBean {
                 .collect(Collectors.toList());
     }
 
-    public void updateEstado(Integer id, UpdateEstadoDTO dto) {
-        var ocorrencia = findOrFail(id);
-        ocorrencia.setEstadoOcorrencia(EstadoOcorrencia.fromValue(dto.getEstado()));
+    public Integer getOcorrenciaOwner(Integer ocorrenciaId) {
+        if (!exists(ocorrenciaId))
+            throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
+
+        return entityManager
+                .createNamedQuery("getOcorrenciaOwner", Integer.class)
+                .setParameter("id", ocorrenciaId)
+                .getSingleResult();
     }
 }
