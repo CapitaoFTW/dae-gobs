@@ -35,7 +35,7 @@
 					<h4 class="my-2 w-100">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
-						:fields="ocorrenciasFields"
+						:fields="ocorrenciasFieldsClientes"
 						:items="ocorrencias"
 						bordered
 						class="m-0"

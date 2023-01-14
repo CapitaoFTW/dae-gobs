@@ -72,6 +72,10 @@ export default {
 					key: 'criado',
 					formatter: 'formatDate'
 				},
+				{
+					key: '',
+					formatter: '<b-button @click="" @variant="success">Validar</b-button>' // ??
+				},
 			],
 		}
 	},

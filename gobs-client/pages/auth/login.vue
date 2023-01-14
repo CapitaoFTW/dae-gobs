@@ -207,7 +207,7 @@ export default {
 			this.$root.$bvToast.toast('You are logged in!', {
 				solid: true,
 				title: 'Logged in!',
-				toaster: 'b-toaster-top-left',
+				toaster: 'b-toaster-top-center',
 				variant: 'success'
 			});
 			this.$router.push('/');
