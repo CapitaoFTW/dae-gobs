@@ -41,6 +41,12 @@ public class OcorrenciaMensagem extends EntityId<Integer> {
         this.ficheiros = new LinkedList<>();
     }
 
+    public OcorrenciaMensagem(Integer sender, String mensagem) {
+        this.sender = sender;
+        this.mensagem = mensagem;
+        this.ficheiros = new LinkedList<>();
+    }
+
     public OcorrenciaMensagem(Integer sender, String mensagem, Ocorrencia ocorrencia) {
         this.sender = sender;
         this.mensagem = mensagem;

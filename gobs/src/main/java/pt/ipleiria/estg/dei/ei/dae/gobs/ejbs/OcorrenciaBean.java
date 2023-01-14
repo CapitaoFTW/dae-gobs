@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import org.apache.commons.lang3.tuple.Pair;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
@@ -23,21 +24,32 @@ public class OcorrenciaBean {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, String mensagem) {
+    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, NewOcorrenciaMensagemDTO mensagemDTO) {
         if (apoliceBean.getApolice(apoliceId) == null)
             throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
         Ocorrencia ocorrencia = new Ocorrencia(clienteId, apoliceId, assunto, EstadoOcorrencia.Criada);
-        OcorrenciaMensagem ocorrenciaMensagem = new OcorrenciaMensagem(0, mensagem, ocorrencia);
-
         try {
             entityManager.persist(ocorrencia);
-            entityManager.persist(ocorrenciaMensagem);
         } catch (ConstraintViolationException ex) {
             throw new GobsConstraintViolationException(ex);
         }
 
-        return Pair.of(ocorrencia, ocorrenciaMensagem);
+        OcorrenciaMensagem mensagem = addMessage(ocorrencia, mensagemDTO);
+        return Pair.of(ocorrencia, mensagem);
+    }
+
+    public OcorrenciaMensagem addMessage(Ocorrencia ocorrencia, NewOcorrenciaMensagemDTO mensagemDTO) {
+        OcorrenciaMensagem mensagem = mensagemDTO.toEntity();
+        mensagem.setOcorrencia(ocorrencia);
+
+        try {
+            entityManager.persist(mensagem);
+        } catch (ConstraintViolationException ex) {
+            throw new GobsConstraintViolationException(ex);
+        }
+
+        return mensagem;
     }
 
     public Ocorrencia find(Integer id) {

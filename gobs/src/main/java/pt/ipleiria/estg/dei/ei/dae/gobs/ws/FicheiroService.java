@@ -45,6 +45,6 @@ public class FicheiroService {
         File file = new File(ficheiro.getFilepath());
         return Response.ok(file)
                 .header("Content-Disposition", "attachment;filename" + ficheiro.getFilename())
-                .build();//todo add info
+                .build();
     }
 }

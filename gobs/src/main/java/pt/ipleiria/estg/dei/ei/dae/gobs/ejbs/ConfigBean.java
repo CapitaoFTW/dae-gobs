@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Cliente;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
@@ -88,7 +89,7 @@ public class ConfigBean {
 
             Integer apoliceId = randomValue(ap);
             EstadoOcorrencia estadoOcorrencia = estados[random.nextInt(estados.length)];
-            Ocorrencia ocorrencia = ocorrenciaBean.create(clienteId, apoliceId, "Item quebrado", 0,"Exemplo de descricao para uma ocorrencia").getLeft();
+            Ocorrencia ocorrencia = ocorrenciaBean.create(clienteId, apoliceId, "Item quebrado", new NewOcorrenciaMensagemDTO(0, "Exemplo de descricao para uma ocorrencia")).getLeft();
             ocorrencia.setEstadoOcorrencia(estadoOcorrencia);
         }
     }

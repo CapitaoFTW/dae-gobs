@@ -4,6 +4,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ClienteBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.SeguradoraBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
+import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
 import javax.annotation.security.RolesAllowed;
@@ -59,6 +60,9 @@ public class ApolicesService {
     @RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
     public Response getApolice(@PathParam("id") Integer apoliceId) {
         Apolice apolice = apoliceBean.getApolice(apoliceId);
+        if (apolice == null)
+            throw new GobsEntityNotFoundException(apoliceId, "Falha ao obter Apólice, Apólice não existe");
+
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
             Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
             if (!apolice.getClienteId().equals(id))
