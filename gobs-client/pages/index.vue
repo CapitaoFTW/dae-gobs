@@ -4,7 +4,7 @@
 		<b-button>Reload</b-button><!-- todo change location adding reload function use variable to show-->
 		<b-row :class="{ 'row-cols-2': isCliente }" class="flex-fill text-center">
 			<b-col v-if="isCliente" class="h-100">
-				<b-row class="border border-primary mx-1">
+				<b-row class="border border-primary mx-1 rounded">
 					<h4 class="my-2 w-100">Apólices</h4>
 					<b-table
 						:busy="apolicesLoading"
@@ -35,7 +35,7 @@
 				<b-button class="mt-2" to="/apolices" variant="primary">Ver apólices</b-button>
 			</b-col>
 			<b-col class="h-100">
-				<b-row class="border border-primary mx-1">
+				<b-row class="border border-primary mx-1 rounded">
 					<h4 class="my-2 w-100">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"

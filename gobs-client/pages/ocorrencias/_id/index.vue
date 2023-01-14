@@ -27,15 +27,19 @@
 							</object>
 						</div>
 					</b-row>
-					<hr/>
+					<br/>
 				</div>
-				<b-row>Mensagens:</b-row>
-				<b-row v-for="item in mensagens">
-					{{ `${item.sender}: ${item.mensagem}` }}
+				<b-row class="border border-primary p-2 rounded">
+					<b-col>
+						Mensagens:
+						<b-row v-for="item in mensagens">
+							{{ `${item.sender}: ${item.mensagem}` }}
+						</b-row>
+					</b-col>
 				</b-row>
 				<b-row>
 				<!--suppress JSUnresolvedVariable -->
-				<b-form ref="msgForm" :validated="isFormValid" class="mt-5 w-100" @submit.prevent="sendMsg" v-if="ocorrencia.estado < 7">
+				<b-form ref="msgForm" :validated="isFormValid" class="mt-3 w-100" @submit.prevent="sendMsg" v-if="ocorrencia.estado < 7">
 					<!--suppress JSUnresolvedVariable -->
 					<b-form-group
 						:invalid-feedback="invalidMensagemFeedback"
