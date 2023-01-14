@@ -164,6 +164,48 @@ public class OcorrenciaService {
 
             ficheiroBean.create(mensagemDTO, filename, file.getPath());
         }
+
+        Ocorrencia ocorrencia = pair.getLeft();
+        URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrencia.getId().toString()).build();
+        return Response.created(uri).entity(ocorrenciaDTO(ocorrencia, true)).build();
+    }
+
+    /*@PUT
+    @Path("{id}")
+    public Response update(@PathParam("id") Integer Id, OcorrenciaDTO ocorrenciaDTO) {
+        ocorrenciaBean.update(Id, ocorrenciaDTO.getName());
+        ocorrenciaDTO = ocorrenciaDTO(ocorrenciaBean.find(ocorrenciaDTO.getId()), false);
+
+        return Response.ok(ocorrenciaDTO).build();
+    }*/
+
+    private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias, boolean comMensagens) {
+        Collection<OcorrenciaDTO> ocorrenciaDTOs = new LinkedList<>();
+        Map<Integer, Apolice> apolices = new LinkedHashMap<>();
+
+        for (Ocorrencia ocorrencia : ocorrencias) {
+            OcorrenciaDTO dto = comMensagens ? ocorrencia.toDTOcomMensagens() : ocorrencia.toDTO();
+            ocorrenciaDTOs.add(dto);
+
+            Integer apoliceId = ocorrencia.getApoliceId();
+            Apolice apolice = apolices.get(apoliceId);
+            if (apolice == null) {
+                apolice = apoliceBean.getApolice(apoliceId);
+                apolices.put(apoliceId, apolice);
+            }
+            dto.setApolice(apolice.toDto());
+        }
+
+        return ocorrenciaDTOs;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private OcorrenciaDTO ocorrenciaDTO(Ocorrencia ocorrencia, boolean comMensagens) {
+        OcorrenciaDTO dto = comMensagens ? ocorrencia.toDTOcomMensagens() : ocorrencia.toDTO();
+        Integer apoliceId = ocorrencia.getApoliceId();
+        Apolice apolice = apoliceBean.getApolice(apoliceId);
+        dto.setApolice(apolice.toDto());
+        return dto;
     }
 
     private String getFilename(MultivaluedMap<String, String> headers) {
