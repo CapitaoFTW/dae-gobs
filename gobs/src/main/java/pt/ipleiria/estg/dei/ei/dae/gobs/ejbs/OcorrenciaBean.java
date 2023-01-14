@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import org.apache.commons.lang3.tuple.Pair;
+import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
@@ -13,36 +14,30 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Stateless
 public class OcorrenciaBean {
-    private static int i = 0;
     @EJB
     private ApoliceBean apoliceBean;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, String descricao) {
+    public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, String mensagem) {
         if (apoliceBean.getApolice(apoliceId) == null)
             throw new GobsEntityNotFoundException(apoliceId, "Falha ao registar ocorrencia, apólice não existe.");
 
-        Ocorrencia ocorrencia = new Ocorrencia(clienteId, apoliceId, assunto);
-        OcorrenciaMensagem mensagem = new OcorrenciaMensagem(descricao, ocorrencia);
+        Ocorrencia ocorrencia = new Ocorrencia(clienteId, apoliceId, assunto, EstadoOcorrencia.Criada);
+        OcorrenciaMensagem ocorrenciaMensagem = new OcorrenciaMensagem(0, mensagem, ocorrencia);
 
         try {
             entityManager.persist(ocorrencia);
-            entityManager.persist(mensagem);
+            entityManager.persist(ocorrenciaMensagem);
         } catch (ConstraintViolationException ex) {
             throw new GobsConstraintViolationException(ex);
         }
 
-        return Pair.of(ocorrencia, mensagem);
-    }
-
-    public boolean exists(Integer id) {
-        return entityManager.createNamedQuery("existsOcorrencia", Long.class).setParameter("id", id).getSingleResult() > 0;
+        return Pair.of(ocorrencia, ocorrenciaMensagem);
     }
 
     public Ocorrencia find(Integer id) {

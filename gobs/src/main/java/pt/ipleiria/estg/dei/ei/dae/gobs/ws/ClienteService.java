@@ -15,12 +15,13 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("clientes")
 @Produces({MediaType.APPLICATION_JSON})
-@RolesAllowed({CLIENTE_ROLE})
+@RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
 public class ClienteService {
     @EJB
     private ClienteBean clienteBean;

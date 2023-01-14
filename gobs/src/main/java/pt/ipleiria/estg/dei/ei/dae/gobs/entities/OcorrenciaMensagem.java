@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import org.hibernate.annotations.CreationTimestamp;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaMensagemDTO;
 
 import javax.persistence.*;
@@ -19,7 +18,8 @@ public class OcorrenciaMensagem extends EntityId<Integer> {
     @Id
     @GeneratedValue
     private Integer id;
-
+    @NotNull
+    private Integer sender;//0 means ocorrencia.client another value is the id of funcionario
     @JoinColumn(name = "ocorrencia_id")
     @ManyToOne
     @NotNull
@@ -41,7 +41,8 @@ public class OcorrenciaMensagem extends EntityId<Integer> {
         this.ficheiros = new LinkedList<>();
     }
 
-    public OcorrenciaMensagem(String mensagem, Ocorrencia ocorrencia) {
+    public OcorrenciaMensagem(Integer sender, String mensagem, Ocorrencia ocorrencia) {
+        this.sender = sender;
         this.mensagem = mensagem;
         this.ocorrencia = ocorrencia;
         this.ficheiros = new LinkedList<>();
@@ -58,6 +59,14 @@ public class OcorrenciaMensagem extends EntityId<Integer> {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getSender() {
+        return sender;
+    }
+
+    public void setSender(Integer sender) {
+        this.sender = sender;
     }
 
     public Ocorrencia getOcorrencia() {
@@ -95,6 +104,7 @@ public class OcorrenciaMensagem extends EntityId<Integer> {
     public OcorrenciaMensagemDTO toDTO() {
         return new OcorrenciaMensagemDTO(
                 this.getId(),
+                this.getSender(),
                 this.getMensagem(),
                 this.getFicheiros().stream().map(Ficheiro::toDTO).collect(Collectors.toList()),
                 this.getCriado()

@@ -2,13 +2,11 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.entities;
 
 import org.hibernate.annotations.CreationTimestamp;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.FicheiroDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaMensagemDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Entity
 @SuppressWarnings("unused")

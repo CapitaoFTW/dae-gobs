@@ -46,6 +46,9 @@ export default {
 		},
 		isFuncionario() {
 			return this.$auth.user.roles.includes('Funcionario');
+		},
+		ocorrenciasFields() {
+			return this.isFuncionario ? this.ocorrenciasFieldsFuncionario : this.ocorrenciasFieldsClientes
 		}
 	},
 	data() {
@@ -53,16 +56,25 @@ export default {
 			currentPage: 1,
 			perPage: 10,
 			ocorrencias: [],
-			ocorrenciasFields: [
+			ocorrenciasFieldsFuncionario: [
 				{
-					key: 'id'
+					key: 'cliente'
+				},
+				{
+					key: 'bem',
+					label: 'Bem'
+				},
+				{
+					key: 'premio',
+					label: 'Premio',
+					formatter: 'formatMoney'
+				},
+				{
+					key: 'assunto'
 				},
 				{
 					key: 'estado',
 					formatter: 'formatEstado'
-				},
-				{
-					key: 'descricao'
 				},
 				{
 					key: 'atualizado',
@@ -72,16 +84,84 @@ export default {
 					key: 'criado',
 					formatter: 'formatDate'
 				},
-				{
-					key: '',
-					formatter: '<b-button @click="" @variant="success">Validar</b-button>' // ??
-				},
 			],
+			ocorrenciasFieldsClientes: [
+				{
+					key: 'bem',
+					label: 'Bem'
+				},
+				{
+					key: 'premio',
+					label: 'Premio',
+					formatter: 'formatMoney'
+				},
+				{
+					key: 'assunto'
+				},
+				{
+					key: 'estado',
+					formatter: 'formatEstado'
+				},
+				{
+					key: 'atualizado',
+					formatter: 'formatDate'
+				},
+				{
+					key: 'criado',
+					formatter: 'formatDate'
+				},
+/*
+				{
+					key: 'actions'
+				}
+			]
+*/
+			]
 		}
 	},
 	async fetch() {
 		await this.$axios.$get('/api/ocorrencias')
-			.then(data => this.ocorrencias = data)
+			.then(async data => {
+				this.ocorrencias = data
+				const apolices = {}
+				const clientes = {}
+
+				for (const ocorrencia of this.ocorrencias) {
+					// noinspection JSUnresolvedVariable
+					const apoliceId = ocorrencia.apoliceId
+					if (!(apoliceId in apolices)) {
+						await this.$axios.$get(`/api/apolices/${apoliceId}`)
+							.then(data => {
+								const bem = data.bem
+								const premio = data.premio
+
+								apolices[apoliceId] = [bem, premio]
+								ocorrencia.bem = bem
+								ocorrencia.premio = premio
+							})
+					} else {
+						const [bem, premio] = apolices[apoliceId]
+						ocorrencia.bem = bem
+						ocorrencia.premio = premio
+					}
+
+					if (this.isCliente)
+						continue
+
+					const clienteId = ocorrencia.clienteId
+					const cliente = clientes[clienteId]
+					if (!cliente) {
+						await this.$axios.$get(`/api/clientes/${clienteId}`)
+							.then(data => {
+								const msg = `${data.nome}(${data.nif})`
+								clientes[clienteId] = msg
+								ocorrencia.cliente = msg
+							})
+					} else {
+						ocorrencia.cliente = cliente
+					}
+				}
+			})
 			.catch(e => {
 				console.error(`Erro ao obter ocorrencias: ${e}`)
 				this.$root.$bvToast.toast('Erro ao obter ocorrencias.', {
@@ -92,47 +172,17 @@ export default {
 				});
 				this.$router.back()
 			});
-		/*if (this.isCliente)
-			await this.getClienteData();
-
-		if (this.isFuncionario)
-			await this.getFuncionarioData();*/
 	},
 	fetchOnServer: false,
 	methods: {
-		/*async getClienteData() {
-			await this.$axios.$get('/api/ocorrencias')
-				.then(data => this.ocorrencias = data)
-				.catch(e => {
-					console.error(`Erro ao obter ocorrencias: ${e}`)
-					this.$root.$bvToast.toast('Erro ao obter ocorrencias.', {
-						solid: true,
-						title: 'Erro ao obter dados',
-						toaster: 'b-toaster-top-center',
-						variant: 'danger'
-					});
-					this.$router.push('/')
-				});
-		},
-		async getFuncionarioData() {
-			await this.$axios.$get('/api/ocorrencias')
-				.then(data => this.ocorrencias = data)
-				.catch(e => {
-					console.error(`Erro ao obter ocorrencias: ${e}`)
-					this.$root.$bvToast.toast('Erro ao obter ocorrencias.', {
-						solid: true,
-						title: 'Erro ao obter dados',
-						toaster: 'b-toaster-top-center',
-						variant: 'danger'
-					});
-					this.$router.push('/')
-				});
-		},*/
 		formatDate(value) {
 			if (!value)
 				return '-'
 
 			return new Date(value.replace('[UTC]', '')).toLocaleString()
+		},
+		formatMoney(value) {
+			return `${value}€`
 		},
 		formatEstado(value) {
 			switch (value) {

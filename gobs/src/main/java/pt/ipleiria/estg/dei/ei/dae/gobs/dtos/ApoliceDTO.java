@@ -1,15 +1,13 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.dtos;
 
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Seguradora;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 @SuppressWarnings("unused")
 public class ApoliceDTO {
     private Integer id;
-    private Seguradora seguradora;//todo seguradora dto
-    private ClienteDTO cliente;
+    private Integer seguradoraId;
+    private Integer clienteId;
     private String bem;
     private BigDecimal premio;
     private Date prazo;
@@ -18,8 +16,10 @@ public class ApoliceDTO {
     public ApoliceDTO() {
     }
 
-    public ApoliceDTO(Integer id, String bem, BigDecimal premio, Date prazo, Date criado) {
+    public ApoliceDTO(Integer id, Integer seguradoraId, Integer clienteId, String bem, BigDecimal premio, Date prazo, Date criado) {
         this.id = id;
+        this.seguradoraId = seguradoraId;
+        this.clienteId = clienteId;
         this.bem = bem;
         this.premio = premio;
         this.prazo = prazo;
@@ -34,20 +34,20 @@ public class ApoliceDTO {
         this.id = id;
     }
 
-    public Seguradora getSeguradora() {
-        return seguradora;
+    public Integer getSeguradoraId() {
+        return seguradoraId;
     }
 
-    public void setSeguradora(Seguradora seguradora) {
-        this.seguradora = seguradora;
+    public void setSeguradoraId(Integer seguradoraId) {
+        this.seguradoraId = seguradoraId;
     }
 
-    public ClienteDTO getCliente() {
-        return cliente;
+    public Integer getClienteId() {
+        return clienteId;
     }
 
-    public void setCliente(ClienteDTO cliente) {
-        this.cliente = cliente;
+    public void setClienteId(Integer clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getBem() {

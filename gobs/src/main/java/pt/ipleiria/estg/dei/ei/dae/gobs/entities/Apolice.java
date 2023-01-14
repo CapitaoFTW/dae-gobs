@@ -78,6 +78,8 @@ public class Apolice extends EntityId<Integer> {
     public ApoliceDTO toDto() {
         return new ApoliceDTO(
                 this.getId(),
+                this.getSeguradoraId(),
+                this.getClienteId(),
                 this.getBem(),
                 this.getPremio(),
                 this.getPrazo(),

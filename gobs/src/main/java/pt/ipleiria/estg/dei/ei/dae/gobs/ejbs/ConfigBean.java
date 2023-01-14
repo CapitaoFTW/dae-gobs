@@ -88,7 +88,7 @@ public class ConfigBean {
 
             Integer apoliceId = randomValue(ap);
             EstadoOcorrencia estadoOcorrencia = estados[random.nextInt(estados.length)];
-            Ocorrencia ocorrencia = ocorrenciaBean.create(clienteId, apoliceId, "Item quebrado", "Exemplo de descricao para uma ocorrencia").getLeft();
+            Ocorrencia ocorrencia = ocorrenciaBean.create(clienteId, apoliceId, "Item quebrado", 0,"Exemplo de descricao para uma ocorrencia").getLeft();
             ocorrencia.setEstadoOcorrencia(estadoOcorrencia);
         }
     }

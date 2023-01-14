@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PersistenceUnitSettings">
-    <persistence-units>
-      <persistence-unit name="GobsUnit" persistenceXmlPath="src/main/resources/META-INF/persistence.xml">
-        <packages>
-          <package value="pt.ipleiria.estg.dei.ei.dae.gobs" />
-        </packages>
-      </persistence-unit>
-    </persistence-units>
-  </component>
+    <component name="PersistenceUnitSettings">
+        <persistence-units>
+            <persistence-unit name="GobsUnit" persistenceXmlPath="src/main/resources/META-INF/persistence.xml">
+                <packages>
+                    <package value="pt.ipleiria.estg.dei.ei.dae.gobs"/>
+                </packages>
+            </persistence-unit>
+        </persistence-units>
+    </component>
 </project>

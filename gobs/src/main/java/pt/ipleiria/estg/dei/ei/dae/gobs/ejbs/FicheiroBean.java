@@ -15,6 +15,7 @@ public class FicheiroBean {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @SuppressWarnings("UnusedReturnValue")
     public Ficheiro create(OcorrenciaMensagem mensagem, String filename, String filepath) {
         Ficheiro ficheiro = new Ficheiro(filepath, filename, mensagem);
         try {

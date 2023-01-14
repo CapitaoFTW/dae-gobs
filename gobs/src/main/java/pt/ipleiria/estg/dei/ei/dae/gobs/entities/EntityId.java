@@ -4,7 +4,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 @MappedSuperclass
-public abstract class EntityId<T>  {
+public abstract class EntityId<T> {
     @Version
     private int version;
 

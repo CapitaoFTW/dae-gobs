@@ -2,10 +2,12 @@ package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.api;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.http.ResteasyProxy;
 
+import javax.ejb.EJBException;
 import javax.persistence.MappedSuperclass;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 @MappedSuperclass
 public abstract class ExternalService<Bridge, Proxy extends ResteasyProxy<Bridge>> {
@@ -26,6 +28,13 @@ public abstract class ExternalService<Bridge, Proxy extends ResteasyProxy<Bridge
         } catch (WebApplicationException ex) {
             if (ex.getResponse().getStatusInfo() == Response.Status.INTERNAL_SERVER_ERROR)//MockAPi.io returns error 500 instead of 404
                 return null;
+
+            throw ex;
+        } catch (EJBException ex) {
+            Logger.getLogger("test").warning("EJBException");
+            Exception ex1 = ex.getCausedByException();
+            if (ex1 instanceof RuntimeException)
+                throw (RuntimeException) ex1;
 
             throw ex;
         }

@@ -55,16 +55,9 @@ public class Ocorrencia extends EntityId<Integer> {
     private Collection<OcorrenciaMensagem> mensagems;
     @UpdateTimestamp
     private Date atualizado;
+    private Date criado;
 
     public Ocorrencia() {
-        this.mensagems = new LinkedHashSet<>();
-    }
-
-    public Ocorrencia(Integer clienteId, Integer apoliceId, String assunto) {
-        this.clienteId = clienteId;
-        this.apoliceId = apoliceId;
-        this.assunto = assunto;
-        this.estadoOcorrencia = EstadoOcorrencia.Criada;
         this.mensagems = new LinkedHashSet<>();
     }
 
@@ -74,6 +67,11 @@ public class Ocorrencia extends EntityId<Integer> {
         this.assunto = assunto;
         this.estadoOcorrencia = estadoOcorrencia;
         this.mensagems = new LinkedHashSet<>();
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.criado = new Date();
     }
 
     @Override
@@ -137,22 +135,36 @@ public class Ocorrencia extends EntityId<Integer> {
         this.atualizado = atualizado;
     }
 
+    public Date getCriado() {
+        return criado;
+    }
+
+    public void setCriado(Date criado) {
+        this.criado = criado;
+    }
+
     public OcorrenciaDTO toDTO() {
         return new OcorrenciaDTO(
                 this.getId(),
+                this.getApoliceId(),
+                this.getClienteId(),
                 this.getAssunto(),
                 this.getEstadoOcorrencia().getValue(),
-                this.getAtualizado()
+                this.getAtualizado(),
+                this.getCriado()
         );
     }
 
     public OcorrenciaDTO toDTOcomMensagens() {
         return new OcorrenciaDTO(
                 this.getId(),
+                this.getApoliceId(),
+                this.getClienteId(),
                 this.getAssunto(),
                 this.getEstadoOcorrencia().getValue(),
                 this.getMensagems().stream().map(OcorrenciaMensagem::toDTO).collect(Collectors.toList()),
-                this.getAtualizado()
+                this.getAtualizado(),
+                this.getCriado()
         );
     }
 }

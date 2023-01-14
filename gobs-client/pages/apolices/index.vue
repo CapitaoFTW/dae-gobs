@@ -43,7 +43,7 @@ export default {
 			apolices: [],
 			apolicesFields: [
 				{
-					key: 'seguradora.nome',
+					key: 'seguradora',
 					label: 'Seguradora'
 				},
 				{
@@ -68,7 +68,28 @@ export default {
 	},
 	async fetch() {
 		await this.$axios.$get('/api/apolices')
-			.then(data => this.apolices = data)
+			.then(async data => {
+				this.apolices = data
+				const seguradoras = {}
+
+				for (const apolice of this.apolices) {
+					// noinspection JSUnresolvedVariable
+					const seguradoraId = apolice.seguradoraId
+					const seguradora = seguradoras[seguradoraId]
+					if (seguradora) {
+						apolice.seguradora = seguradora
+						continue
+					}
+
+					await this.$axios.$get(`/api/seguradoras/${seguradoraId}`)
+						.then(data => {
+							// noinspection JSUnresolvedVariable
+							const seguradora = data.nome
+							seguradoras[seguradoraId] = seguradora
+							apolice.seguradora = seguradora
+						})
+				}
+			})
 			.catch(e => {
 				console.error(`Erro ao obter apolices: ${e}`)
 				this.$root.$bvToast.toast('Erro ao obter apolices.', {

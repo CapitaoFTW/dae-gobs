@@ -2,24 +2,12 @@
 	<b-container class="d-flex align-items-center flex-column h-75 mt-3">
 		<h2>Registar uma nova ocorrência</h2>
 		<b-form :validated="isFormValid" class="mt-5" @submit.prevent="create">
-			<b-form-group
-				:invalid-feedback="invalidAssuntoFeedback"
-				:state="isAssuntoValid"
-				label="Introduzir o assunto:"
-				label-for="input-assunto">
-				<b-form-input
-					id="input-assunto"
-					v-model.trim="assunto"
-					:state="isAssuntoValid"
-					placeholder="Assunto"
-					required
-					type="text"/>
-			</b-form-group>
+			<!--suppress JSUnresolvedVariable -->
 			<b-overlay :show="$fetchState.pending" spinner-variant="primary">
 				<b-form-group
 					:invalid-feedback="invalidApoliceFeedback"
 					:state="isApoliceValid"
-					label="Apolice:"
+					label="Apólice:"
 					label-for="input-apolice">
 					<b-form-select
 						id="input-apolice"
@@ -27,7 +15,7 @@
 						:options="apolices"
 						:state="isApoliceValid"
 						required
-						text-field="nome"
+						text-field="seguradoraBem"
 						value-field="id">
 						<template #first>
 							<b-form-select-option :value="null" disabled>-- Selecione a apólice --
@@ -42,6 +30,19 @@
 					</div>
 				</template>
 			</b-overlay>
+			<b-form-group
+				:invalid-feedback="invalidAssuntoFeedback"
+				:state="isAssuntoValid"
+				label="Introduzir o assunto:"
+				label-for="input-assunto">
+				<b-form-input
+					id="input-assunto"
+					v-model.trim="assunto"
+					:state="isAssuntoValid"
+					placeholder="Assunto"
+					required
+					type="text"/>
+			</b-form-group>
 			<b-form-group
 				:invalid-feedback="invalidDescricaoFeedback"
 				:state="isDescricaoValid"
@@ -111,7 +112,7 @@ export default {
 			}
 
 			if (!this.apolices.some(apolice => apolice.id === apoliceId)) {
-				return 'Apolice não exitente.'
+				return 'Apólice não exitente.'
 			}
 
 			return ''
@@ -161,20 +162,29 @@ export default {
 	},
 	async fetch() {
 		await this.$axios.$get('/api/apolices')
-			.then(data => {
-				if (!data)
-					return
+			.then(async data => {
+				const apolices = data
+				const seguradoras = {}
 
-				data.forEach(i => {
+				for (const apolice of apolices) {
 					// noinspection JSUnresolvedVariable
-					if (!i.seguradora)
-						return i
+					const seguradoraId = apolice.seguradoraId
+					const seguradora = seguradoras[seguradoraId]
+					if (seguradora) {
+						apolice.seguradoraBem = `Seguradora: ${seguradora} | Bem: ${apolice.bem}`
+						continue
+					}
 
-					// noinspection JSUnresolvedVariable
-					i.nome = `Seguradora: ${i.seguradora.nome} | Bem: ${i.bem}`
-					return i
-				})
-				this.apolices = data
+					await this.$axios.$get(`/api/seguradoras/${seguradoraId}`)
+						.then(data => {
+							// noinspection JSUnresolvedVariable
+							const seguradora = data.nome
+							seguradoras[seguradoraId] = seguradora
+							apolice.seguradoraBem = `Seguradora: ${seguradora} | Bem: ${apolice.bem}`
+						})
+				}
+
+				this.apolices = apolices
 			})
 			.catch(e => {
 				console.error(`Erro ao obter apolices: ${e}`)
@@ -186,6 +196,7 @@ export default {
 				});
 				//todo reload
 			});
+		console.log(this.apolices)
 	},
 	fetchOnServer: false,
 	methods: {

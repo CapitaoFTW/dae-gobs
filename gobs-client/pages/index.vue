@@ -17,8 +17,12 @@
 						show-empty
 						thead-class="d-none"
 						@row-clicked="clickApolice">
+						<!--suppress JSUnresolvedVariable -->
 						<template v-slot:cell(dataRange)="row">
 							{{ `${formatDate(row.item.criado)} - ${formatDate(row.item.prazo)}` }}
+						</template>
+						<template v-slot:cell(actions)="row">
+							<b-button @click="" variant="success">Validar</b-button>
 						</template>
 						<template #table-busy>
 							<div class="text-center text-primary my-2">
@@ -35,7 +39,7 @@
 					<h4 class="my-2 w-100">Ocorrências</h4>
 					<b-table
 						:busy="ocorrenciasLoading"
-						:fields="ocorrenciasFieldsClientes"
+						:fields="ocorrenciasFields"
 						:items="ocorrencias"
 						bordered
 						class="m-0"
@@ -67,10 +71,15 @@
 export default {
 	computed: {
 		isCliente() {
+			// noinspection JSUnresolvedVariable
 			return this.$auth.user.roles.includes('Cliente');
 		},
 		isFuncionario() {
+			// noinspection JSUnresolvedVariable
 			return this.$auth.user.roles.includes('Funcionario');
+		},
+		ocorrenciasFields() {
+			return this.isFuncionario ? this.ocorrenciasFieldsFuncionario : this.ocorrenciasFieldsClientes
 		}
 	},
 	data() {
@@ -93,10 +102,10 @@ export default {
 			ocorrencias: [],
 			ocorrenciasFieldsClientes: [
 				{
-					key: 'seguradora.nome'
+					key: 'bem'
 				},
 				{
-					key: 'apolice.bem'
+					key: 'assunto'
 				},
 				{
 					key: 'estado',
@@ -105,12 +114,17 @@ export default {
 			],
 			ocorrenciasFieldsFuncionario: [
 				{
-					key: 'estado',
-					formatter: 'formatEstado'
+					key: 'cliente'
 				},
 				{
-					key: 'atualizado',
-					formatter: 'formatDateTime'
+					key: 'bem'
+				},
+				{
+					key: 'assunto'
+				},
+				{
+					key: 'estado',
+					formatter: 'formatEstado'
 				}
 			],
 			ocorrenciasLoading: true
@@ -126,7 +140,7 @@ export default {
 	fetchOnServer: false,
 	methods: {
 		async getClienteData() {
-			const requestApolices = this.$axios.$get('/api/apolices/recent?limit=5')
+			await this.$axios.$get('/api/apolices/recent?limit=5')
 				.then(data => {
 					this.apolices = data
 					this.apolicesLoading = false;
@@ -141,10 +155,33 @@ export default {
 					});
 					this.needReload = true
 				});
-			const requestOcorrencias = this.$axios.$get('/api/ocorrencias/recent?limit=5')
-				.then(data => {
+			await this.$axios.$get('/api/ocorrencias/recent?limit=5')
+				.then(async data => {
 					this.ocorrencias = data
-					console.log(data)
+					const bens = {}
+
+					for (const ocorrencia of this.ocorrencias) {
+						const apoliceId = ocorrencia.apoliceId
+						const bem = bens[apoliceId]
+						if (bem) {
+							ocorrencia.bem = bem
+							continue
+						}
+
+						const apolice = this.apolices.find(apolice => apolice.id === apoliceId)
+						if (apolice) {
+							bens[apoliceId] = apolice.bem
+							ocorrencia.bem = apolice.bem
+							continue
+						}
+
+						await this.$axios.$get(`/api/apolices/${apoliceId}`)
+							.then(data => {
+								const bem = data.bem
+								bens[apoliceId] = bem
+								ocorrencia.bem = bem
+							})
+					}
 					this.ocorrenciasLoading = false;
 				})
 				.catch(e => {
@@ -157,13 +194,44 @@ export default {
 					});
 					this.needReload = true
 				});
-
-			await Promise.all([requestApolices, requestOcorrencias]);
 		},
 		async getFuncionarioData() {
 			await this.$axios.$get('/api/ocorrencias/recent?limit=5')
-				.then(data => {
+				.then(async data => {
 					this.ocorrencias = data
+					const bens = {}
+					const clientes = {}
+
+					for (const ocorrencia of this.ocorrencias) {
+						// noinspection JSUnresolvedVariable
+						const apoliceId = ocorrencia.apoliceId
+						const bem = bens[apoliceId]
+						if (!bem) {
+							await this.$axios.$get(`/api/apolices/${apoliceId}`)
+								.then(data => {
+									const bem = data.bem
+									bens[apoliceId] = bem
+									ocorrencia.bem = bem
+								})
+						} else {
+							ocorrencia.bem = bem
+						}
+
+						// noinspection JSUnresolvedVariable
+						const clienteId = ocorrencia.clienteId
+						const cliente = clientes[clienteId]
+						if (!cliente) {
+							await this.$axios.$get(`/api/clientes/${clienteId}`)
+								.then(data => {
+									const msg = `${data.nome}(${data.nif})`
+									clientes[clienteId] = msg
+									ocorrencia.cliente = msg
+								})
+						} else {
+							ocorrencia.cliente = cliente
+						}
+					}
+
 					this.ocorrenciasLoading = false;
 				})
 				.catch(e => {

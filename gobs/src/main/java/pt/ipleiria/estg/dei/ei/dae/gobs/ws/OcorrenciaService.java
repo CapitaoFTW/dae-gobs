@@ -5,11 +5,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.OcorrenciaDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ApoliceBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.FicheiroBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.OcorrenciaBean;
-import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Apolice;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
@@ -25,7 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
 import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
@@ -37,8 +38,6 @@ import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
 @RolesAllowed({CLIENTE_ROLE, FUNCIONARIO_ROLE})
 public class OcorrenciaService {
     @EJB
-    private ApoliceBean apoliceBean;
-    @EJB
     private FicheiroBean ficheiroBean;
     @EJB
     private OcorrenciaBean ocorrenciaBean;
@@ -47,7 +46,6 @@ public class OcorrenciaService {
 
     @GET
     @Path("/")
-    @Transactional
     public Response getOcorrencias() {
         Collection<Ocorrencia> ocorrencias;
         if (securityContext.isUserInRole(CLIENTE_ROLE)) {
@@ -56,7 +54,8 @@ public class OcorrenciaService {
         } else {
             ocorrencias = ocorrenciaBean.getOcorrencias();
         }
-        return Response.ok(ocorrenciasToDTOs(ocorrencias, true)).build();
+
+        return Response.ok(ocorrencias.stream().map(Ocorrencia::toDTO).collect(Collectors.toList())).build();
     }
 
     @GET
@@ -70,13 +69,27 @@ public class OcorrenciaService {
             ocorrencias = ocorrenciaBean.getOcorrenciasRecentes(limit);
         }
 
-        return Response.ok(ocorrenciasToDTOs(ocorrencias, false)).build();
+        return Response.ok(ocorrencias.stream().map(Ocorrencia::toDTO).collect(Collectors.toList())).build();
     }
 
     @GET
     @Path("/estados")
     public Response getEstados() {
         return Response.ok(EstadoOcorrencia.values()).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Transactional
+    public Response getOcorrencia(@PathParam("id") Integer ocorrenciaId) {
+        Ocorrencia ocorrencia = ocorrenciaBean.find(ocorrenciaId);
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
+            if (!ocorrencia.getClienteId().equals(id))
+                return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        return Response.ok(ocorrencia.toDTOcomMensagens()).build();
     }
 
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -112,36 +125,21 @@ public class OcorrenciaService {
 
         Ocorrencia ocorrencia = pair.getLeft();
         URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrencia.getId().toString()).build();
-        return Response.created(uri).entity(ocorrenciaDTO(ocorrencia, true)).build();
+        return Response.created(uri).entity(ocorrencia.toDTOcomMensagens()).build();
     }
 
-    private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias, boolean comMensagens) {
-        Collection<OcorrenciaDTO> ocorrenciaDTOs = new LinkedList<>();
-        Map<Integer, Apolice> apolices = new LinkedHashMap<>();
-
-        for (Ocorrencia ocorrencia : ocorrencias) {
-            OcorrenciaDTO dto = comMensagens ? ocorrencia.toDTOcomMensagens() : ocorrencia.toDTO();
-            ocorrenciaDTOs.add(dto);
-
-            Integer apoliceId = ocorrencia.getApoliceId();
-            Apolice apolice = apolices.get(apoliceId);
-            if (apolice == null) {
-                apolice = apoliceBean.getApolice(apoliceId);
-                apolices.put(apoliceId, apolice);
-            }
-            dto.setApolice(apolice.toDto());
+    @GET
+    @Path("/update")
+    public Response getOcorrencias() {
+        Collection<Ocorrencia> ocorrencias;
+        if (securityContext.isUserInRole(CLIENTE_ROLE)) {
+            Integer id = Integer.valueOf(securityContext.getUserPrincipal().getName());
+            ocorrencias = ocorrenciaBean.findByCliente(id);
+        } else {
+            ocorrencias = ocorrenciaBean.getOcorrencias();
         }
 
-        return ocorrenciaDTOs;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private OcorrenciaDTO ocorrenciaDTO(Ocorrencia ocorrencia, boolean comMensagens) {
-        OcorrenciaDTO dto = comMensagens ? ocorrencia.toDTOcomMensagens() : ocorrencia.toDTO();
-        Integer apoliceId = ocorrencia.getApoliceId();
-        Apolice apolice = apoliceBean.getApolice(apoliceId);
-        dto.setApolice(apolice.toDto());
-        return dto;
+        return Response.ok(ocorrencias.stream().map(Ocorrencia::toDTO).collect(Collectors.toList())).build();
     }
 
     private String getFilename(MultivaluedMap<String, String> headers) {
