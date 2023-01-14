@@ -7,11 +7,13 @@ public enum EstadoOcorrencia {
     Criada(1),
     ParaAnalise(2),
     AguardarMaisDados(3),
-    EmReparacao(4),
-    ImpossivelReparar(5),
-    Reparada(6),
-    Concluida(7),
-    Invalida(8);
+    ParaReparacao(4),
+    EmReparacao(5),
+    ImpossivelReparar(6),
+    Reparada(7),
+    EmPagamento(8),
+    Concluida(9),
+    Invalida(10);
 
     private static final Map<Integer, EstadoOcorrencia> estadosMap = new HashMap<>();
 

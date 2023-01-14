@@ -1,8 +1,10 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.Hibernate;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.UpdateEstadoDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsConstraintViolationException;
@@ -24,6 +26,7 @@ public class OcorrenciaBean {
     private ApoliceBean apoliceBean;
     @PersistenceContext
     private EntityManager entityManager;
+    private EstadoOcorrencia estadoOcorrencia;
 
     public Pair<Ocorrencia, OcorrenciaMensagem> create(Integer clienteId, Integer apoliceId, String assunto, NewOcorrenciaMensagemDTO mensagemDTO) {
         if (apoliceBean.getApolice(apoliceId) == null)
@@ -69,6 +72,13 @@ public class OcorrenciaBean {
         return entityManager.find(Ocorrencia.class, id, lockModeType);
     }
 
+    public Ocorrencia findOrFail(Integer id) {
+        var ocorrencia = entityManager.getReference(Ocorrencia.class, id);
+        Hibernate.initialize(ocorrencia);
+
+        return ocorrencia;
+    }
+
     public Collection<Ocorrencia> findByCliente(Integer id) {
         return entityManager
                 .createNamedQuery("getOcorrenciasByCliente", Ocorrencia.class)
@@ -99,5 +109,10 @@ public class OcorrenciaBean {
                 .setMaxResults(limite)
                 .getResultStream()
                 .collect(Collectors.toList());
+    }
+
+    public void updateEstado(Integer id, UpdateEstadoDTO dto) {
+        var ocorrencia = findOrFail(id);
+        ocorrencia.setEstadoOcorrencia(EstadoOcorrencia.fromValue(dto.getEstado()));
     }
 }

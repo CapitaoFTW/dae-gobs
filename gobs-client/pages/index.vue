@@ -259,15 +259,16 @@ export default {
 				case 1:
 				case 2:
 				case 4:
+				case 5:
+				case 7:
 					return 'Em processo'
 				case 3:
-				case 5:
-				case 6:
-					return 'Aguardando utilizador'
-				case 7:
-					return 'Concluída'
 				case 8:
-					return 'Pedido inválido'
+					return 'Aguardando utilizador'
+				case 9:
+					return 'Concluída'
+				case 10:
+					return 'Inválida'
 				default:
 					return 'Algo correu mal! Contacte-nos'
 			}

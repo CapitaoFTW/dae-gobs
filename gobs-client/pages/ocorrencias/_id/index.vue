@@ -81,6 +81,9 @@
 			<b-button :disabled="!isFormValid || sending" type="submit" variant="success" @click.prevent="sendMsg">
 				Enviar mensagem
 			</b-button>
+			<b-button v-if="isFuncionario" :disabled="!isFormValid" type="submit" variant="primary" @click.prevent="aceitarOcorrencia">
+				Aceitar ocorrência
+			</b-button>
 		</div>
 	</b-container>
 </template>
@@ -123,6 +126,9 @@ export default {
 		isFormValid() {
 			//&& true to remove warning
 			return this.isMensagemValid && true;
+		},
+		isEstadoValid() {
+			return this.ocorrencia.estado
 		}
 	},
 	data() {
@@ -293,7 +299,26 @@ export default {
 						});
 					});
 			}
-		}
+		},
+		aceitarOcorrencia() {
+			this.$axios.$patch(`/api/ocorrencias/${this.id}/update-estado`, 4)
+				.then(data => this.ocorrencia.estado == data)
+				.catch(error => {
+					let msg
+					if (error.response && error.response.data)
+						msg = error.response.data
+					else
+						msg = error.message
+
+					console.error(`Erro ao aceitar ocorrencia: ${msg}`)
+					this.$bvToast.toast(msg, {
+						solid: true,
+						title: `Erro ao aceitar ocorrencia`,
+						toaster: 'b-toaster-top-center',
+						variant: 'danger'
+					})
+				})
+		},
 	},
 	beforeDestroy() {
 		for (const [, ficheiro] of Object.entries(this.ficheiros)) {

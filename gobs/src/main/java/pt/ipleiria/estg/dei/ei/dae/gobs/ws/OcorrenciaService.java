@@ -6,6 +6,8 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import pt.ipleiria.estg.dei.ei.dae.gobs.api.EstadoOcorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.NewOcorrenciaMensagemDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.UpdateEstadoDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.auth.ChangePasswordDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.FicheiroBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.OcorrenciaBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
@@ -16,6 +18,7 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.File;
@@ -30,8 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.CLIENTE_ROLE;
-import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.FUNCIONARIO_ROLE;
+import static pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.AuthBean.*;
 
 @Authenticated
 @Consumes({MediaType.APPLICATION_JSON})
@@ -117,6 +119,13 @@ public class OcorrenciaService {
 
         URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrenciaId.toString()).build();
         return Response.created(uri).entity(ocorrencia.toDTOcomMensagens()).build();
+    }
+
+    @PATCH
+    @Path("{id}/update-estado")
+    public Response updateEstado(@PathParam("id") Integer id, @Valid UpdateEstadoDTO dto) {
+        ocorrenciaBean.updateEstado(id, dto);
+        return Response.ok(dto).build();
     }
 
     @Consumes(MediaType.MULTIPART_FORM_DATA)

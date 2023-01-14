@@ -25,8 +25,8 @@ POST {{host}}/api/auth/login-client
 Content-Type: application/json
 
 {
-  "nif": "{{test_user}}",
-  "password": "test0"
+  "nif": "846239129",
+  "password": "zfoC1gPnqbKWq_A"
 }
 
 > {%
