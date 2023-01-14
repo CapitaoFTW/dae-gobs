@@ -119,8 +119,10 @@ public class OcorrenciaService {
         return Response.created(uri).entity(ocorrencia.toDTOcomMensagens()).build();
     }
 
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @PUT
     @Path("/message/{id}")
+    @Transactional
     public Response addMessage(@PathParam("id") Integer ocorrenciaId, MultipartFormDataInput input) throws IOException {
         Ocorrencia ocorrencia = ocorrenciaBean.find(ocorrenciaId);
         if (ocorrencia == null)
@@ -134,11 +136,19 @@ public class OcorrenciaService {
             sender = 0;
         }
 
+        EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
+        switch (estado) {
+            case Concluida:
+            case Invalida:
+                return Response.status(Response.Status.BAD_REQUEST).entity("A ocorrência está marcada como concluida ou inválida.").build();
+        }
+
         Map<String, List<InputPart>> form = input.getFormDataMap();
         NewOcorrenciaMensagemDTO mensagemDTO = getMessageDTOFromForm(input.getFormDataMap(), sender);
         OcorrenciaMensagem mensagem = ocorrenciaBean.addMessage(ocorrencia, mensagemDTO);
 
         getAndSaveFiles(ocorrenciaId, mensagem, form);
+
         return Response.ok(ocorrencia.toDTOcomMensagens()).build();
     }
 

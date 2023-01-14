@@ -52,13 +52,13 @@ public class Ocorrencia extends EntityId<Integer> {
     @NotNull
     @OneToMany(mappedBy = "ocorrencia", cascade = CascadeType.REMOVE)
     @OrderColumn(name = "criado")
-    private Collection<OcorrenciaMensagem> mensagems;
+    private Collection<OcorrenciaMensagem> mensagens;
     @UpdateTimestamp
     private Date atualizado;
     private Date criado;
 
     public Ocorrencia() {
-        this.mensagems = new LinkedHashSet<>();
+        this.mensagens = new LinkedHashSet<>();
     }
 
     public Ocorrencia(Integer clienteId, Integer apoliceId, String assunto, EstadoOcorrencia estadoOcorrencia) {
@@ -66,7 +66,7 @@ public class Ocorrencia extends EntityId<Integer> {
         this.apoliceId = apoliceId;
         this.assunto = assunto;
         this.estadoOcorrencia = estadoOcorrencia;
-        this.mensagems = new LinkedHashSet<>();
+        this.mensagens = new LinkedHashSet<>();
     }
 
     @PrePersist
@@ -119,12 +119,12 @@ public class Ocorrencia extends EntityId<Integer> {
         this.estadoOcorrencia = estadoOcorrencia;
     }
 
-    public Collection<OcorrenciaMensagem> getMensagems() {
-        return mensagems;
+    public Collection<OcorrenciaMensagem> getMensagens() {
+        return mensagens;
     }
 
-    public void setMensagems(Collection<OcorrenciaMensagem> mensagems) {
-        this.mensagems = mensagems;
+    public void setMensagens(Collection<OcorrenciaMensagem> mensagens) {
+        this.mensagens = mensagens;
     }
 
     public Date getAtualizado() {
@@ -141,6 +141,14 @@ public class Ocorrencia extends EntityId<Integer> {
 
     public void setCriado(Date criado) {
         this.criado = criado;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean addMensagem(OcorrenciaMensagem mensagem) {
+        if (mensagens.contains(mensagem))
+            return false;
+
+        return mensagens.add(mensagem);
     }
 
     public OcorrenciaDTO toDTO() {
@@ -162,7 +170,7 @@ public class Ocorrencia extends EntityId<Integer> {
                 this.getClienteId(),
                 this.getAssunto(),
                 this.getEstadoOcorrencia().getValue(),
-                this.getMensagems().stream().map(OcorrenciaMensagem::toDTO).collect(Collectors.toList()),
+                this.getMensagens().stream().map(OcorrenciaMensagem::toDTO).collect(Collectors.toList()),
                 this.getAtualizado(),
                 this.getCriado()
         );

@@ -24,6 +24,7 @@ public class FicheiroBean {
             throw new GobsConstraintViolationException(ex);
         }
 
+        mensagem.addFicheiro(ficheiro);
         return ficheiro;
     }
 

@@ -107,6 +107,14 @@ public class OcorrenciaMensagem extends EntityId<Integer> {
         this.criado = criado;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean addFicheiro(Ficheiro ficheiro) {
+        if (ficheiros.contains(ficheiro))
+            return false;
+
+        return ficheiros.add(ficheiro);
+    }
+
     public OcorrenciaMensagemDTO toDTO() {
         return new OcorrenciaMensagemDTO(
                 this.getId(),

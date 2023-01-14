@@ -50,6 +50,7 @@ public class OcorrenciaBean {
             throw new GobsConstraintViolationException(ex);
         }
 
+        ocorrencia.addMensagem(mensagem);
         return mensagem;
     }
 
