@@ -1,7 +1,6 @@
 <template>
 	<b-container>
 		<h1 class="text-center mb-5">Dashboard</h1>
-		<b-button>Reload</b-button><!-- todo change location adding reload function use variable to show-->
 		<b-row :class="{ 'row-cols-2': isCliente }" class="flex-fill text-center">
 			<b-col v-if="isCliente" class="h-100">
 				<b-row class="border border-primary mx-1 rounded">
@@ -64,6 +63,7 @@
 				</b-row>
 			</b-col>
 		</b-row>
+		<b-button v-if="needReload" @click="reloadPage">Reload</b-button>
 	</b-container>
 </template>
 
@@ -256,20 +256,20 @@ export default {
 		},
 		formatEstado(value) {
 			switch (value) {
+				case 0:
+				case 2:
+				case 5:
+				case 6:
+					return 'Em processo'
 				case 1:
 				case 3:
-				case 6:
-				case 7:
-					return 'Em processo'
-				case 2:
 				case 4:
-				case 5:
 					return 'Aguardando utilizador'
-				case 8:
+				case 7:
 					return 'Pagamento'
-				case 9:
+				case 8:
 					return 'Concluída'
-				case 10:
+				case 9:
 					return 'Inválida'
 				default:
 					return 'Algo correu mal! Contacte-nos'
@@ -280,6 +280,9 @@ export default {
 		},
 		clickOcorrencia(item) {
 			this.$router.push(`/ocorrencias/${item.id}`)
+		},
+		reloadPage() {
+			this.$router.go(0)
 		}
 	}
 }

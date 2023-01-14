@@ -17,7 +17,7 @@
 				</div>
 			</template>
 		</b-overlay>
-		<b-button @click=$router.back()>Voltar</b-button>
+		<b-button @click="$router.push('/apolices')">Voltar</b-button>
 	</b-container>
 </template>
 
@@ -52,7 +52,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.back()
+				this.$router.push('/apolices')
 			});
 	},
 	fetchOnServer: false,

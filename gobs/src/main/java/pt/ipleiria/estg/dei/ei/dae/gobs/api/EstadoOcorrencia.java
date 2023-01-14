@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EstadoOcorrencia {
-    Criada(1),
-    AguardarMaisDados(2),
-    ParaAnalise(3),
-    ParaReparacao(4),
-    EmReparacao(5),
-    ImpossivelReparar(6),
-    Reparado(7),
-    EmPagamento(8),
-    Concluida(9),
-    Invalida(10);
+    Criada(0),
+    AguardarMaisDados(1),
+    ParaAnalise(2),
+    ParaReparacao(3),
+    EmReparacao(4),
+    ImpossivelReparar(5),
+    Reparado(6),
+    EmPagamento(7),
+    Concluida(8),
+    Invalida(9);
 
     private static final Map<Integer, EstadoOcorrencia> estadosMap = new HashMap<>();
 

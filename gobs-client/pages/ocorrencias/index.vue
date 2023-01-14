@@ -24,7 +24,7 @@
 		</b-table>
 		<b-row>
 			<b-col>
-				<b-button @click=$router.back()>Voltar</b-button>
+				<b-button @click="$router.push('/')">Voltar</b-button>
 				<b-button v-if="isCliente" to="/ocorrencias/create" variant="success">Registar nova ocorrência
 				</b-button>
 			</b-col>
@@ -170,7 +170,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.back()
+				this.$router.push('/')
 			});
 	},
 	fetchOnServer: false,
@@ -186,20 +186,20 @@ export default {
 		},
 		formatEstado(value) {
 			switch (value) {
+				case 0:
+				case 2:
+				case 5:
+				case 6:
+					return 'Em processo'
 				case 1:
 				case 3:
-				case 6:
-				case 7:
-					return 'Em processo'
-				case 2:
 				case 4:
-				case 5:
 					return 'Aguardando utilizador'
-				case 8:
+				case 7:
 					return 'Pagamento'
-				case 9:
+				case 8:
 					return 'Concluída'
-				case 10:
+				case 9:
 					return 'Inválida'
 				default:
 					return 'Algo correu mal! Contacte-nos'

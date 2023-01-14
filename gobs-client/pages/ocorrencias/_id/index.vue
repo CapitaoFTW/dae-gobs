@@ -1,8 +1,7 @@
 <template>
 	<b-container>
 		<h1 class="text-center mb-2">Ocorrência</h1>
-		<!--suppress JSUnresolvedVariable -->
-		<b-overlay :show="$fetchState.pending" spinner-variant="primary">
+		<b-overlay :show="ocorrenciaLoading" spinner-variant="primary">
 			<template #overlay>
 				<div class="text-center text-primary my-2">
 					<b-spinner class="align-middle"></b-spinner>
@@ -10,10 +9,18 @@
 				</div>
 			</template>
 			<b-col class="text-center">
-				<b-row>Assunto: {{ ocorrencia.assunto }}</b-row>
-				<b-row><!--suppress JSUnresolvedVariable -->Criado: {{ formatDate(ocorrencia.criado) }}</b-row>
-				<hr/>
+				<!--suppress JSUnresolvedVariable -->
+				<b-row>
+					Estado: {{ formatEstado(ocorrencia.estado) }}
+				</b-row>
+				<b-row>
+					Criado: {{ formatDate(ocorrencia.criado) }}
+				</b-row>
+				<b-row>
+					Assunto: {{ ocorrencia.assunto }}
+				</b-row>
 				<div v-if="Object.keys(this.ficheiros).length > 0">
+					<hr/>
 					<b-row>Ficheiros:</b-row>
 					<b-row>
 						<div v-for="item in ficheiros" @click="openFile(item.url)">
@@ -27,62 +34,81 @@
 							</object>
 						</div>
 					</b-row>
-					<br/>
 				</div>
-				<b-row class="border border-primary p-2 rounded">
+				<br/>
+				<b-row class="border border-primary p-2 rounded mb-3 ">
 					<b-col>
 						Mensagens:
-						<b-row v-for="item in mensagens">
+						<b-row v-for="item in mensagens" v-bind:key="item.id">
 							{{ `${item.sender}: ${item.mensagem}` }}
 						</b-row>
 					</b-col>
 				</b-row>
 				<b-row>
-				<!--suppress JSUnresolvedVariable -->
-				<b-form ref="msgForm" :validated="isFormValid" class="mt-3 w-100" @submit.prevent="sendMsg" v-if="ocorrencia.estado < 7">
 					<!--suppress JSUnresolvedVariable -->
-					<b-form-group
-						:invalid-feedback="invalidMensagemFeedback"
-						:state="isMensagemValid"
-						label="Enviar mensagem:"
-						label-for="input-mensagem">
-						<b-form-textarea
-							id="input-mensagem"
-							v-model="novaMensagem"
+					<b-form v-if="ocorrencia.estado < 9" ref="msgForm" :validated="isFormValid" class="w-100"
+							@submit.prevent="formSend">
+						<!--suppress JSUnresolvedVariable -->
+						<b-form-group
+							:invalid-feedback="invalidMensagemFeedback"
 							:state="isMensagemValid"
-							required
-							rows="5"/>
-					</b-form-group>
-					<b-form-group v-if="isCliente"
-						label="Ficheiros (opcional):"
-						label-for="input-files">
-						<b-form-file
-							id="input-files"
-							v-model="novosFicheiros"
-							drop-placeholder="Largar os ficheiros aqui."
-							multiple
-							no-traverse
-							placeholder="Nenhum ficheiro"/>
-						<b-progress
-							v-if="uploadProgress > 0"
-							:value="uploadProgress"
-							animated
-							class="mt-3"
-							show-progress
-							striped></b-progress>
-					</b-form-group>
-				</b-form>
+							label="Enviar mensagem:"
+							label-for="input-mensagem">
+							<b-form-textarea
+								id="input-mensagem"
+								v-model="novaMensagem"
+								:state="isMensagemValid"
+								rows="5"/>
+						</b-form-group>
+						<b-form-group v-if="isCliente"
+									  label="Ficheiros (opcional):"
+									  label-for="input-files">
+							<b-form-file
+								id="input-files"
+								v-model="novosFicheiros"
+								drop-placeholder="Largar os ficheiros aqui."
+								multiple
+								no-traverse
+								placeholder="Nenhum ficheiro"/>
+							<b-progress
+								v-if="uploadProgress > 0"
+								:value="uploadProgress"
+								animated
+								class="mt-3"
+								show-progress
+								striped></b-progress>
+						</b-form-group>
+						<b-overlay :show="estadoLoading" spinner-variant="primary">
+							<b-form-group
+								:invalid-feedback="invalidEstadoFeedback"
+								:state="isEstadoValid"
+								label="Alterar estado:"
+								label-for="input-estado">
+								<b-form-select
+									id="input-estado"
+									v-model="estadoAtual"
+									:options="estados"
+									:state="isEstadoValid"
+									required
+									text-field="nome"
+									value-field="id"/>
+							</b-form-group>
+							<template #overlay>
+								<div class="text-center text-primary my-2">
+									<b-spinner class="align-middle"></b-spinner>
+									<strong>Carregando...</strong>
+								</div>
+							</template>
+						</b-overlay>
+					</b-form>
 				</b-row>
 			</b-col>
 		</b-overlay>
 		<div>
-			<b-button @click=$router.back()>Voltar</b-button>
-			<b-button @click="resetForms" type="reset" variant="danger">Limpar</b-button>
-			<b-button :disabled="!isFormValid || sending" type="submit" variant="success" @click.prevent="sendMsg">
-				Enviar mensagem
-			</b-button>
-			<b-button v-if="isFuncionario" :disabled="!isFormValid" type="submit" variant="primary" @click.prevent="aceitarOcorrencia">
-				Aceitar ocorrência
+			<b-button @click="$router.push('/ocorrencias')">Voltar</b-button>
+			<b-button v-if="!ocorrenciaFechada" type="reset" variant="danger" @click="resetForms">Limpar</b-button>
+			<b-button v-if="!ocorrenciaFechada" :disabled="!isFormValid || sending" type="submit" variant="success" @click.prevent="formSend">
+				{{ invalidMensagemFeedback || isMensagemValid ? "Enviar Mensagem" : "Guardar estado" }}
 			</b-button>
 		</div>
 	</b-container>
@@ -102,6 +128,9 @@ export default {
 		},
 		id() {
 			return this.$route.params.id
+		},
+		ocorrenciaFechada() {
+			return this.ocorrencia.estado === 8 || this.ocorrencia.estado === 9
 		},
 		invalidMensagemFeedback() {
 			const mensagem = this.novaMensagem
@@ -123,34 +152,114 @@ export default {
 
 			return this.invalidMensagemFeedback === ''
 		},
-		isFormValid() {
-			//&& true to remove warning
-			return this.isMensagemValid && true;
+		invalidEstadoFeedback() {
+			const estadoId = this.estadoAtual
+			// noinspection JSUnresolvedVariable
+			if (estadoId === this.ocorrencia.estado)
+				return null
+
+			if (!this.estados.some(estado => !estado.disabled && estado.id === estadoId)) {
+				return 'Estado não exitente ou inválido.'
+			}
+
+			return ''
 		},
 		isEstadoValid() {
-			return this.ocorrencia.estado
+			if (this.invalidEstadoFeedback == null) {
+				return null
+			}
+
+			return this.invalidEstadoFeedback === ''
+		},
+		isFormValid() {
+			if ((this.isMensagemValid === null || this.isMensagemValid) && this.isEstadoValid)
+				return true
+
+			return this.isMensagemValid && (this.isEstadoValid === null || this.isEstadoValid);//todo change
 		}
 	},
 	data() {
 		return {
+			estados: [],
+			estadoAtual: null,
+			estadoLoading: true,
 			ficheiros: {},
 			ficheirosLoading: true,
 			mensagens: {},
 			novosFicheiros: [],
 			novaMensagem: null,
 			ocorrencia: {},
+			ocorrenciaLoading: true,
 			sending: false,
 			senders: {},
 			uploadProgress: 0
 		}
 	},
 	async fetch() {
-		const files = []
+
 		await this.$axios.$get(`/api/ocorrencias/${this.id}`)
 			.then(async data => {
 				this.ocorrencia = data
 				// noinspection JSUnresolvedVariable
+				this.estadoAtual = this.ocorrencia.estado
+
+				this.$axios.$get('/api/ocorrencias/estados')
+					.then(data => {
+						for (const id in data) {
+							const estadoId = Number(id)
+
+							let disabled
+							if (estadoId === this.estadoAtual) {
+								disabled = false
+							} else if (estadoId !== 0) {
+								if (this.isCliente) {
+									switch (estadoId) {
+										case 0:
+										case 1:
+										case 3:
+										case 9:
+											disabled = true
+											break
+									}
+								} else {
+									switch (estadoId) {
+										case 0:
+										case 2:
+										case 4:
+										case 5:
+										case 6:
+											disabled = true
+											break
+									}
+								}
+							} else {
+								disabled = true
+							}
+
+							this.estados.push({
+								id: estadoId,
+								disabled: disabled,
+								nome: this.formatEstadoForm(estadoId)
+							})
+						}
+
+						this.estadoLoading = false
+					})
+					.catch(e => {
+						console.error(`Erro ao obter estados: ${e}`)
+						this.$root.$bvToast.toast('Erro ao obter estados.', {
+							solid: true,
+							title: 'Erro ao obter dados',
+							toaster: 'b-toaster-top-center',
+							variant: 'danger'
+						});
+						this.$router.push('/ocorrencias')
+					});
+
+				const files = []
 				await this.processMensagens(this.ocorrencia.mensagens, files)
+				this.loadFiles(files)
+				this.ocorrenciaLoading = false
 			})
 			.catch(e => {
 				console.error(`Erro ao obter ocorrência: ${e}`)
@@ -160,30 +269,42 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.back()
+				this.$router.push('/ocorrencias')
 			});
-
-		this.loadFiles(files)
 	},
 	fetchOnServer: false,
 	methods: {
+		formSend() {
+			if (this.isMensagemValid) {
+				this.sendMsg()
+			}
+			else {
+				this.sendEstado()
+			}
+		},
 		sendMsg() {
 			this.sending = true
 
 			const formData = new FormData()
-			formData.append("descricao", this.novaMensagem);
+			formData.append('descricao', this.novaMensagem);
+
+			const estado = this.estadoAtual
+			// noinspection JSUnresolvedVariable
+			if (estado !== this.ocorrencia.estado)
+				formData.append('estado', estado)
 
 			if (this.isCliente)
-				this.novosFicheiros.forEach(file => formData.append("files", file));
+				this.novosFicheiros.forEach(file => formData.append('files', file));
 
-			this.$axios.$put(`/api/ocorrencias/message/${this.id}`, formData, {
+			this.$axios.$post(`/api/ocorrencias/${this.id}/message`, formData, {
 				headers: {
-					"Content-Type": "multipart/form-data"
+					'Content-Type': 'multipart/form-data'
 				},
 				onUploadProgress: (event) => this.uploadProgress = Math.round(100 * event.loaded / event.total)
 			})
 				.then(data => this.mensagemEnviada(data))
 				.catch(error => {
+					this.uploadProgress = 0
 					this.sending = false
 					let msg
 					if (error.response && error.response.data)
@@ -200,10 +321,33 @@ export default {
 					})
 				})
 		},
+		sendEstado() {
+			this.$axios.$patch(`/api/ocorrencias/${this.id}/estado`, {estado: this.estadoAtual})
+				.then(data => this.mensagemEnviada(data))
+				.catch(error => {
+					let msg
+					if (error.response && error.response.data)
+						msg = error.response.data
+					else
+						msg = error.message
+
+					console.error(`Erro ao atualizar estado: ${msg}`)
+					this.$bvToast.toast(msg, {
+						solid: true,
+						title: `Erro ao atualizar estado`,
+						toaster: 'b-toaster-top-center',
+						variant: 'danger'
+					})
+				})
+		},
 		async mensagemEnviada(data) {
 			this.sending = false
 			this.uploadProgress = 0
 			this.resetForms()
+
+			this.ocorrencia = data
+			// noinspection JSUnresolvedVariable
+			this.estadoAtual = this.ocorrencia.estado
 
 			const files = []
 			await this.processMensagens(data.mensagens, files)
@@ -230,6 +374,53 @@ export default {
 			this.novosFicheiros = []//to reset validation
 			this.novaMensagem = null//to reset validation
 		},
+		formatEstado(value) {
+			switch (value) {
+				case 0:
+				case 2:
+				case 5:
+				case 6:
+					return 'Em processo'
+				case 1:
+				case 3:
+				case 4:
+					return 'Aguardando utilizador'
+				case 7:
+					return 'Pagamento'
+				case 8:
+					return 'Concluída'
+				case 9:
+					return 'Inválida'
+				default:
+					return 'Algo correu mal! Contacte-nos'
+			}
+		},
+		formatEstadoForm(value) {
+			switch (value) {
+				case 0:
+					return 'Criada';
+				case 1:
+					return 'Dados em falta';
+				case 2:
+					return 'Para análise';
+				case 3:
+					return 'Para reparação';
+				case 4:
+					return 'Em reparação';
+				case 5:
+					return 'Impossivel reparar';
+				case 6:
+					return 'Reparado';
+				case 7:
+					return 'Em pagammento';
+				case 8:
+					return 'Concluida';
+				case 9:
+					return 'Invalida';
+				default:
+					return `Unknown (${value})`;
+			}
+		},
 		async processMensagens(mensagens, files) {
 			const sortMsgs = (a, b) => {
 				return this.toDate(a.criado) - this.toDate(b.criado)
@@ -250,8 +441,7 @@ export default {
 				const senderId = mensagem.sender
 				if (senderId === 0) {
 					msg.sender = this.isCliente ? 'Eu' : 'Cliente'
-				}
-				else {
+				} else {
 					msg.sender = this.isCliente ? 'Gobs' : 'Eu'
 				}
 
@@ -299,26 +489,7 @@ export default {
 						});
 					});
 			}
-		},
-		aceitarOcorrencia() {
-			this.$axios.$patch(`/api/ocorrencias/${this.id}/update-estado`, 4)
-				.then(data => this.ocorrencia.estado == data)
-				.catch(error => {
-					let msg
-					if (error.response && error.response.data)
-						msg = error.response.data
-					else
-						msg = error.message
-
-					console.error(`Erro ao aceitar ocorrencia: ${msg}`)
-					this.$bvToast.toast(msg, {
-						solid: true,
-						title: `Erro ao aceitar ocorrencia`,
-						toaster: 'b-toaster-top-center',
-						variant: 'danger'
-					})
-				})
-		},
+		}
 	},
 	beforeDestroy() {
 		for (const [, ficheiro] of Object.entries(this.ficheiros)) {

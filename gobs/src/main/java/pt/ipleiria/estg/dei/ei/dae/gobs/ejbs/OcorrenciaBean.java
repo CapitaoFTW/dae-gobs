@@ -53,18 +53,14 @@ public class OcorrenciaBean {
         if (ocorrencia == null)
             throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
 
-        updateEstadoInternal(ocorrencia, EstadoOcorrencia.fromValue(estado), false);
+        if (estado != null) {
+            updateEstadoInternal(ocorrencia, EstadoOcorrencia.fromValue(estado), false);
+        }
+
         return addMessageInternal(ocorrencia, mensagemDTO, notificar);
     }
 
     private Pair<Ocorrencia, OcorrenciaMensagem> addMessageInternal(Ocorrencia ocorrencia, NewOcorrenciaMensagemDTO mensagemDTO, boolean notificar) {
-        EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
-        switch (estado) {
-            case Concluida:
-            case Invalida:
-                throw new GobsBadRequestException(estado, "A ocorrência está marcada como concluida ou inválida");
-        }
-
         OcorrenciaMensagem mensagem = mensagemDTO.toEntity();
         mensagem.setOcorrencia(ocorrencia);
 
@@ -77,7 +73,7 @@ public class OcorrenciaBean {
         ocorrencia.addMensagem(mensagem);
 
         if (notificar) {
-            notificarCliente(ocorrencia.getId(), ocorrencia.getApoliceId(), ocorrencia.getClienteId(), String.format("Você recebeu uma nova mensagem na sua ocorrência.\nEstado atual: %s\nMensagem: %s", estado, mensagem.getMensagem()));
+            notificarCliente(ocorrencia.getId(), ocorrencia.getApoliceId(), ocorrencia.getClienteId(), String.format("Você recebeu uma nova mensagem na sua ocorrência.\nEstado atual: %s\nMensagem: %s", ocorrencia.getEstadoOcorrencia(), mensagem.getMensagem()));
         }
 
         return Pair.of(ocorrencia, mensagem);
@@ -91,17 +87,42 @@ public class OcorrenciaBean {
         return entityManager.find(Ocorrencia.class, id, lockModeType);
     }
 
-    public Ocorrencia updateEstado(Integer ocorrenciaId, EstadoOcorrencia novoEstado, boolean notificar) {
+    public Ocorrencia updateEstado(Integer ocorrenciaId, EstadoOcorrencia novoEstado, boolean isCliente) {
         Ocorrencia ocorrencia = find(ocorrenciaId);
         if (ocorrencia == null)
             throw new GobsEntityNotFoundException(ocorrenciaId, "Falha ao obter Ocorrência, Ocorrência não existe");
 
-        return updateEstadoInternal(ocorrencia, novoEstado, notificar);
+        if (ocorrencia.getEstadoOcorrencia() == novoEstado)
+            throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estadoé igual ao antigo");
+
+        if (isCliente) {
+            switch (novoEstado) {
+                case Criada:
+                case AguardarMaisDados:
+                case ParaReparacao:
+                case Invalida:
+                    throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estado é inválido");
+            }
+        } else {
+            switch (novoEstado) {
+                case Criada:
+                case ParaAnalise:
+                case EmReparacao:
+                case ImpossivelReparar:
+                case Reparado:
+                    throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estado é inválido");
+            }
+        }
+
+        return updateEstadoInternal(ocorrencia, novoEstado, !isCliente);
     }
 
 
     private Ocorrencia updateEstadoInternal(Ocorrencia ocorrencia, EstadoOcorrencia novoEstado, boolean notificar) {
         EstadoOcorrencia estado = ocorrencia.getEstadoOcorrencia();
+        if (novoEstado == estado)
+            throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estadoé igual ao antigo");
+
         switch (estado) {
             case Concluida:
             case Invalida:

@@ -11,7 +11,6 @@ import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.FicheiroBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.OcorrenciaBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Ocorrencia;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.OcorrenciaMensagem;
-import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsBadRequestException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
@@ -163,26 +162,7 @@ public class OcorrenciaService {
         }
 
         EstadoOcorrencia novoEstado = EstadoOcorrencia.fromValue(novoEstadoDto.getEstado());
-        if (isCliente) {
-            switch (novoEstado) {
-                case Criada:
-                case AguardarMaisDados:
-                case ParaReparacao:
-                case Invalida:
-                    throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estado é inválido");
-            }
-        } else {
-            switch (novoEstado) {
-                case Criada:
-                case ParaAnalise:
-                case EmReparacao:
-                case ImpossivelReparar:
-                case Reparado:
-                    throw new GobsBadRequestException(novoEstado, "Falha ao atualizar estado, o novo estado é inválido");
-            }
-        }
-
-        Ocorrencia ocorrencia = ocorrenciaBean.updateEstado(ocorrenciaId, novoEstado, !isCliente);
+        Ocorrencia ocorrencia = ocorrenciaBean.updateEstado(ocorrenciaId, novoEstado, isCliente);
         return Response.ok(ocorrencia.toDTO()).build();
     }
 

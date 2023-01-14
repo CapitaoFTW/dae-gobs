@@ -7,7 +7,6 @@ import javax.persistence.MappedSuperclass;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 @MappedSuperclass
 public abstract class ExternalService<Bridge, Proxy extends ResteasyProxy<Bridge>> {
@@ -31,7 +30,6 @@ public abstract class ExternalService<Bridge, Proxy extends ResteasyProxy<Bridge
 
             throw ex;
         } catch (EJBException ex) {
-            Logger.getLogger("test").warning("EJBException");
             Exception ex1 = ex.getCausedByException();
             if (ex1 instanceof RuntimeException)
                 throw (RuntimeException) ex1;

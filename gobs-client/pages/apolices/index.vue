@@ -24,7 +24,7 @@
 		</b-table>
 		<b-row>
 			<b-col>
-				<b-button @click=$router.back()>Voltar</b-button>
+				<b-button @click="$router.push('/')">Voltar</b-button>
 			</b-col>
 			<b-col class="flex-grow-0">
 				<b-pagination
@@ -98,7 +98,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				this.$router.back()
+				this.$router.push('/')
 			});
 	},
 	fetchOnServer: false,

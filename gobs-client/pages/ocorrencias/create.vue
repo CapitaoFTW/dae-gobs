@@ -73,7 +73,7 @@
 					show-progress
 					striped></b-progress>
 			</b-form-group>
-			<b-button @click=$router.back()>Voltar</b-button>
+			<b-button @click="$router.push('/')">Voltar</b-button>
 			<b-button type="reset" variant="danger">Limpar</b-button>
 			<b-button :disabled="!isFormValid || sending" type="submit" variant="success" @click.prevent="create">
 				Registar Ocorrência
@@ -193,7 +193,7 @@ export default {
 					toaster: 'b-toaster-top-center',
 					variant: 'danger'
 				});
-				//todo reload
+				this.$router.push('/')
 			});
 	},
 	fetchOnServer: false,
@@ -215,6 +215,7 @@ export default {
 			})
 				.then(data => this.ocorrenciaCriada(data))
 				.catch(error => {
+					this.uploadProgress = 0
 					this.sending = false
 					let msg
 					if (error.response && error.response.data)
@@ -239,7 +240,7 @@ export default {
 				title: `Ocorrência criada`,
 				variant: 'success'
 			})
-			this.$router.push('/ocorrencias')//todo change
+			this.$router.push(`/ocorrencias/${data.id}`)
 		}
 	}
 }
