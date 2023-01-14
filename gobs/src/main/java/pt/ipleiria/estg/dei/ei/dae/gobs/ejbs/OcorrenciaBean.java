@@ -15,9 +15,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
-
-import java.util.Objects;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 

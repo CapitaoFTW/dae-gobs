@@ -31,7 +31,7 @@ public class FicheiroService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFicheiro(@PathParam("id") Long id) {
+    public Response getFicheiro(@PathParam("id") Integer id) {
         Ficheiro ficheiro = ficheiroBean.find(id);
         if (ficheiro == null)
             throw new GobsEntityNotFoundException(id, "Falha ao obter ficheiro, ficheiro não encontrado.");

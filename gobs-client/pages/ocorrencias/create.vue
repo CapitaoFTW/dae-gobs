@@ -196,7 +196,6 @@ export default {
 				});
 				//todo reload
 			});
-		console.log(this.apolices)
 	},
 	fetchOnServer: false,
 	methods: {

@@ -152,7 +152,9 @@ public class OcorrenciaService {
         files.addAll(form.getOrDefault("files", new ArrayList<>()));
 
         for (InputPart part : files) {
-            String filename = getFilename(part.getHeaders());
+            MultivaluedMap<String, String> header = part.getHeaders();
+            String filename = getFilename(header);
+            String mimeType = getMimeType(header);
             java.nio.file.Path dirPath = Paths.get(System.getProperty("user.home"), "uploads", ocorrenciaId.toString());
             mkdirIfNotExists(dirPath.toFile());
 
@@ -162,12 +164,8 @@ public class OcorrenciaService {
                 writeFile(bytes, file);
             }
 
-            ficheiroBean.create(mensagemDTO, filename, file.getPath());
+            ficheiroBean.create(mensagemDTO, filename, mimeType, file.getPath());
         }
-
-        Ocorrencia ocorrencia = pair.getLeft();
-        URI uri = UriBuilder.fromResource(OcorrenciaService.class).path(ocorrencia.getId().toString()).build();
-        return Response.created(uri).entity(ocorrenciaDTO(ocorrencia, true)).build();
     }
 
     /*@PUT
@@ -179,35 +177,6 @@ public class OcorrenciaService {
         return Response.ok(ocorrenciaDTO).build();
     }*/
 
-    private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias, boolean comMensagens) {
-        Collection<OcorrenciaDTO> ocorrenciaDTOs = new LinkedList<>();
-        Map<Integer, Apolice> apolices = new LinkedHashMap<>();
-
-        for (Ocorrencia ocorrencia : ocorrencias) {
-            OcorrenciaDTO dto = comMensagens ? ocorrencia.toDTOcomMensagens() : ocorrencia.toDTO();
-            ocorrenciaDTOs.add(dto);
-
-            Integer apoliceId = ocorrencia.getApoliceId();
-            Apolice apolice = apolices.get(apoliceId);
-            if (apolice == null) {
-                apolice = apoliceBean.getApolice(apoliceId);
-                apolices.put(apoliceId, apolice);
-            }
-            dto.setApolice(apolice.toDto());
-        }
-
-        return ocorrenciaDTOs;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private OcorrenciaDTO ocorrenciaDTO(Ocorrencia ocorrencia, boolean comMensagens) {
-        OcorrenciaDTO dto = comMensagens ? ocorrencia.toDTOcomMensagens() : ocorrencia.toDTO();
-        Integer apoliceId = ocorrencia.getApoliceId();
-        Apolice apolice = apoliceBean.getApolice(apoliceId);
-        dto.setApolice(apolice.toDto());
-        return dto;
-    }
-
     private String getFilename(MultivaluedMap<String, String> headers) {
         String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
         for (String filename : contentDisposition) {
@@ -217,6 +186,10 @@ public class OcorrenciaService {
             }
         }
         return "unknown";
+    }
+
+    private String getMimeType(MultivaluedMap<String, String> headers) {
+        return headers.getFirst("Content-Type");
     }
 
     private void mkdirIfNotExists(File file) {

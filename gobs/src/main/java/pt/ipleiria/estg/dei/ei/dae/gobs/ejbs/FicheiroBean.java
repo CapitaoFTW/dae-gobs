@@ -16,8 +16,8 @@ public class FicheiroBean {
     protected EntityManager entityManager;
 
     @SuppressWarnings("UnusedReturnValue")
-    public Ficheiro create(OcorrenciaMensagem mensagem, String filename, String filepath) {
-        Ficheiro ficheiro = new Ficheiro(filepath, filename, mensagem);
+    public Ficheiro create(OcorrenciaMensagem mensagem, String filename, String mimeType, String filepath) {
+        Ficheiro ficheiro = new Ficheiro(filename, mimeType, filepath, mensagem);
         try {
             entityManager.persist(ficheiro);
         } catch (ConstraintViolationException ex) {
@@ -27,11 +27,11 @@ public class FicheiroBean {
         return ficheiro;
     }
 
-    public Ficheiro find(Long id) {
+    public Ficheiro find(Integer id) {
         return find(id, LockModeType.OPTIMISTIC);
     }
 
-    public Ficheiro find(Long id, LockModeType lockModeType) {
+    public Ficheiro find(Integer id, LockModeType lockModeType) {
         return entityManager.find(Ficheiro.class, id, lockModeType);
     }
 }

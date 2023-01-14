@@ -1,16 +1,17 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ws;
 
 import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ReparadorDTO;
-import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ReparadorBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.EmailBean;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.EmailDTO;
+import pt.ipleiria.estg.dei.ei.dae.gobs.ejbs.ReparadorBean;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Reparador;
-import pt.ipleiria.estg.dei.ei.dae.gobs.exceptions.GobsEntityNotFoundException;
 import pt.ipleiria.estg.dei.ei.dae.gobs.security.Authenticated;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;

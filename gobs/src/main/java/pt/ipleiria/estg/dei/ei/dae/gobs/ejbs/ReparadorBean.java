@@ -1,7 +1,5 @@
 package pt.ipleiria.estg.dei.ei.dae.gobs.ejbs;
 
-import org.hibernate.Hibernate;
-import pt.ipleiria.estg.dei.ei.dae.gobs.dtos.ReparadorDTO;
 import pt.ipleiria.estg.dei.ei.dae.gobs.entities.Reparador;
 
 import javax.ejb.Stateless;

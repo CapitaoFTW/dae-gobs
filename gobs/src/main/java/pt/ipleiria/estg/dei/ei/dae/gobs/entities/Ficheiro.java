@@ -17,6 +17,8 @@ public class Ficheiro extends EntityId<Integer> {
     @NotBlank
     private String filename;
     @NotBlank
+    private String mimeType;
+    @NotBlank
     private String filepath;
     @JoinColumn(name = "mensagem_id")
     @ManyToOne
@@ -28,8 +30,9 @@ public class Ficheiro extends EntityId<Integer> {
     public Ficheiro() {
     }
 
-    public Ficheiro(String filename, String filepath, OcorrenciaMensagem mensagem) {
+    public Ficheiro(String filename, String mimeType, String filepath, OcorrenciaMensagem mensagem) {
         this.filename = filename;
+        this.mimeType = mimeType;
         this.filepath = filepath;
         this.mensagem = mensagem;
     }
@@ -53,6 +56,14 @@ public class Ficheiro extends EntityId<Integer> {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
     public String getFilepath() {
@@ -83,6 +94,7 @@ public class Ficheiro extends EntityId<Integer> {
         return new FicheiroDTO(
                 this.getId(),
                 this.getFilename(),
+                this.getMimeType(),
                 this.getCriado()
         );
     }

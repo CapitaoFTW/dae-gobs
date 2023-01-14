@@ -22,7 +22,7 @@
 							{{ `${formatDate(row.item.criado)} - ${formatDate(row.item.prazo)}` }}
 						</template>
 						<template v-slot:cell(actions)="row">
-							<b-button @click="" variant="success">Validar</b-button>
+							<b-button variant="success" @click="">Validar</b-button>
 						</template>
 						<template #table-busy>
 							<div class="text-center text-primary my-2">
@@ -262,10 +262,11 @@ export default {
 					return 'Em processo'
 				case 3:
 				case 5:
-					return 'Aguardando utilizador'
 				case 6:
-					return 'Concluida'
+					return 'Aguardando utilizador'
 				case 7:
+					return 'Concluída'
+				case 8:
 					return 'Pedido inválido'
 				default:
 					return 'Algo correu mal! Contacte-nos'

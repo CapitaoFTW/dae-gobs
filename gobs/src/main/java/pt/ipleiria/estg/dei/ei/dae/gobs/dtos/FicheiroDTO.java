@@ -5,14 +5,16 @@ import java.util.Date;
 public class FicheiroDTO {
     private Integer id;
     private String filename;
+    private String mimeType;
     private Date criado;
 
     public FicheiroDTO() {
     }
 
-    public FicheiroDTO(Integer id, String filename, Date criado) {
+    public FicheiroDTO(Integer id, String filename, String mimeType, Date criado) {
         this.id = id;
         this.filename = filename;
+        this.mimeType = mimeType;
         this.criado = criado;
     }
 
@@ -30,6 +32,14 @@ public class FicheiroDTO {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
     public Date getCriado() {
