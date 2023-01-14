@@ -13,6 +13,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,9 @@ public class OcorrenciaBean {
 
         return Pair.of(ocorrencia, mensagem);
     }
+
+    /*public void update(Integer clienteId, Integer apoliceId, String assunto, String descricao) {
+    }*/
 
     public boolean exists(Integer id) {
         return entityManager.createNamedQuery("existsOcorrencia", Long.class).setParameter("id", id).getSingleResult() > 0;

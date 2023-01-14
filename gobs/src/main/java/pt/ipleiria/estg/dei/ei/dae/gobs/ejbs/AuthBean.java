@@ -22,11 +22,14 @@ import javax.persistence.PersistenceContext;
 public class AuthBean {
     public static final String CLIENTE_ROLE = "Cliente";
     public static final String FUNCIONARIO_ROLE = "Funcionario";
+    public static final String REPARADOR_ROLE = "Reparador";
 
     @EJB
     private ClienteBean clienteBean;
     @EJB
     private FuncionarioBean funcionarioBean;
+    @EJB
+    private ReparadorBean reparadorBean;
     @PersistenceContext
     private EntityManager entityManager;
 

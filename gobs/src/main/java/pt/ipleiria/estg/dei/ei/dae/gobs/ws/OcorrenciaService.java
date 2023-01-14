@@ -115,6 +115,15 @@ public class OcorrenciaService {
         return Response.created(uri).entity(ocorrenciaDTO(ocorrencia, true)).build();
     }
 
+    /*@PUT
+    @Path("{id}")
+    public Response update(@PathParam("id") Integer Id, OcorrenciaDTO ocorrenciaDTO) {
+        ocorrenciaBean.update(Id, ocorrenciaDTO.getName());
+        ocorrenciaDTO = ocorrenciaDTO(ocorrenciaBean.find(ocorrenciaDTO.getId()), false);
+
+        return Response.ok(ocorrenciaDTO).build();
+    }*/
+
     private Collection<OcorrenciaDTO> ocorrenciasToDTOs(Collection<Ocorrencia> ocorrencias, boolean comMensagens) {
         Collection<OcorrenciaDTO> ocorrenciaDTOs = new LinkedList<>();
         Map<Integer, Apolice> apolices = new LinkedHashMap<>();
