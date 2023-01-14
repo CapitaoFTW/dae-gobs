@@ -124,8 +124,8 @@ public class OcorrenciaService {
     }
 
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @PUT
-    @Path("{id}/message")
+    @POST
+    @Path("/{id}/message")
     @Transactional
     public Response addMessage(@PathParam("id") Integer ocorrenciaId, MultipartFormDataInput input) throws IOException {
         int sender = Integer.parseInt(securityContext.getUserPrincipal().getName());
@@ -141,7 +141,7 @@ public class OcorrenciaService {
         Map<String, List<InputPart>> form = input.getFormDataMap();
         NewOcorrenciaMensagemDTO mensagemDTO = getMessageDTOFromForm(input.getFormDataMap(), sender);
 
-        List<InputPart> inputEstado = form.get("estado");
+        List<InputPart> inputEstado = form.getOrDefault("estado", new ArrayList<>());
         Integer estado = inputEstado.size() > 0 ? inputEstado.get(0).getBody(Integer.class, Integer.TYPE) : null;
         Pair<Ocorrencia, OcorrenciaMensagem> pair = ocorrenciaBean.addMessage(ocorrenciaId, mensagemDTO, estado, !isCliente);
 
@@ -152,7 +152,7 @@ public class OcorrenciaService {
     }
 
     @PATCH
-    @Path("{id}/estado")
+    @Path("/{id}/estado")
     public Response updateEstado(@PathParam("id") Integer ocorrenciaId, @Valid UpdateEstadoDTO novoEstadoDto) {
         int sender = Integer.parseInt(securityContext.getUserPrincipal().getName());
         boolean isCliente = securityContext.isUserInRole(CLIENTE_ROLE);
